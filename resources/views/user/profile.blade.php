@@ -1,4 +1,4 @@
-<x-dashboard-layout title="Profile • Flux Kit">
+<x-dashboard-layout title="Profile • {{ config('app.name', 'Practizly') }}">
     <div class="self-stretch flex-1 space-y-8 max-lg:max-w-2xl max-lg:mx-auto">
         <div class="space-y-6">
             <div>

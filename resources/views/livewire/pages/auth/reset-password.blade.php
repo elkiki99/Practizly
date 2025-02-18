@@ -12,7 +12,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 
 new 
-#[Layout('layouts.guest')] #[Title('Reset password • Flux Kit')] class extends Component
+#[Layout('layouts.guest')] #[Title('Reset password • Practizly')] class extends Component
 {
     #[Locked]
     public string $token = '';

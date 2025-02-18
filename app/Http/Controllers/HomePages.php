@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class HomePages extends Controller
 {
     public function welcome()
@@ -16,9 +14,9 @@ class HomePages extends Controller
         return view('homepages.contact');
     }
 
-    public function about()
+    public function docs()
     {
-        return view('homepages.about');
+        return view('homepages.docs');
     }
 
     public function blog()
@@ -26,19 +24,14 @@ class HomePages extends Controller
         return view('homepages.blog');
     }
 
-    public function services()
+    public function clients()
     {
-        return view('homepages.services');
+        return view('homepages.clients');
     }
 
     public function pricing()
     {
         return view('homepages.pricing');
-    }
-
-    public function caseStudies()
-    {
-        return view('homepages.case-studies');
     }
     
     public function terms()

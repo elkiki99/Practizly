@@ -6,7 +6,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\{Layout, Title};
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] #[Title('Confirm password • Flux Kit')] class extends Component {
+new #[Layout('layouts.guest')] #[Title('Confirm password • Practizly')] class extends Component {
     public string $password = '';
 
     /**

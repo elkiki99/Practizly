@@ -9,13 +9,12 @@ use App\Http\Middleware\EnsureUserIsNotAdmin;
 
 Route::get('/', [HomePages::class, 'welcome'])->name('welcome');
 Route::get('contact', [HomePages::class, 'contact'])->name('contact');
-Route::get('about', [HomePages::class, 'about'])->name('about');
+Route::get('docs', [HomePages::class, 'docs'])->name('docs');
 Route::get('blog', [HomePages::class, 'blog'])->name('blog');
 Route::get('terms', [HomePages::class, 'terms'])->name('terms');
 Route::get('privacy', [HomePages::class, 'privacy'])->name('privacy');
-Route::get('services', [HomePages::class, 'services'])->name('services');
+Route::get('clients', [HomePages::class, 'clients'])->name('clients');
 Route::get('pricing', [HomePages::class, 'pricing'])->name('pricing');
-Route::get('case-studies', [HomePages::class, 'caseStudies'])->name('case-studies');
 
 Route::middleware([EnsureUserIsNotAdmin::class])->group(function () {
     Route::get('dashboard', [UserDashboard::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');

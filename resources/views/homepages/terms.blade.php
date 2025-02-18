@@ -1,4 +1,4 @@
-<x-app-layout title="Terms • Flux Kit">
+<x-app-layout title="Terms • {{ config('app.name', 'Practizly') }}">
     <flux:main container>
         
     </flux:main>

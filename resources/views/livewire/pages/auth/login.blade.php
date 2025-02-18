@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\{Layout, Title};
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] #[Title('Login • Flux Kit')] class extends Component {
+new #[Layout('layouts.guest')] #[Title('Login • Practizly')] class extends Component {
     public LoginForm $form;
 
     /**

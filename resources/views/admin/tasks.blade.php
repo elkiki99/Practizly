@@ -1,4 +1,4 @@
-<x-admin-panel-layout title="Tasks • Flux Kit">
+<x-admin-panel-layout title="Tasks • {{ config('app.name', 'Practizly') }}">
     <div class="self-stretch flex-1 space-y-8 max-lg:max-w-2xl max-lg:mx-auto">
         <div>
             <flux:heading level="1" size="xl">Tasks</flux:heading>

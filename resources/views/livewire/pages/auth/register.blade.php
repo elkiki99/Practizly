@@ -8,7 +8,7 @@ use Illuminate\Validation\Rules;
 use Livewire\Attributes\{Layout, Title};
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] #[Title('Register • Flux Kit')] class extends Component {
+new #[Layout('layouts.guest')] #[Title('Register • Practizly')] class extends Component {
     public string $name = '';
     public string $email = '';
     public string $password = '';

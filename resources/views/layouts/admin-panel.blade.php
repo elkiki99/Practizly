@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? config('app.name', 'Panel • Flux Kit') }}</title>
+    <title>{{ $title ?? config('app.name', 'Panel • Practizly') }}</title>
 
     <!-- Fonts -->
-    <link rel="icon" href="{{ asset('faviconn.png') }}" />
+    <link rel="icon" href="{{ asset('practizly-logo-white.svg') }}" />
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
 

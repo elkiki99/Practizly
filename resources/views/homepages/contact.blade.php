@@ -1,4 +1,4 @@
-<x-app-layout title="Contact • Flux Kit">
+<x-app-layout title="Contact • {{ config('app.name', 'Practizly') }}">
     <flux:main container>
         <section class="space-y-6">
             <div>

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\{Layout, Title};
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] #[Title('Verify email • Flux Kit')] class extends Component {
+new #[Layout('layouts.guest')] #[Title('Verify email • Practizly')] class extends Component {
     /**
      * Send an email verification notification to the user.
      */
