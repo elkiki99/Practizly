@@ -24,7 +24,7 @@
 <?php elseif ($heading): ?>
     <div {{ $attributes->class('block space-y-[2px]') }}>
         <div class="px-3 py-2">
-            <div class="text-sm text-zinc-400 font-medium leading-none">{{ $heading }}</div>
+            <div class="text-sm font-medium leading-none text-zinc-400">{{ $heading }}</div>
         </div>
 
         <div>

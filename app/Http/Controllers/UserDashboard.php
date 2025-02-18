@@ -24,14 +24,24 @@ class UserDashboard extends Controller
         return view('user.subjects');
     }
     
+    public function assignments()
+    {
+        return view('user.assignments');
+    }
+    
+    public function library()
+    {
+        return view('user.library');
+    }
+    
     public function quizzes()
     {
         return view('user.quizzes');
     }
         
-    public function exam()
+    public function exams()
     {
-        return view('user.exam');
+        return view('user.exams');
     }
     
     public function summaries()

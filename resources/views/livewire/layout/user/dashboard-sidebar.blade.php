@@ -32,14 +32,17 @@ new class extends Component {
         <flux:navlist variant="outline">
             <flux:navlist.item wire:navigate icon="chart-bar" href="/dashboard">Dashboard</flux:navlist.item>
             <flux:navlist.item wire:navigate icon="calendar" href="/calendar">Calendar</flux:navlist.item>
-            <flux:navlist.item wire:navigate icon="user" href="/profile">Profile</flux:navlist.item>
-            <flux:navlist.item wire:navigate icon="cog-6-tooth" href="/settings">Settings</flux:navlist.item>
             
-            <flux:navlist.group expandable heading="Subjects">
+            <flux:navlist.group expandable :expanded="false" heading="Subjects">
                 <flux:navlist.item href="#">Math</flux:navlist.item>
                 <flux:navlist.item href="#">Physics</flux:navlist.item>
                 <flux:navlist.item href="#">Chemistry</flux:navlist.item>
             </flux:navlist.group>
+
+            <flux:navlist.item wire:navigate icon="paper-clip" href="/library">Library</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="light-bulb" href="/summaries">Summaries</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="user" href="/profile">Profile</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="cog-6-tooth" href="/settings">Settings</flux:navlist.item>
         </flux:navlist>
 
         <flux:spacer />

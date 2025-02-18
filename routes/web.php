@@ -24,7 +24,9 @@ Route::middleware([EnsureUserIsNotAdmin::class])->group(function () {
     Route::get('settings', [UserDashboard::class, 'settings'])->middleware(['auth', 'verified'])->name('settings');
     Route::get('quizzes', [UserDashboard::class, 'quizzes'])->middleware(['auth', 'verified'])->name('quizzes');
     Route::get('summaries', [UserDashboard::class, 'summaries'])->middleware(['auth', 'verified'])->name('summaries');
-    Route::get('exam', [UserDashboard::class, 'exam'])->middleware(['auth', 'verified'])->name('exam');
+    Route::get('library', [UserDashboard::class, 'library'])->middleware(['auth', 'verified'])->name('library');
+    Route::get('assignments', [UserDashboard::class, 'assignments'])->middleware(['auth', 'verified'])->name('assignments');
+    Route::get('exams', [UserDashboard::class, 'exams'])->middleware(['auth', 'verified'])->name('exams');
 });
 
 Route::middleware([EnsureUserIsAdmin::class])->group(function () {
