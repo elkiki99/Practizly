@@ -1,10 +1,10 @@
-<x-admin-panel-layout title="Messages • {{ config('app.name', 'Practizly') }}">
-    <div class="self-stretch flex-1 space-y-8 max-lg:max-w-2xl max-lg:mx-auto">
+<x-panel-layout title="Messages • {{ config('app.name', 'Practizly') }}">
+    <div class="self-stretch flex-1 space-y-6 max-lg:max-w-2xl max-lg:mx-auto">
         <div>
-            <flux:heading level="1" size="xl">Messages</flux:heading>
-            <flux:subheading size="lg" class="mb-6">Check out new messages.</flux:subheading>
+            <flux:heading level="1" size="lg">Messages</flux:heading>
+            <flux:subheading>Check out your new messages.</flux:subheading>
         </div>
 
         <flux:separator variant="subtle" />
     </div>
-</x-admin-panel-layout>
+</x-panel-layout>

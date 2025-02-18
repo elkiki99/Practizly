@@ -19,8 +19,12 @@ Route::get('pricing', [HomePages::class, 'pricing'])->name('pricing');
 Route::middleware([EnsureUserIsNotAdmin::class])->group(function () {
     Route::get('dashboard', [UserDashboard::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
     Route::get('profile', [UserDashboard::class, 'profile'])->middleware(['auth', 'verified'])->name('profile');
-    Route::get('billing', [UserDashboard::class, 'billing'])->middleware(['auth', 'verified'])->name('billing');
+    Route::get('calendar', [UserDashboard::class, 'calendar'])->middleware(['auth', 'verified'])->name('calendar');
+    Route::get('subjects', [UserDashboard::class, 'subjects'])->middleware(['auth', 'verified'])->name('subjects');
     Route::get('settings', [UserDashboard::class, 'settings'])->middleware(['auth', 'verified'])->name('settings');
+    Route::get('quizzes', [UserDashboard::class, 'quizzes'])->middleware(['auth', 'verified'])->name('quizzes');
+    Route::get('summaries', [UserDashboard::class, 'summaries'])->middleware(['auth', 'verified'])->name('summaries');
+    Route::get('exam', [UserDashboard::class, 'exam'])->middleware(['auth', 'verified'])->name('exam');
 });
 
 Route::middleware([EnsureUserIsAdmin::class])->group(function () {
@@ -29,7 +33,6 @@ Route::middleware([EnsureUserIsAdmin::class])->group(function () {
     Route::get('marketing', [AdminPanel::class, 'marketing'])->middleware(['auth', 'verified'])->name('marketing');
     Route::get('tasks', [AdminPanel::class, 'tasks'])->middleware(['auth', 'verified'])->name('tasks');
     Route::get('seo', [AdminPanel::class, 'seo'])->middleware(['auth', 'verified'])->name('seo');
-    Route::get('calendar', [AdminPanel::class, 'calendar'])->middleware(['auth', 'verified'])->name('calendar');
     Route::get('configuration', [AdminPanel::class, 'configuration'])->middleware(['auth', 'verified'])->name('configuration');
     Route::get('analytics', [AdminPanel::class, 'analytics'])->middleware(['auth', 'verified'])->name('analytics');
 });

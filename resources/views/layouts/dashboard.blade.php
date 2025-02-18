@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? config('app.name', 'Dashboard • Practizly') }}</title>
+    <title>{{ $title ?? config('app.name', 'Practizly') }}</title>
 
     <!-- Fonts -->
     <link rel="icon" href="{{ asset('practizly-logo-white.svg') }}" />
@@ -26,25 +26,28 @@
 </head>
 
 <body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900">
-    <!-- Primary nav bar & it's responsive sidebar -->
-    <livewire:layout.primary-navigation />
-    <livewire:layout.primary-sidebar />
-
-    <!-- Dashboard responsive nav bar -->
-    <livewire:layout.dashboard-navigation />
-
-    <div class="container flex flex-grow max-w-4xl px-6 mx-auto max-lg:flex-col">
+    <div class="flex">
         <!-- Sidebar -->
-        <aside class="w-[220px] sticky top-28 self-start my-12 lg:mr-10 max-lg:hidden">
-            <livewire:layout.dashboard-sidebar />
-        </aside>
+        <div class="z-40 h-screen lg:fixed lg:w-64">
+            <livewire:layout.user.dashboard-sidebar />
+        </div>
 
-        <!-- Main -->
-        <main class="flex flex-col items-center flex-grow my-8 lg:my-12">
-            <div class="w-full max-w-2xl">
-                {{ $slot }}
+        <div class="flex-1 lg:ml-64">
+            <!-- Secondary Navigation -->
+            <div class="sticky top-0 z-20">
+                <livewire:layout.user.dashboard-secondary-navigation />
             </div>
-        </main>
+
+            <!-- Primary Navigation -->
+            <div class="lg:sticky lg:top-[0rem] z-50">
+                <livewire:layout.user.dashboard-primary-navigation />
+            </div>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6 mb-6 max-lg:max-w-2xl max-lg:mx-auto">
+                {{ $slot }}
+            </main>
+        </div>    
     </div>
 
     @fluxScripts

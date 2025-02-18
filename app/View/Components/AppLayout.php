@@ -12,7 +12,7 @@ class AppLayout extends Component
      */
     public function __construct
     (
-        public string $title = 'Flux Kit'
+        public string $title = 'Practizly'
     ){}
 
     /**

@@ -12,7 +12,7 @@ class DashboardLayout extends Component
      */
     public function __construct
     (
-        public string $title = 'Dashboard • Flux Kit'
+        public string $title = 'Practizly'
     ){}
 
     /**

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? config('app.name', 'Welcome • Practizly') }}</title>
+    <title>{{ $title ?? config('app.name', 'Practizly') }}</title>
 
     <!-- Fonts -->
     <link rel="icon" href="{{ asset('practizly-logo-white.svg') }}" />

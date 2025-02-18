@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for flux-volt-starter-kit on 2025-02-15T12:18:35-03:00
+# fly.toml app configuration file generated for practizly on 2025-02-18T17:34:04-03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'flux-volt-starter-kit'
+app = 'practizly'
 primary_region = 'gru'
 console_command = 'php /var/www/html/artisan tinker'
 

@@ -45,10 +45,11 @@ new class extends Component {
 
         if ($this->profile_picture) {
             $user->profile_picture = $this->profile_picture->store('profile-pictures', 'public');
-            $this->dispatch('profilePictureUpdated');
         }
-
+        
         $user->save();
+
+        $this->dispatch('profileUpdated');
 
         Flux::toast(heading: 'Saved.', text: 'Profile information updated successfully.', variant: 'success');
     }

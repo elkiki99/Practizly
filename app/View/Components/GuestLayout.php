@@ -12,7 +12,7 @@ class GuestLayout extends Component
      */
     public function __construct
     (
-        public string $title = 'Welcome • Flux Kit'
+        public string $title = 'Practizly'
     ){}
 
     /**

@@ -5,9 +5,9 @@ use Livewire\Volt\Component;
 
 new class extends Component {
     /**
-     * Real time update on profile picture when profile information update form is submitted
+     * Real time update on profile when profile information update form is submitted
      */
-    protected $listeners = ['profilePictureUpdated' => '$refresh'];
+    protected $listeners = ['profileUpdated' => '$refresh'];
 
     /**
      * Log the current user out of the application.
@@ -33,8 +33,7 @@ new class extends Component {
         <flux:navlist variant="outline">
             <flux:navlist.item wire:navigate icon="chart-bar" href="/panel">Panel</flux:navlist.item>
             <flux:navlist.item wire:navigate icon="inbox" href="/messages">Messages</flux:navlist.item>
-            <flux:navlist.item wire:navigate icon="calendar" href="/calendar">Calendar</flux:navlist.item>
-            <flux:navlist.item wire:navigate icon="megaphone" href="/marketing">Marketing</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="cog-6-tooth" href="/configuration">Configuration</flux:navlist.item>
 
             <flux:navlist.group expandable heading="Projects">
                 <flux:navlist.item href="#">Project Alpha</flux:navlist.item>

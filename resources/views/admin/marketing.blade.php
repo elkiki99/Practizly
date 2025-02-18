@@ -1,10 +1,10 @@
-<x-admin-panel-layout title="Marketing • {{ config('app.name', 'Practizly') }}">
-    <div class="self-stretch flex-1 space-y-8 max-lg:max-w-2xl max-lg:mx-auto">
+<x-panel-layout title="Marketing • {{ config('app.name', 'Practizly') }}">
+    <div class="self-stretch flex-1 space-y-6 max-lg:max-w-2xl max-lg:mx-auto">
         <div>
-            <flux:heading level="1" size="xl">Marketing</flux:heading>
-            <flux:subheading size="lg" class="mb-6">Your marketing data.</flux:subheading>
+            <flux:heading level="1" size="lg">Marketing</flux:heading>
+            <flux:subheading>Your marketing data.</flux:subheading>
         </div>
 
         <flux:separator variant="subtle" />
     </div>
-</x-admin-panel-layout>
+</x-panel-layout>

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class UserDashboard extends Controller
 {
     public function dashboard()
@@ -16,9 +14,29 @@ class UserDashboard extends Controller
         return view('user.profile');
     }
 
-    public function billing()
+    public function calendar()
     {
-        return view('user.billing');
+        return view('user.calendar');
+    }
+
+    public function subjects()
+    {
+        return view('user.subjects');
+    }
+    
+    public function quizzes()
+    {
+        return view('user.quizzes');
+    }
+        
+    public function exam()
+    {
+        return view('user.exam');
+    }
+    
+    public function summaries()
+    {
+        return view('user.summaries');
     }
 
     public function settings()

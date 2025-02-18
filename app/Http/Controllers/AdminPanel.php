@@ -31,11 +31,6 @@ class AdminPanel extends Controller
         return view('admin.seo');
     }
 
-    public function calendar()
-    {
-        return view('admin.calendar');
-    }
-
     public function configuration()
     {
         return view('admin.configuration');

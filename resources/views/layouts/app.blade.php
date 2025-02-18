@@ -27,15 +27,15 @@
 
 <body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900">
     <!-- Primary nav bar & it's responsive sidebar -->
-    <livewire:layout.primary-navigation />
-    <livewire:layout.primary-sidebar />
+    <livewire:layout.app.navigation />
+    <livewire:layout.app.sidebar />
 
     <!-- Main -->
     <main class="flex-grow w-full py-3">
         {{ $slot }}
     </main>
 
-    <livewire:layout.footer />
+    <livewire:layout.app.footer />
 
     @fluxScripts
 

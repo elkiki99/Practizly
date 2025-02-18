@@ -15,10 +15,10 @@ new class extends Component {
     <flux:navbar.item wire:navigate class="hidden sm:flex" icon="globe-alt" href="/seo">SEO</flux:navbar.item>
     <flux:navbar.item wire:navigate class="hidden sm:flex" icon="check-circle" href="/tasks">Tasks</flux:navbar.item>
     <flux:navbar.item wire:navigate class="hidden sm:flex" icon="arrow-trending-up" href="/analytics">Analytics</flux:navbar.item>
-    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="cog-6-tooth" href="/configuration">Configuration</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="megaphone" href="/marketing">Marketing</flux:navbar.item>
 
     <flux:navbar.item wire:navigate class="flex sm:hidden" href="/seo">SEO</flux:navbar.item>
     <flux:navbar.item wire:navigate class="flex sm:hidden" href="/tasks">Tasks</flux:navbar.item>
     <flux:navbar.item wire:navigate class="flex sm:hidden" href="/analytics">Analytics</flux:navbar.item>
-    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/configuration">Configuration</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/configuration">Marketing</flux:navbar.item>
 </flux:navbar>
