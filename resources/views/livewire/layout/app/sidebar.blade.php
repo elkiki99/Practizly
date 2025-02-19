@@ -6,8 +6,8 @@ new class extends Component {
     //
 }; ?>
 
-<div>
-    <flux:sidebar stashable sticky
+<div >
+    <flux:sidebar x-init="screenLg = window.innerWidth >= 1024" x-data="{ screenLg: true }" stashable sticky
         class="border-r md:hidden bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700">
         <flux:sidebar.toggle class="md:hidden" icon="x-mark" />
 

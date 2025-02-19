@@ -65,70 +65,70 @@
                 </div>
 
                 <flux:table>
-                    <flux:columns>
-                        <flux:column sortable>Event</flux:column>
-                        <flux:column sortable>Date</flux:column>
-                        <flux:column sortable>Status</flux:column>
-                    </flux:columns>
+                    <flux:table.column>
+                        <flux:table.column sortable>Event</flux:table.column>
+                        <flux:table.column sortable>Date</flux:table.column>
+                        <flux:table.column sortable>Status</flux:table.column>
+                    </flux:table.column>
 
-                    <flux:rows>
+                    <flux:table.rows>
                         <!-- Example 1 -->
-                        <flux:row>
-                            <flux:cell class="flex items-center gap-3 whitespace-nowrap">
+                        <flux:table.row>
+                            <flux:table.cell class="flex items-center gap-3 whitespace-nowrap">
                                 <flux:icon.book-open />Exam
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell class="whitespace-nowrap">Jul 31, 11:15</flux:cell>
+                            <flux:table.cell class="whitespace-nowrap">Jul 31, 11:15</flux:table.cell>
 
-                            <flux:cell>
+                            <flux:table.cell>
                                 <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell>
+                            <flux:table.cell>
                                 <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                     inset="top bottom">
                                 </flux:button>
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
 
                         <!-- Example 2 -->
-                        <flux:row>
-                            <flux:cell class="flex items-center gap-3 whitespace-nowrap">
+                        <flux:table.row>
+                            <flux:table.cell class="flex items-center gap-3 whitespace-nowrap">
                                 <flux:icon.document-text />Assignment
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell class="whitespace-nowrap">Aug 22, 12:25</flux:cell>
+                            <flux:table.cell class="whitespace-nowrap">Aug 22, 12:25</flux:table.cell>
 
-                            <flux:cell>
+                            <flux:table.cell>
                                 <flux:badge size="sm" color="green" inset="top bottom">Submitted</flux:badge>
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell>
+                            <flux:table.cell>
                                 <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                     inset="top bottom">
                                 </flux:button>
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
 
                         <!-- Example 3 -->
-                        <flux:row>
-                            <flux:cell class="flex items-center gap-3 whitespace-nowrap">
+                        <flux:table.row>
+                            <flux:table.cell class="flex items-center gap-3 whitespace-nowrap">
                                 <flux:icon.check-circle />Quizz
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell class="whitespace-nowrap">September 25, 22:00</flux:cell>
+                            <flux:table.cell class="whitespace-nowrap">September 25, 22:00</flux:table.cell>
 
-                            <flux:cell>
+                            <flux:table.cell>
                                 <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell>
+                            <flux:table.cell>
                                 <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                     inset="top bottom">
                                 </flux:button>
-                            </flux:cell>
-                        </flux:row>
-                    </flux:rows>
+                            </flux:table.cell>
+                        </flux:table.row>
+                    </flux:table.rows>
                 </flux:table>
             </div>
 

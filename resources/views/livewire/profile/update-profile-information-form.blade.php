@@ -74,13 +74,13 @@ new class extends Component {
 }; ?>
 
 <form wire:submit="updateProfileInformation" class="space-y-6">
-    <flux:input label="Name" type="text" placeholder="Your name" id="name" wire:model='name' id="name" required
+    <flux:input label="Name" type="text" placeholder="Your name" wire:model='name' required
         autofocus autocomplete />
 
     <flux:field>
         <flux:label>Email</flux:label>
 
-        <flux:input type="email" id="email" wire:model='email' placeholder="Your email" required
+        <flux:input type="email" wire:model='email' placeholder="Your email" required
             autocomplete="username"></flux:input>
 
         <flux:error name="email" />

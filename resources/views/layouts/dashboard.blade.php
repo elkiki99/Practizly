@@ -28,7 +28,7 @@
 <body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900">
     <div class="flex">
         <!-- Sidebar -->
-        <div class="z-40 h-screen lg:fixed lg:w-64">
+        <div class="z-40 h-screen lg:fixed lg:w-64" >
             <livewire:layout.user.dashboard-sidebar />
         </div>
 
@@ -58,13 +58,13 @@
 </body>
 
 {{-- Wire navigate bug fix for dropdown links --}}
-<script>
+{{-- <script>
     document.addEventListener("livewire:navigate", () => {
         const htmlElement = document.documentElement;
         if (htmlElement.hasAttribute("style")) {
             htmlElement.removeAttribute("style");
         }
     });
-</script>
+</script> --}}
 
 </html>

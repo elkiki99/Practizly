@@ -1,12 +1,12 @@
-/* @import "tailwindcss"; */
+@import "tailwindcss";
 
 @import '../../vendor/livewire/flux/dist/flux.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: Inter, sans-serif;
+}
 
 @theme {
   --color-zinc-50: var(--color-neutral-50);
@@ -21,3 +21,4 @@
   --color-zinc-900: var(--color-neutral-900);
   --color-zinc-950: var(--color-neutral-950);
 }
+

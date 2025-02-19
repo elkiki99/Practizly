@@ -22,12 +22,12 @@ new class extends Component {
     }
 }; ?>
 
-<section class="space-y-6">
+<section>
     <flux:modal.trigger name="delete-account">
         <flux:button variant="danger" type="submit">Delete account</flux:button>
     </flux:modal.trigger>
 
-    <flux:description>You're about to delete your account. Once your account is deleted, all of its resources and data
+    <flux:description class="mt-6">You're about to delete your account. Once your account is deleted, all of its resources and data
         will be permanently deleted. This action is irreversible.</flux:description>
 
     <flux:modal name="delete-account">
