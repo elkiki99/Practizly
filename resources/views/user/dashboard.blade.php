@@ -1,84 +1,66 @@
 <x-dashboard-layout title="Dashboard • {{ config('app.name', 'Practizly') }}">
-    <div class="self-stretch flex-1 space-y-6 max-lg:max-w-2xl max-lg:mx-auto">
-        <div>
+    <div class="self-stretch flex-1 space-y-6">
+        {{-- <div>
             <flux:heading level="1" size="lg">Welcome back {{ Auth::user()->name }}!</flux:heading>
             <flux:subheading>Let's study shall we?</flux:subheading>
         </div>
 
-        <flux:separator variant="subtle" />
-
-        {{-- <livewire:open-ai-test /> --}}
+        <flux:separator variant="subtle" /> --}}
 
         <div class="space-y-12">
             <!-- Actions (overview) -->
             <div class="space-y-6">
                 <div class="">
-                    <flux:heading level="2" size="lg">Overview</flux:heading>
+                    <flux:heading level="2">Overview</flux:heading>
                     <flux:subheading>Let's get you organized!</flux:subheading>
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <flux:card class="hover:bg-transparent hover:cursor-pointer">
-                        <div class="flex gap-4">
-                            <flux:icon.book-open variant="mini" />
-                            <div>
-                                <flux:heading level="2">New subjet</flux:heading>
-                                <flux:subheading>Create a new subject.</flux:subheading>
-                            </div>
-                        </div>
-                    </flux:card>
-                    <flux:card class="hover:bg-transparent hover:cursor-pointer">
-                        <div class="flex gap-4">
-                            <flux:icon.academic-cap variant="mini" />
-                            <div>
-                                <flux:heading level="2">New exam prep</flux:heading>
-                                <flux:subheading>Create a new exam preparation.</flux:subheading>
-                            </div>
-                        </div>
-                    </flux:card>
-                    <flux:card class="hover:bg-transparent hover:cursor-pointer">
-                        <div class="flex gap-4">
-                            <flux:icon.calendar variant="mini" />
-                            <div>
-                                <flux:heading level="2">New calendar event</flux:heading>
-                                <flux:subheading>Organize your schedule.</flux:subheading>
-                            </div>
-                        </div>
-                    </flux:card>
-                    <flux:card class="hover:bg-transparent hover:cursor-pointer">
-                        <div class="flex gap-4">
-                            <flux:icon.document-text variant="mini" />
-                            <div>
-                                <flux:heading level="2">New assignments</flux:heading>
-                                <flux:subheading>Add assignments and complete them.</flux:subheading>
-                            </div>
-                        </div>
-                    </flux:card>
-                    <flux:card class="hover:bg-transparent hover:cursor-pointer">
-                        <div class="flex gap-4">
-                            <flux:icon.light-bulb variant="mini" />
-                            <div>
-                                <flux:heading level="2">My summaries</flux:heading>
-                                <flux:subheading>Organize your files with summaries.</flux:subheading>
-                            </div>
-                        </div>
-                    </flux:card>
-                    <flux:card class="hover:bg-transparent hover:cursor-pointer">
-                        <div class="flex gap-4">
-                            <flux:icon.check-circle variant="mini" />
-                            <div>
-                                <flux:heading level="2">My quizzes</flux:heading>
-                                <flux:subheading>Study with quizzes.</flux:subheading>
-                            </div>
-                        </div>
-                    </flux:card>
+                    <!-- New subject -->
+                    <livewire:components.modal-card :icon="'book-open'" :title="'New subject'" :subtitle="'Create and manage study subjects.'"
+                        :modal-event="'create-subject'" />
+
+                    <!-- New exam -->
+                    <livewire:components.modal-card :icon="'academic-cap'" :title="'New exam prep'" :subtitle="'Generate AI-powered practice tests.'"
+                        :modal-event="'create-exam'" />
+
+                    <!-- New event -->
+                    <livewire:components.modal-card :icon="'paper-clip'" :title="'New attachment'" :subtitle="'Attach files to your library.'"
+                        :modal-event="'create-attachment'" />
+
+                    <!-- New assignment -->
+                    <livewire:components.modal-card :icon="'document-text'" :title="'New assignment'" :subtitle="'Create and track your tasks.'"
+                        :modal-event="'create-assignment'" />
+
+                    <!-- Summaries -->
+                    <livewire:components.modal-card :icon="'light-bulb'" :title="'New summary'" :subtitle="'Save and organize study notes.'"
+                        :modal-event="'create-summary'" />
+
+                    <!-- New quizz -->
+                    <livewire:components.modal-card :icon="'check-circle'" :title="'New quizz'" :subtitle="'Test your knowledge with quizzes.'"
+                        :modal-event="'create-quizz'" />
                 </div>
+            </div>
+
+            <!-- Modal actions -->
+            <div>
+                <livewire:subjects.create />
+                <livewire:exams.create />
+                <livewire:assignments.create />
+                <livewire:attachments.create />
+                <livewire:summaries.create />
+                <livewire:quizzes.create />
             </div>
 
             <!-- Next events (exams, assignments, etc.) -->
             <div class="space-y-6">
                 <div class="">
-                    <flux:heading level="2" size="lg">Next events</flux:heading>
+                    <div class="flex items-center gap-2 mb-2">
+                        <flux:heading level="2">Next events</flux:heading>
+                        <flux:button as="link" href="/calendar" wire:navigate icon-trailing="chevron-right"
+                            size="xs" variant="ghost" />
+                    </div>
+
                     <flux:subheading>Check out your upcoming events.</flux:subheading>
                 </div>
 
@@ -148,6 +130,19 @@
                         </flux:row>
                     </flux:rows>
                 </flux:table>
+            </div>
+
+            <!-- Uploaded files -->
+            <div class="space-y-6">
+                <div class="">
+                    <div class="flex items-center gap-2 mb-2">
+                        <flux:heading level="2">Last uploaded files</flux:heading>
+                        <flux:button as="link" href="/library" wire:navigate icon-trailing="chevron-right"
+                            size="xs" variant="ghost" />
+                    </div>
+
+                    <flux:subheading>Check out latest file uploads.</flux:subheading>
+                </div>
             </div>
         </div>
     </div>
