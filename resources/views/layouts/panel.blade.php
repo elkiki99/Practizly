@@ -22,7 +22,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    @fluxStyles
+    @fluxAppearance
 </head>
 
 <body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900 ">

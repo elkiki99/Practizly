@@ -1,5 +1,5 @@
 import forms from "@tailwindcss/forms";
-import colors from 'tailwindcss/colors';
+// import colors from 'tailwindcss/colors';
 
 
 /** @type {import('tailwindcss').Config} */
@@ -17,31 +17,6 @@ module.exports = {
 
     theme: {
         extend: {
-            keyframes: {
-                marquee: {
-                    '0%': {
-                        transform: 'translateX(0)'
-                    },
-                    '100%': {
-                        transform: 'translateX(-100%)'
-                    },
-                },
-            },
-            // Add custom animations
-            animation: {
-                'marquee': 'marquee 20s linear infinite',
-            },
-            colors: {
-                // Re-assign Flux's gray of choice...
-                zinc: colors.neutral,
-
-                // Accent variables are defined in resources/css/app.css...
-                accent: {
-                    DEFAULT: 'var(--color-accent)',
-                    content: 'var(--color-accent-content)',
-                    foreground: 'var(--color-accent-foreground)',
-                },
-            },
             fontFamily: {
                 sans: ["Inter", "sans-serif"],
             },

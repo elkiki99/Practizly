@@ -1,11 +1,11 @@
 <x-dashboard-layout title="Dashboard • {{ config('app.name', 'Practizly') }}">
     <div class="self-stretch flex-1 space-y-6">
-        {{-- <div>
+        <div>
             <flux:heading level="1" size="lg">Welcome back {{ Auth::user()->name }}!</flux:heading>
             <flux:subheading>Let's study shall we?</flux:subheading>
         </div>
 
-        <flux:separator variant="subtle" /> --}}
+        <flux:separator variant="subtle" />
 
         <div class="space-y-12">
             <!-- Actions (overview) -->

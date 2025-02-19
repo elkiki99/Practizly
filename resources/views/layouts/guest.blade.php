@@ -16,7 +16,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    @fluxStyles
+    @fluxAppearance
 </head>
 
 <body class="font-sans antialiased">
