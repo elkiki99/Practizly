@@ -38,14 +38,25 @@ new class extends Component {
 }; ?>
 
 <form wire:submit="updatePassword" class="space-y-6">
-    <flux:input viewable name="current_password" type="password" autocomplete="current-password"
-        wire:model="current_password" id="udpate_password_current_password" label="Current password" />
+    <flux:field>
+        <flux:label class="mb-2">Current password</flux:label>
+        <flux:input viewable name="current_password" type="password" autocomplete="current-password"
+            wire:model="current_password" />
+        <flux:error name="current_password" />
+    </flux:field>
 
-    <flux:input viewable name="password" type="password" autocomplete="new-password" wire:model="password"
-        id="update_password_password" label="New password" />
+    <flux:field>
+        <flux:label class="mb-2">New password</flux:label>
+        <flux:input viewable name="password" type="password" autocomplete="new-password" wire:model="password" />
+        <flux:error name="password" />
+    </flux:field>
 
-    <flux:input viewable name="password_confirmation" type="password" autocomplete="new-password"
-        wire:model="password_confirmation" id="update_password_password_confirmation" label="Confirm new password" />
+    <flux:field>
+        <flux:label class="mb-2">Confirm new password</flux:label>
+        <flux:input viewable name="password_confirmation" type="password" autocomplete="new-password"
+            wire:model="password_confirmation" />
+        <flux:error name="password_confirmation" />
+    </flux:field>
 
     <div class="flex justify-end">
         <flux:button variant="primary" type="submit">Save password</flux:button>

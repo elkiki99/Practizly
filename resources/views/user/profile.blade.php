@@ -6,7 +6,7 @@
         </div>
 
         <flux:separator variant="subtle" />
-
+        
         <div class="max-w-xl space-y-6">
             <div class="space-y-6">
                 <div>

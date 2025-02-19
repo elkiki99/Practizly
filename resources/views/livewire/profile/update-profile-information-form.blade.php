@@ -9,7 +9,7 @@ use App\Models\User;
 
 new class extends Component {
     use WithFileUploads;
-    
+
     public string $name = '';
     public string $email = '';
     public $profile_picture = null;
@@ -46,7 +46,7 @@ new class extends Component {
         if ($this->profile_picture) {
             $user->profile_picture = $this->profile_picture->store('profile-pictures', 'public');
         }
-        
+
         $user->save();
 
         $this->dispatch('profileUpdated');
@@ -74,15 +74,16 @@ new class extends Component {
 }; ?>
 
 <form wire:submit="updateProfileInformation" class="space-y-6">
-    <flux:input label="Name" type="text" placeholder="Your name" wire:model='name' required
-        autofocus autocomplete />
+    <flux:field>
+        <flux:label class="mb-2">Name</flux:label>
+        <flux:input placeholder="Your name" wire:model='name' autofocus required autocomplete="name" />
+        <flux:error name="name" />
+    </flux:field>
 
     <flux:field>
-        <flux:label>Email</flux:label>
-
-        <flux:input type="email" wire:model='email' placeholder="Your email" required
-            autocomplete="username"></flux:input>
-
+        <flux:label class="mb-2">Email</flux:label>
+        <flux:input type="email" wire:model='email' placeholder="Your email" required autocomplete="username">
+        </flux:input>
         <flux:error name="email" />
 
         @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !auth()->user()->hasVerifiedEmail())
@@ -95,7 +96,11 @@ new class extends Component {
         @endif
     </flux:field>
 
-    <flux:input type="file" wire:model='profile_picture' label="Profile picture" />
+    <flux:field>
+        <flux:label class="mb-2">Profile picture</flux:label>
+        <flux:input type="file" wire:model='profile_picture' />
+        <flux:error name="profile_picture" />
+    </flux:field>
 
     <div class="flex justify-end">
         <flux:button variant="primary" type="submit">Save info</flux:button>
