@@ -33,11 +33,15 @@ new class extends Component {
         </flux:select>
     </flux:field>
 
-    {{-- <flux:radio.group wire:model="payment" label="Select your payment method"> --}}
-        <flux:radio value="cc" label="Credit Card" checked />
-        <flux:radio value="paypal" label="Paypal" />
-        <flux:radio value="ach" label="Bank transfer" />
-    {{-- </flux:radio.group> --}}
+    <flux:field>
+        <flux:label class="mb-2">Select your payment method</flux:label>
+        
+        <flux:radio.group variant="default" wire:model="payment">
+            <flux:radio value="cc" label="Credit Card" checked />
+            <flux:radio value="paypal" label="Paypal" />
+            <flux:radio value="ach" label="Bank transfer" />
+        </flux:radio.group>
+    </flux:field>
 
     <div class="flex">
         <flux:spacer />

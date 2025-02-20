@@ -28,7 +28,7 @@
 <body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900">
     <div class="flex">
         <!-- Sidebar -->
-        <div class="z-40 h-screen lg:fixed lg:w-64" >
+        <div class="z-40 h-screen lg:fixed lg:w-64">
             <livewire:layout.user.dashboard-sidebar />
         </div>
 
@@ -47,14 +47,14 @@
             <main class="flex-1 p-6 mb-6 max-lg:max-w-2xl max-lg:mx-auto">
                 {{ $slot }}
             </main>
-        </div>    
+        </div>
     </div>
-
-    @fluxScripts
 
     @persist('toast')
         <flux:toast />
     @endpersist
+
+    @fluxScripts
 </body>
 
 {{-- Wire navigate bug fix for dropdown links --}}
