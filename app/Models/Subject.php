@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Topic;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class Subject extends Model
 {
@@ -22,6 +24,6 @@ class Subject extends Model
 
     public function topics()
     {
-        return $this->hasMany(Topic::class);
+        return $this->hasMany(Topic::class, 'subject_id');
     }
 }

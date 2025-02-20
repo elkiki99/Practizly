@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Topic;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Exam extends Model
 {
@@ -13,15 +14,16 @@ class Exam extends Model
     protected $fillable = [
         'topic_id', 
         'title', 
-        'exam_date',    
-        'study_plan', 
-        'estimated_study_time', 
-        'progress', 
-        'notes'
+        'exam_type',
+        // 'exam_date',    
+        // 'study_plan', 
+        // 'estimated_study_time', 
+        // 'progress', 
+        // 'notes'
     ];
 
-    public function topic()
+    public function topics()
     {
-        return $this->belongsTo(Topic::class);
+        return $this->hasMany(Topic::class);
     }
 }

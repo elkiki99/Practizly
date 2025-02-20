@@ -7,8 +7,7 @@ use App\Models\Subject;
 use App\Models\Topic;
 
 new class extends Component {
-    public string $variant = '';
-
+    
     #[Validate('required|string|max:255')]
     public string $name = '';
 
@@ -56,33 +55,28 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createSubject">
-    <flux:modal variant="{{ $variant }}" name="create-subject" class="space-y-6 md:w-96" x-data="{ createTopic: false }"
+    <flux:modal name="create-subject" class="space-y-6 md:w-96" x-data="{ createTopic: false }"
         x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New subject</flux:heading>
             <flux:subheading>Create a new subject.</flux:subheading>
         </div>
 
-        <flux:field>
-            <flux:label class="mb-2">Subject name</flux:label>
-            <flux:input placeholder="Physics" wire:model='name' autofocus required autocomplete="name" />
-            <flux:error name="name" />
-        </flux:field>
+        <!-- Name -->
+        <flux:input label="Subject name" placeholder="Physics" wire:model='name' autofocus required autocomplete="name" />
 
-        <flux:field>
-            <flux:label class="mb-2">Subject description</flux:label>
-            <flux:input placeholder="Physics - 1st semester 2025" wire:model='description' autofocus required />
-            <flux:error name="description" />
-        </flux:field>
+        <!-- Description -->
+        <flux:input label="Subject description" placeholder="Physics - 1st semester 2025" wire:model='description'
+            autofocus required />
 
         <flux:field>
             <div class="flex items-center justify-between mb-2">
-                <flux:label>Pick a topic</flux:label>
+                <flux:label>Subject topic</flux:label>
                 <flux:button as="link" size="sm" variant="subtle" icon-trailing="plus"
                     x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select variant="listbox" searchable placeholder="Subject topic" wire:model="topicId">
+            <flux:select variant="listbox" searchable placeholder="Select topic" wire:model="topicId">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->title }}</flux:select.option>
                 @empty
