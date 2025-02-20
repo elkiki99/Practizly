@@ -1,8 +1,8 @@
 <x-dashboard-layout title="Dashboard • {{ config('app.name', 'Practizly') }}">
     <div class="self-stretch flex-1 space-y-6">
         <div>
-            <flux:heading level="1" size="lg">Welcome back {{ Auth::user()->name }}!</flux:heading>
-            <flux:subheading>Let's study shall we?</flux:subheading>
+            <flux:heading level="1" size="xl">Welcome back {{ Auth::user()->name }}!</flux:heading>
+            {{-- <flux:subheading>Let's study shall we?</flux:subheading> --}}
         </div>
 
         <flux:separator variant="subtle" />
@@ -65,11 +65,11 @@
                 </div>
 
                 <flux:table>
-                    <flux:table.column>
+                    <flux:table.columns>
                         <flux:table.column sortable>Event</flux:table.column>
                         <flux:table.column sortable>Date</flux:table.column>
                         <flux:table.column sortable>Status</flux:table.column>
-                    </flux:table.column>
+                    </flux:table.columns>
 
                     <flux:table.rows>
                         <!-- Example 1 -->
