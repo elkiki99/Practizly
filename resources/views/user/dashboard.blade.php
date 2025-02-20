@@ -24,9 +24,9 @@
                     <livewire:components.modal-card :icon="'academic-cap'" :title="'New exam prep'" :subtitle="'Generate AI-powered practice tests.'"
                         :modal-event="'create-exam'" />
 
-                    <!-- New event -->
-                    <livewire:components.modal-card :icon="'paper-clip'" :title="'New attachment'" :subtitle="'Attach files to your library.'"
-                        :modal-event="'create-attachment'" />
+                    <!-- New quizz -->
+                    <livewire:components.modal-card :icon="'check-circle'" :title="'New quizz'" :subtitle="'Test your knowledge with quizzes.'"
+                        :modal-event="'create-quizz'" />
 
                     <!-- New assignment -->
                     <livewire:components.modal-card :icon="'document-text'" :title="'New assignment'" :subtitle="'Create and track your tasks.'"
@@ -35,10 +35,10 @@
                     <!-- Summaries -->
                     <livewire:components.modal-card :icon="'light-bulb'" :title="'New summary'" :subtitle="'Save and organize study notes.'"
                         :modal-event="'create-summary'" />
-
-                    <!-- New quizz -->
-                    <livewire:components.modal-card :icon="'check-circle'" :title="'New quizz'" :subtitle="'Test your knowledge with quizzes.'"
-                        :modal-event="'create-quizz'" />
+                        
+                    <!-- New attachment -->
+                    <livewire:components.modal-card :icon="'paper-clip'" :title="'New attachment'" :subtitle="'Attach files to your library.'"
+                    :modal-event="'create-attachment'" />
                 </div>
             </div>
 

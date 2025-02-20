@@ -13,7 +13,7 @@ class Exam extends Model
     protected $fillable = [
         'topic_id', 
         'title', 
-        'exam_date', 
+        'exam_date',    
         'study_plan', 
         'estimated_study_time', 
         'progress', 

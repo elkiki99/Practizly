@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('color');
             $table->integer('goal')->nullable();
             $table->integer('completion_percentage')->default(0);
-            $table->dateTime('last_studied_at')->default(null);
             $table->boolean('is_favorite')->default(false);
             $table->timestamps();
         });

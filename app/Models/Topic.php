@@ -12,11 +12,16 @@ class Topic extends Model
 
     protected $fillable = [
         'subject_id', 
-        'name', 
+        'title', 
         'description', 
         'order', 
         'difficulty', 
         'estimated_study_time', 
         'status'
     ];
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
 }

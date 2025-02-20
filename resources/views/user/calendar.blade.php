@@ -6,5 +6,7 @@
         </div>
 
         <flux:separator variant="subtle" />
+
+        <flux:calendar />
     </div>
 </x-dashboard-layout>

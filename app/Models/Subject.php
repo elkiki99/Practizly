@@ -17,7 +17,6 @@ class Subject extends Model
         'color', 
         'goal', 
         'completion_percentage', 
-        'last_studied_at', 
         'is_favorite'
     ];
 
