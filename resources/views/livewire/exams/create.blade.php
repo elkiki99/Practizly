@@ -21,7 +21,7 @@ new class extends Component {
     public $subject;
     public $topics = [];
     public $topic;
-
+    
     #[On('topicCreated')]
     #[On('subjectCreated')]
     public function mount()
@@ -83,6 +83,7 @@ new class extends Component {
         $subject = Subject::find($this->subject);
 
         $exam = Exam::create([
+            'subject_id' => $this->subject,
             'title' => $subject->name . ' Test',
             'type' => $this->type,
             'difficulty' => $this->difficulty,
@@ -127,7 +128,7 @@ new class extends Component {
                     icon-trailing="plus" x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select searchable variant="listbox" wire:model.live="topic" placeholder="Select topic">
+            <flux:select multiple searchable variant="listbox" wire:model.live="topic" placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option wire:key='{{ $topic->id }}' value="{{ $topic->id }}">{{ $topic->title }}
                     </flux:select.option>

@@ -16,11 +16,11 @@ new class extends Component {
     <flux:navbar.item wire:navigate class="hidden sm:flex" icon="academic-cap" href="/exams">Exams</flux:navbar.item>
     <flux:navbar.item wire:navigate class="hidden sm:flex" icon="document-text" href="/assignments">Assignments
     </flux:navbar.item>
-    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="check-circle" href="/quizzes">Quizzes
+    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="calendar" href="/calendar">Calendar
     </flux:navbar.item>
 
     <flux:navbar.item wire:navigate class="flex sm:hidden" href="/subjects">Subjects</flux:navbar.item>
     <flux:navbar.item wire:navigate class="flex sm:hidden" href="/exams">Exams</flux:navbar.item>
     <flux:navbar.item wire:navigate class="flex sm:hidden" href="/assignments">Assignments</flux:navbar.item>
-    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/quizzes">Quizzes</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/calendar">Calendar</flux:navbar.item>
 </flux:navbar>

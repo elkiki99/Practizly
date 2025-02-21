@@ -31,7 +31,6 @@ new class extends Component {
 
         <flux:navlist variant="outline">
             <flux:navlist.item wire:navigate icon="chart-bar" href="/dashboard">Dashboard</flux:navlist.item>
-            <flux:navlist.item wire:navigate icon="calendar" href="/calendar">Calendar</flux:navlist.item>
             
             <flux:navlist.group expandable :expanded="false" heading="Subjects">
                 <flux:navlist.item href="#">Math</flux:navlist.item>

@@ -24,9 +24,9 @@
                     <livewire:components.modal-card :icon="'academic-cap'" :title="'New exam prep'" :subtitle="'Generate AI-powered practice tests.'"
                         :modal-event="'create-exam'" />
 
-                    <!-- New quiz -->
-                    <livewire:components.modal-card :icon="'check-circle'" :title="'New quiz'" :subtitle="'Test your knowledge with quizzes.'"
-                        :modal-event="'create-quiz'" />
+                    <!-- New event -->
+                    <livewire:components.modal-card :icon="'calendar'" :title="'New calendar event'" :subtitle="'Create a new calendar event.'"
+                        :modal-event="'create-event'" />
 
                     <!-- New assignment -->
                     <livewire:components.modal-card :icon="'document-text'" :title="'New assignment'" :subtitle="'Create and track your tasks.'"
@@ -49,7 +49,7 @@
                 <livewire:assignments.create />
                 <livewire:attachments.create />
                 <livewire:summaries.create />
-                <livewire:quizzes.create />
+                <livewire:events.create />
             </div>
 
             <!-- Next events (exams, assignments, etc.) -->
