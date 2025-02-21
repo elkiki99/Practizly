@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->string('type')->default('open_ended');
+            $table->string('difficulty')->default('easy');
+            $table->string('size')->default('short');
             $table->timestamps();
         });
     }

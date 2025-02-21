@@ -26,6 +26,6 @@ new class extends Component {
             </div>
         </flux:card>
     @empty
-        <p class="text-gray-500">No tienes materias aún. ¡Añade una nueva!</p>
+        <flux:subheading>You don't have any subjects yet!</flux:subheading>
     @endforelse
 </div>
