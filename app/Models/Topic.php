@@ -18,8 +18,8 @@ class Topic extends Model
         'description', 
         'order', 
         'difficulty', 
-        'estimated_study_time', 
-        'status'
+        // 'estimated_study_time', 
+        // 'status'
     ];
 
     public function subject()

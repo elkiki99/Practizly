@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('topics', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subject_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('description')->nullable();
             $table->integer('order')->nullable();
             $table->string('difficulty')->nullable();
-            $table->integer('estimated_study_time')->nullable();
-            $table->boolean('status')->default(false);
+            // $table->integer('estimated_study_time')->nullable();
+            // $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }

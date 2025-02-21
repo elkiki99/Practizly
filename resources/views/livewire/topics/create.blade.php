@@ -2,22 +2,32 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\Validate;
+use Livewire\Attributes\Reactive;
 use App\Models\Topic;
 
 new class extends Component {
-    
     #[Validate('required|string|max:255')]
     public string $title = '';
+
+    #[Validate('required|exists:subjects,id')]
+    #[Reactive]
+    public ?int $subject_id = null;
+
+    public function mount($subject_id)
+    {
+        $this->subject_id = $subject_id;
+    }
 
     public function createTopic()
     {
         $this->validate();
 
         $topic = Topic::create([
+            'subject_id' => $this->subject_id,
             'title' => $this->title,
         ]);
 
-        $this->title = '';
+        $this->reset('title');
 
         $this->dispatch('topicCreated');
 
