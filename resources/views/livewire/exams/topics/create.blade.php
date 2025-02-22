@@ -7,7 +7,7 @@ use App\Models\Topic;
 
 new class extends Component {
     #[Validate('required|string|max:255')]
-    public string $title = '';
+    public string $name = '';
 
     #[Validate('required|exists:subjects,id')]
     #[Reactive]
@@ -24,10 +24,10 @@ new class extends Component {
 
         $topic = Topic::create([
             'subject_id' => $this->subject_id,
-            'title' => $this->title,
+            'name' => $this->name,
         ]);
 
-        $this->reset('title');
+        $this->reset('name');
 
         $this->dispatch('topicCreated');
 
@@ -38,12 +38,12 @@ new class extends Component {
 <flux:field x-show="createTopic">
     <flux:label class="mb-2">New topic</flux:label>
     <div class="flex items-center gap-2 mb-3">
-        <flux:input placeholder="Quantum mechanics" @keydown.enter="createTopic = false" wire:model="title">
+        <flux:input placeholder="Quantum mechanics" @keydown.enter="createTopic = false" wire:model="name">
         </flux:input>
 
         <flux:button class="px-2" variant="ghost" wire:click='createTopic' icon="plus">
         </flux:button>
     </div>
 
-    <flux:error name="title" />
+    <flux:error name="name" />
 </flux:field>

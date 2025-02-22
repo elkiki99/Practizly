@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Topic;
+use App\Models\Assignment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -25,5 +26,10 @@ class Subject extends Model
     public function topics()
     {
         return $this->hasMany(Topic::class, 'subject_id');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class, 'subject_id');
     }
 }

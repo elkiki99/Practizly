@@ -11,18 +11,23 @@ class Assignment extends Model
     use HasFactory;
 
     protected $fillable = [
+        'subject_id', 
         'topic_id', 
-        'title', 
-        'description', 
+        'title',
+        'description',
+        'guidelines',
+        'attachments', 
         'due_date', 
-        'status', 
-        'priority', 
-        'type', 
-        'score'
+        'status',
     ];
 
     public function topic()
     {
         return $this->belongsTo(Topic::class);
+    }
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
     }
 }

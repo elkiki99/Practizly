@@ -8,34 +8,36 @@ use App\Models\Topic;
 use App\Models\Exam;
 
 new class extends Component {
-    #[Validate('required|string|max:30')]
+    #[Validate('required|string|in:open_ended,multiple_choice,true_or_false,quiz')]
     public string $type = 'open_ended';
 
-    #[Validate('required|string|max:30')]
+    #[Validate('required|string|in:easy,medium,hard')]
     public string $difficulty = 'easy';
 
-    #[Validate('required|string|max:30')]
+    #[Validate('required|in:short,medium,long')]
     public string $size = 'short';
 
+    #[Validate('required|exists:topics,id')]
+    public $topic;
+
+    public $topics = [];
     public $subjects = [];
     public $subject;
-    public $topics = [];
-    public $topic;
-    
+
     #[On('topicCreated')]
     #[On('subjectCreated')]
     public function mount()
     {
         $this->subjects = Subject::all();
 
-        if($this->subjects->count() === 1) {
+        if ($this->subjects->count() === 1) {
             $this->subject = Subject::first()->id;
-        }
 
-        $this->topics = Topic::all();
+            $this->topics = Topic::all();
 
-        if($this->topics->count() === 1) {
-            $this->topic = Topic::first()->id;
+            if ($this->topics->count() === 1) {
+                $this->topic = Topic::first()->id;
+            }
         }
     }
 
@@ -44,10 +46,10 @@ new class extends Component {
     {
         $this->subjects = Subject::all();
 
-        if($this->subjects->count() === 1) {
+        if ($this->subjects->count() === 1) {
             $this->subject = Subject::first()->id;
         }
-        
+
         if (!empty($subject)) {
             $this->topics = Topic::where('subject_id', $subject)->get();
 
@@ -66,13 +68,8 @@ new class extends Component {
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
 
-        if($this->topics->count() === 1) {
+        if ($this->topics->count() === 1) {
             $this->topic = Topic::first()->id;
-        }
-        
-        if (!empty($topic)) {
-            $this->subject = Topic::find($topic)->subject_id;
-            $this->topics = Topic::where('subject_id', $this->subject)->get();
         }
     }
 
@@ -81,6 +78,7 @@ new class extends Component {
         $this->validate();
 
         $subject = Subject::find($this->subject);
+        $topics = Topic::find($this->topic);
 
         $exam = Exam::create([
             'subject_id' => $this->subject,
@@ -93,6 +91,8 @@ new class extends Component {
         $exam->update([
             'title' => $subject->name . ' Test #' . $exam->id,
         ]);
+
+        $exam->topics()->sync($this->topic);
 
         $this->reset(['type', 'difficulty', 'size']);
 
@@ -111,9 +111,9 @@ new class extends Component {
             <flux:subheading>Generate a new AI exam.</flux:subheading>
         </div>
 
-        <flux:select searchable variant="listbox" wire:model.live="subject" placeholder="Select subject">
+        <flux:select label="Exam subject" searchable variant="listbox" wire:model.live="subject" placeholder="Select subject">
             @forelse($subjects as $item)
-                <flux:select.option wire:key="{{ $item->id }}" value="{{ $item->id }}">
+                <flux:select.option value="{{ $item->id }}">
                     {{ $item->name }}
                 </flux:select.option>
             @empty
@@ -128,14 +128,17 @@ new class extends Component {
                     icon-trailing="plus" x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select multiple searchable variant="listbox" wire:model.live="topic" placeholder="Select topic">
+            <flux:select multiple searchable variant="listbox" selected-suffix="{{ __('topics selected') }}"
+                wire:model.live="topic" placeholder="Select topic">
                 @forelse($topics as $topic)
-                    <flux:select.option wire:key='{{ $topic->id }}' value="{{ $topic->id }}">{{ $topic->title }}
+                    <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>
                 @empty
                     <flux:select.option disabled>No topics found</flux:select.option>
                 @endforelse
             </flux:select>
+
+            <flux:error name="topic" />
         </flux:field>
 
         @if ($subject)
@@ -144,9 +147,9 @@ new class extends Component {
 
         <!-- Difficulty -->
         <flux:radio.group wire:model="difficulty" label="Difficulty" variant="segmented">
-            <flux:radio value="easy" label="Easy" icon="" />
-            <flux:radio value="medium" label="Medium" icon="" />
-            <flux:radio value="hard" label="Hard" icon="" />
+            <flux:radio value="easy" label="Easy" icon="check-circle" />
+            <flux:radio value="medium" label="Medium" icon="stop-circle" />
+            <flux:radio value="hard" label="Hard" icon="exclamation-circle" />
         </flux:radio.group>
 
         <!-- Type -->
@@ -154,6 +157,7 @@ new class extends Component {
             <flux:radio label="Open ended" value="open_ended" />
             <flux:radio label="Multiple choice" value="multiple_choice" />
             <flux:radio label="True or false" value="true_or_false" />
+            <flux:radio label="Quiz" value="quiz" />
         </flux:radio.group>
 
         <!-- Size -->

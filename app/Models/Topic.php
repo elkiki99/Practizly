@@ -14,12 +14,10 @@ class Topic extends Model
 
     protected $fillable = [
         'subject_id', 
-        'title', 
+        'name', 
         'description', 
         'order', 
-        'difficulty', 
-        // 'estimated_study_time', 
-        // 'status'
+        'difficulty',
     ];
 
     public function subject()
@@ -30,5 +28,10 @@ class Topic extends Model
     public function exam()
     {
         return $this->belongsToMany(Exam::class);
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class);
     }
 }

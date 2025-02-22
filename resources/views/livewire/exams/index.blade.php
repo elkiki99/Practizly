@@ -22,6 +22,10 @@ new class extends Component {
                 <flux:subheading>{{ $exam->size }}</flux:subheading>
             </div>
 
+            @foreach ($exam->topics as $topic)
+                <flux:subheading>{{ $topic->name }}</flux:subheading>
+            @endforeach
+
             <div class="flex">
                 <flux:spacer />
                 <flux:button as="link" variant="primary" href="{{-- route('exams.show', $exam) --}}">Show</flux:button>
