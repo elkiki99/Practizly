@@ -11,17 +11,13 @@ class Attachment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'topic_id', 
-        'file_path', 
-        'file_name', 
-        'file_size', 
-        'file_type', 
-        'is_protected', 
-        'uploaded_by'
+        'file_path'.
+        'attachable_id',
+        'attachable_type',
     ];
 
-    public function topic()
+    public function attachable()
     {
-        return $this->belongsTo(Topic::class);
+        return $this->morphTo();
     }
 }

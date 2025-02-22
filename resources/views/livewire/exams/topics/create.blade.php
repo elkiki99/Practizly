@@ -41,7 +41,7 @@ new class extends Component {
         <flux:input placeholder="Quantum mechanics" @keydown.enter="createTopic = false" wire:model="name">
         </flux:input>
 
-        <flux:button class="px-2" variant="ghost" wire:click='createTopic' icon="plus">
+        <flux:button class="px-2" variant="ghost" wire:click.prevent='createTopic' icon="plus">
         </flux:button>
     </div>
 

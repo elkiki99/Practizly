@@ -1,24 +1,29 @@
 <?php
 
 use Livewire\Volt\Component;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Validate;
 use Illuminate\Support\Carbon;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\On;
+use App\Models\Assignment;
 use App\Models\Subject;
 use App\Models\Topic;
-use App\Models\Assignment;
 
 new class extends Component {
+    use WithFileUploads;
+
     #[Validate('required|string|max:255')]
     public string $title = '';
 
-    #[Validate('required|string|max:1000')]
+    #[Validate('nullable|string|max:1000')]
     public string $description = '';
 
     #[Validate('required|string|max:1000')]
     public string $guidelines = '';
 
-    #[Validate('required|file|mimes:jpg,jpeg,png,webp|max:10240')]
-    public $attachments = [];
+    #[Validate(['attachments.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240'])]
+    public array $attachments = [];
 
     #[Validate('required|date')]
     public ?Carbon $due_date;
@@ -34,6 +39,23 @@ new class extends Component {
 
     public $subjects = [];
     public $topics = [];
+
+    #[On('topicCreated')]
+    #[On('subjectCreated')]
+    public function mount()
+    {
+        $this->subjects = Subject::all();
+
+        if ($this->subjects->count() === 1) {
+            $this->subject = Subject::first()->id;
+
+            $this->topics = Topic::all();
+
+            if ($this->topics->count() === 1) {
+                $this->topic = Topic::first()->id;
+            }
+        }
+    }
 
     #[On('subjectCreated')]
     public function updatedSubject($subject = null)
@@ -67,21 +89,37 @@ new class extends Component {
         }
     }
 
-    #[On('topicCreated')]
-    #[On('subjectCreated')]
-    public function mount()
+    public function createAssignment()
     {
-        $this->subjects = Subject::all();
+        $this->validate();
 
-        if ($this->subjects->count() === 1) {
-            $this->subject = Subject::first()->id;
+        $assignment = Assignment::create([
+            'title' => $this->title,
+            'description' => $this->description,
+            'guidelines' => $this->guidelines,
+            'due_date' => $this->due_date,
+            'status' => $this->status,
+            'topic_id' => $this->topic,
+            'subject_id' => $this->subject,
+        ]);
 
-            $this->topics = Topic::all();
+        if (!empty($this->attachments)) {
+            foreach ($this->attachments as $attachmentFile) {
+                $filePath = $attachmentFile->store('attachments', 'public');
 
-            if ($this->topics->count() === 1) {
-                $this->topic = Topic::first()->id;
+                $assignment->attachments()->create([
+                    'file_path' => $filePath,
+                ]);
             }
         }
+
+        $this->reset();
+
+        $this->dispatch('assignmentCreated');
+
+        Flux::toast(heading: 'Assignment created', text: 'Your assignment was created successfully', variant: 'success');
+
+        $this->modal('create-assignment')->close();
     }
 }; ?>
 
@@ -99,7 +137,7 @@ new class extends Component {
         <flux:textarea label="Guidelines"
             placeholder="Use financial statements to support your analysis, include charts, and ensure all calculations are accurate." />
 
-        <flux:select label="Exam subject" searchable variant="listbox" wire:model.live="subject"
+        <flux:select label="Assignment subject" searchable variant="listbox" wire:model.live="subject"
             placeholder="Select subject">
             @forelse($subjects as $item)
                 <flux:select.option value="{{ $item->id }}">
@@ -112,13 +150,13 @@ new class extends Component {
 
         <flux:field>
             <div class="flex items-center justify-between mb-2">
-                <flux:label>Exam topic</flux:label>
+                <flux:label>Assignment topic</flux:label>
                 <flux:button x-show="{{ $subjects }}" as="link" size="xs" variant="subtle"
                     icon-trailing="plus" x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select searchable variant="listbox" selected-suffix="{{ __('topics selected') }}"
-                wire:model.live="topic" placeholder="Select topic">
+            <flux:select searchable variant="listbox" selected-suffix="{{ __('topics selected') }}" wire:model="topic"
+                placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>

@@ -129,7 +129,7 @@ new class extends Component {
             </div>
 
             <flux:select multiple searchable variant="listbox" selected-suffix="{{ __('topics selected') }}"
-                wire:model.live="topic" placeholder="Select topic">
+                wire:model="topic" placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>

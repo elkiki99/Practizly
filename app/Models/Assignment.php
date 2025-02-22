@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Attachment;
+use App\Models\Topic;
 
 class Assignment extends Model
 {
@@ -21,13 +23,13 @@ class Assignment extends Model
         'status',
     ];
 
-    public function topic()
+    public function topics()
     {
-        return $this->belongsTo(Topic::class);
+        return $this->belongsToMany(Topic::class);
     }
 
-    public function subject()
+    public function attachments()
     {
-        return $this->belongsTo(Subject::class);
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 }

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('guidelines');
-            $table->string('attachments')->nullable();
             $table->date('due_date');
             $table->string('status')->default('pending');
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');

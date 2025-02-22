@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Exam;
 use App\Models\Subject;
+use App\Models\Assignment;
+use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -33,5 +35,10 @@ class Topic extends Model
     public function assignments()
     {
         return $this->hasMany(Assignment::class);
+    }
+
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 }
