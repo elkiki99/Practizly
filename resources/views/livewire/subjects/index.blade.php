@@ -8,7 +8,7 @@ new class extends Component {
 
     public function mount()
     {
-        $this->subjects = Subject::all();
+        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
     }
 }; ?>
 

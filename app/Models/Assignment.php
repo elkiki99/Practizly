@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Attachment;
+use App\Models\Subject;
 use App\Models\Topic;
 
 class Assignment extends Model
@@ -18,12 +19,11 @@ class Assignment extends Model
         'title',
         'description',
         'guidelines',
-        'attachments', 
         'due_date', 
         'status',
     ];
 
-    public function topics()
+    public function topic()
     {
         return $this->belongsToMany(Topic::class);
     }
@@ -31,5 +31,10 @@ class Assignment extends Model
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
     }
 }

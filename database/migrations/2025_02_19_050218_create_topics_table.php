@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->integer('order')->nullable();
             $table->string('difficulty')->nullable();
-            // $table->integer('estimated_study_time')->nullable();
-            // $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }

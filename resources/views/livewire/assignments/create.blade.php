@@ -22,8 +22,8 @@ new class extends Component {
     #[Validate('required|string|max:1000')]
     public string $guidelines = '';
 
-    #[Validate(['attachments.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240'])]
-    public array $attachments = [];
+    #[Validate(['attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,doc,docx,pdf|max:10240'])]
+    public $attachments = [];
 
     #[Validate('required|date')]
     public ?Carbon $due_date;
@@ -40,7 +40,6 @@ new class extends Component {
     public $subjects = [];
     public $topics = [];
 
-    #[On('topicCreated')]
     #[On('subjectCreated')]
     public function mount()
     {
@@ -72,7 +71,7 @@ new class extends Component {
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
             } else {
-                $this->topic = [];
+                $this->topic = null;
             }
         } else {
             $this->topics = [];
@@ -83,14 +82,10 @@ new class extends Component {
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
-
-        if ($this->topics->count() === 1) {
-            $this->topic = Topic::first()->id;
-        }
     }
 
     public function createAssignment()
-    {
+    {   
         $this->validate();
 
         $assignment = Assignment::create([
@@ -113,6 +108,7 @@ new class extends Component {
             }
         }
 
+        // $this->reset(['title', 'description', 'guidelines', 'attachments', 'due_date', 'status', 'topic', 'subject']);
         $this->reset();
 
         $this->dispatch('assignmentCreated');
@@ -130,11 +126,11 @@ new class extends Component {
             <flux:subheading>Create a new assignment.</flux:subheading>
         </div>
 
-        <flux:input label="Title" placeholder="Calculate quarterly revenue" />
+        <flux:input wire:model="title" label="Title" placeholder="Calculate quarterly revenue" />
 
-        <flux:input label="Description" placeholder="Analyze case study to determine performance." />
+        <flux:input wire:model="description" label="Description" placeholder="Analyze case study to determine performance." />
 
-        <flux:textarea label="Guidelines"
+        <flux:textarea wire:model="guidelines" label="Guidelines"
             placeholder="Use financial statements to support your analysis, include charts, and ensure all calculations are accurate." />
 
         <flux:select label="Assignment subject" searchable variant="listbox" wire:model.live="subject"
@@ -151,7 +147,7 @@ new class extends Component {
         <flux:field>
             <div class="flex items-center justify-between mb-2">
                 <flux:label>Assignment topic</flux:label>
-                <flux:button x-show="{{ $subjects }}" as="link" size="xs" variant="subtle"
+                <flux:button as="link" size="xs" variant="subtle"
                     icon-trailing="plus" x-on:click="createTopic = true">New topic</flux:button>
             </div>
 

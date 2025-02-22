@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Subject;
 
 class User extends Authenticatable // implements MustVerifyEmail
 {
@@ -49,5 +50,10 @@ class User extends Authenticatable // implements MustVerifyEmail
     public function isAdmin() : bool
     {
         return $this->is_admin;
+    }
+
+    public function subjects()
+    {
+        return $this->hasManty(Subject::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\Topic;
 use App\Models\Assignment;
 use App\Models\Attachment;
@@ -27,5 +28,10 @@ class Subject extends Model
     public function topics()
     {
         return $this->hasMany(Topic::class, 'subject_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

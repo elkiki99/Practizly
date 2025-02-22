@@ -19,12 +19,13 @@ new class extends Component {
 
     #[Validate('required|exists:topics,id')]
     public $topic;
-
+    
+    #[Validate('required|exists:subjects,id')]
+    public $subject;
+    
     public $topics = [];
     public $subjects = [];
-    public $subject;
 
-    #[On('topicCreated')]
     #[On('subjectCreated')]
     public function mount()
     {
@@ -56,7 +57,7 @@ new class extends Component {
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
             } else {
-                $this->topic = [];
+                $this->topic = null;
             }
         } else {
             $this->topics = [];
@@ -67,10 +68,6 @@ new class extends Component {
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
-
-        if ($this->topics->count() === 1) {
-            $this->topic = Topic::first()->id;
-        }
     }
 
     public function createExam()
@@ -94,7 +91,8 @@ new class extends Component {
 
         $exam->topics()->sync($this->topic);
 
-        $this->reset(['type', 'difficulty', 'size']);
+        // $this->reset(['type', 'difficulty', 'size']);
+        $this->reset();
 
         $this->dispatch('examCreated');
 
@@ -124,7 +122,7 @@ new class extends Component {
         <flux:field>
             <div class="flex items-center justify-between mb-2">
                 <flux:label>Exam topic</flux:label>
-                <flux:button x-show="{{ $subjects }}" as="link" size="xs" variant="subtle"
+                <flux:button as="link" size="xs" variant="subtle"
                     icon-trailing="plus" x-on:click="createTopic = true">New topic</flux:button>
             </div>
 

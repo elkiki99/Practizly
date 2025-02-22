@@ -28,9 +28,10 @@ new class extends Component {
             'description' => $this->description,
             'color' => $this->color,
             'is_favorite' => $this->is_favorite,
+            'user_id' => auth()->user()->id,
         ]);
 
-        $this->reset(['name', 'description', 'color', 'is_favorite']);
+        $this->reset();
 
         $this->dispatch('subjectCreated');
 

@@ -6,5 +6,7 @@
         </div>
 
         <flux:separator variant="subtle" />
+
+        <livewire:assignments.index />
     </div>
 </x-dashboard-layout>
