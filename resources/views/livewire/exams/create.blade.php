@@ -91,7 +91,6 @@ new class extends Component {
 
         $exam->topics()->sync($this->topic);
 
-        // $this->reset(['type', 'difficulty', 'size']);
         $this->reset();
 
         $this->dispatch('examCreated');

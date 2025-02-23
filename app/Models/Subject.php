@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Topic;
 use App\Models\Assignment;
 use App\Models\Attachment;
+use App\Models\Exam;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -28,6 +29,21 @@ class Subject extends Model
     public function topics()
     {
         return $this->hasMany(Topic::class, 'subject_id');
+    }
+
+    public function exams()
+    {
+        return $this->hasMany(Exam::class, 'subject_id');
+    }
+
+    // public function attachments()
+    // {
+    //     return $this->hasMany(Attachment::class, 'attachable_id');
+    // }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class, 'subject_id');
     }
 
     public function user()
