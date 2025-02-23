@@ -29,12 +29,12 @@ new class extends Component {
     #[On('subjectCreated')]
     public function mount()
     {
-        $this->subjects = Subject::all();
+        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
 
         if ($this->subjects->count() === 1) {
             $this->subject = Subject::first()->id;
 
-            $this->topics = Topic::all();
+            $this->topics = Topic::where('subject_id', $this->subject)->get();
 
             if ($this->topics->count() === 1) {
                 $this->topic = Topic::first()->id;
@@ -45,7 +45,7 @@ new class extends Component {
     #[On('subjectCreated')]
     public function updatedSubject($subject = null)
     {
-        $this->subjects = Subject::all();
+        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
 
         if ($this->subjects->count() === 1) {
             $this->subject = Subject::first()->id;

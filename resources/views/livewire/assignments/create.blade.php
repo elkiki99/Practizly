@@ -43,12 +43,12 @@ new class extends Component {
     #[On('subjectCreated')]
     public function mount()
     {
-        $this->subjects = Subject::all();
+        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
 
         if ($this->subjects->count() === 1) {
             $this->subject = Subject::first()->id;
 
-            $this->topics = Topic::all();
+            $this->topics = Topic::where('subject_id', $this->subject)->get();
 
             if ($this->topics->count() === 1) {
                 $this->topic = Topic::first()->id;
@@ -59,7 +59,7 @@ new class extends Component {
     #[On('subjectCreated')]
     public function updatedSubject($subject = null)
     {
-        $this->subjects = Subject::all();
+        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
 
         if ($this->subjects->count() === 1) {
             $this->subject = Subject::first()->id;
@@ -151,7 +151,7 @@ new class extends Component {
                     icon-trailing="plus" x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select searchable variant="listbox" selected-suffix="{{ __('topics selected') }}" wire:model="topic"
+            <flux:select searchable variant="listbox" wire:model="topic"
                 placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}

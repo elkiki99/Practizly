@@ -1,8 +1,18 @@
 <?php
 
 use Livewire\Volt\Component;
+use Livewire\Attributes\On;
+use App\Models\Subject;
 
 new class extends Component {
+    public $subjects;
+
+    #[On('subjectCreated')]
+    public function mount()
+    {
+        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
+    }
+
     /**
      * Real time update on profile when profile information update form is submitted
      */
@@ -31,11 +41,13 @@ new class extends Component {
 
         <flux:navlist variant="outline">
             <flux:navlist.item wire:navigate icon="chart-bar" href="/dashboard">Dashboard</flux:navlist.item>
-            
+
             <flux:navlist.group expandable :expanded="false" heading="Subjects">
-                <flux:navlist.item href="#">Math</flux:navlist.item>
-                <flux:navlist.item href="#">Physics</flux:navlist.item>
-                <flux:navlist.item href="#">Chemistry</flux:navlist.item>
+                @forelse($subjects as $subject)
+                    <flux:navlist.item href="#">{{ $subject->name }}</flux:navlist.item>
+                @empty
+                    <flux:subheading>No subjects yet</flux:subheading>
+                @endforelse
             </flux:navlist.group>
 
             <flux:navlist.item wire:navigate icon="paper-clip" href="/library">Library</flux:navlist.item>

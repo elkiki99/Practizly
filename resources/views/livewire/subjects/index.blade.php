@@ -30,11 +30,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
             <div class="flex items-center justify-start gap-2 max-lg:hidden">
-                <flux:subheading class="whitespace-nowrap">Actions:</flux:subheading>
-
                 <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New subject
-                </flux:badge>
-                <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">Another action...
                 </flux:badge>
             </div>
         </div>
@@ -47,14 +43,13 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
 
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         @forelse($subjects as $subject)
-            <flux:card class="flex flex-col flex-grow h-full space-y-6">
+            <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6">
                 <!-- Subject heading -->
-                <div>
+                <div class="flex-1">
                     <div class="flex items-center">
                         <flux:heading size="lg">{{ $subject->name }}</flux:heading>
                         <!-- Indicador de color -->
                         <span class="inline-block ml-2 size-2 bg-{{ $subject->color }}-500 rounded-full"></span>
-
                         <flux:spacer />
                         <flux:tooltip content="Options" position="left">
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
@@ -63,8 +58,10 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                     <flux:subheading>{{ $subject->description }}</flux:subheading>
                 </div>
 
+                <flux:separator variant="subtle" />
+
                 <!-- Last exams -->
-                <div class="flex-grow h-full">
+                <div class="flex-1">
                     <flux:heading>Recent tests</flux:heading>
                     <ul>
                         @forelse ($subject->exams->sortByDesc('created_at')->take(2) as $exam)
@@ -85,12 +82,14 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             </li>
                         @endforelse
                     </ul>
+
+                    {{-- <flux:separator class="mt-2" variant="subtle" /> --}}
                 </div>
 
                 <!-- Last assignments -->
-                <div class="flex-grow h-full">
+                <div class="flex-1">
                     <flux:heading>Recent assignments</flux:heading>
-                    <ul class="space-y-1">
+                    <ul>
                         @forelse ($subject->assignments->sortByDesc('created_at')->take(2) as $assignment)
                             <li class="flex items-center justify-between">
                                 <flux:subheading>{{ $assignment->title }}</flux:subheading>
@@ -110,23 +109,23 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                         @endforelse
                     </ul>
                 </div>
+                
+                <flux:separator variant="subtle" />
 
                 <!-- Topics list -->
-                @if ($subject->topics->isNotEmpty())
-                    <div class="h-full mt-auto space-y-2">
-                        <flux:heading>Topics</flux:heading>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach ($subject->topics as $topic)
-                                <flux:badge size="sm">{{ $topic->name }}</flux:badge>
-                            @endforeach
-                        </div>
+                <div class="flex-1">
+                    <flux:heading class="mb-2">Topics</flux:heading>
+                    <div class="flex flex-wrap gap-2">
+                        @forelse($subject->topics as $topic)
+                            <flux:badge size="sm">{{ $topic->name }}</flux:badge>
+                        @empty
+                            <flux:subheading>No topics yet</flux:subheading>
+                        @endforelse
                     </div>
-                @endif
+                </div>
             </flux:card>
         @empty
             <flux:subheading>You don't have any subjects yet</flux:subheading>
         @endforelse
     </div>
-    {{-- </div> --}}
-
 </div>
