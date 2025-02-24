@@ -29,15 +29,15 @@ new class extends Component {
     #[On('subjectCreated')]
     public function mount()
     {
-        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
+        $this->subjects = Auth::user()->subjects()->latest()->get();
 
         if ($this->subjects->count() === 1) {
-            $this->subject = Subject::first()->id;
+            $this->subject = $this->subjects->first()->id;
 
             $this->topics = Topic::where('subject_id', $this->subject)->get();
 
             if ($this->topics->count() === 1) {
-                $this->topic = Topic::first()->id;
+                $this->topic = $this->topics->first()->id;
             }
         }
     }
@@ -45,13 +45,13 @@ new class extends Component {
     #[On('subjectCreated')]
     public function updatedSubject($subject = null)
     {
-        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
+        $this->subjects = Auth::user()->subjects()->latest()->get();
 
         if ($this->subjects->count() === 1) {
-            $this->subject = Subject::first()->id;
+            $this->subject = $this->subjects->first()->id;
         }
 
-        if (!empty($subject)) {
+        if(!empty($subject)) {
             $this->topics = Topic::where('subject_id', $subject)->get();
 
             if ($this->topics->count() === 1) {
@@ -59,8 +59,6 @@ new class extends Component {
             } else {
                 $this->topic = null;
             }
-        } else {
-            $this->topics = [];
         }
     }
 
@@ -68,6 +66,10 @@ new class extends Component {
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
+
+        if ($this->topics->count() === 1) {
+            $this->topic = $this->topics->first()->id;
+        }
     }
 
     public function createExam()
@@ -91,7 +93,7 @@ new class extends Component {
 
         $exam->topics()->sync($this->topic);
 
-        $this->reset();
+        // $this->reset();
 
         $this->dispatch('examCreated');
 

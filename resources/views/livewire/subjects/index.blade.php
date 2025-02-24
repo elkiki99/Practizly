@@ -1,28 +1,30 @@
 <?php
 
 use Livewire\Volt\Component;
-use App\Models\Subject;
 use Livewire\Attributes\{Layout, Title};
+use Livewire\Attributes\On;
+use App\Models\Subject;
 
 new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class extends Component {
     public $viewType;
     public $subjects;
 
+    #[On('subjectCreated')]
     public function mount()
     {
         $this->viewType = 'grid';
 
-        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
+        $this->subjects = Auth::user()->subjects()->latest()->get();
     }
 }; ?>
 
-{{-- <div class="self-stretch flex-1 space-y-6 max-lg:max-w-2xl max-lg:mx-auto"> --}}
 <div>
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
             <flux:select size="sm" class="">
-                <option selected>Latest exam</option>
+                <option selected>Creation</option>
+                <option>Latest exam</option>
                 <option>Latest assignment</option>
                 <option>Favorite</option>
             </flux:select>
@@ -30,8 +32,11 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
             <div class="flex items-center justify-start gap-2 max-lg:hidden">
-                <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New subject
-                </flux:badge>
+                <flux:modal.trigger name="create-subject">
+                    <flux:badge as="button" variant="pill" color="zinc" icon="plus"
+                        size="lg">New subject
+                    </flux:badge>
+                </flux:modal.trigger>
             </div>
         </div>
 
@@ -64,7 +69,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                 <div class="flex-1">
                     <flux:heading>Recent tests</flux:heading>
                     <ul>
-                        @forelse ($subject->exams->sortByDesc('created_at')->take(2) as $exam)
+                        @forelse ($subject->exams()->latest()->take(2)->get() as $exam)
                             <li class="flex items-center justify-between">
                                 <flux:subheading>{{ $exam->title }}</flux:subheading>
                                 <flux:tooltip content="Finish test" position="left">
@@ -82,15 +87,13 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             </li>
                         @endforelse
                     </ul>
-
-                    {{-- <flux:separator class="mt-2" variant="subtle" /> --}}
                 </div>
 
                 <!-- Last assignments -->
                 <div class="flex-1">
                     <flux:heading>Recent assignments</flux:heading>
                     <ul>
-                        @forelse ($subject->assignments->sortByDesc('created_at')->take(2) as $assignment)
+                        @forelse ($subject->assignments()->latest()->take(2)->get() as $assignment)
                             <li class="flex items-center justify-between">
                                 <flux:subheading>{{ $assignment->title }}</flux:subheading>
                                 <flux:tooltip content="Finish assignment" position="left">
@@ -109,7 +112,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                         @endforelse
                     </ul>
                 </div>
-                
+
                 <flux:separator variant="subtle" />
 
                 <!-- Topics list -->
@@ -127,5 +130,10 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
         @empty
             <flux:subheading>You don't have any subjects yet</flux:subheading>
         @endforelse
+    </div>
+
+    <!-- Modal actions -->
+    <div>
+        <livewire:subjects.create />
     </div>
 </div>

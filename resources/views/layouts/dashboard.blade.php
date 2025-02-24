@@ -44,10 +44,8 @@
             </div>
 
             <!-- Main Content -->
-            <main class="flex-1 p-6 mb-6 max-lg:max-w-2xl max-lg:mx-auto">
-                <div class="self-stretch flex-1 space-y-6 max-lg:max-w-2xl max-lg:mx-auto">
-                    {{ $slot }}
-                </div>
+            <main class="self-stretch flex-1 p-6 space-y-6">
+                {{ $slot }}
             </main>
         </div>
     </div>

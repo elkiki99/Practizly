@@ -40,18 +40,18 @@ new class extends Component {
     public $subjects = [];
     public $topics = [];
 
-    #[On('subjectCreated')]
+    #[On('subjectCreated')] 
     public function mount()
     {
-        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
+        $this->subjects = Auth::user()->subjects()->latest()->get();
 
         if ($this->subjects->count() === 1) {
-            $this->subject = Subject::first()->id;
+            $this->subject = $this->subjects->first()->id;
 
             $this->topics = Topic::where('subject_id', $this->subject)->get();
 
             if ($this->topics->count() === 1) {
-                $this->topic = Topic::first()->id;
+                $this->topic = $this->topics->first()->id;
             }
         }
     }
@@ -59,13 +59,13 @@ new class extends Component {
     #[On('subjectCreated')]
     public function updatedSubject($subject = null)
     {
-        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
+        $this->subjects = Auth::user()->subjects()->latest()->get();
 
         if ($this->subjects->count() === 1) {
-            $this->subject = Subject::first()->id;
+            $this->subject = $this->subjects->first()->id;
         }
 
-        if (!empty($subject)) {
+        if(!empty($subject)) {
             $this->topics = Topic::where('subject_id', $subject)->get();
 
             if ($this->topics->count() === 1) {
@@ -73,8 +73,6 @@ new class extends Component {
             } else {
                 $this->topic = null;
             }
-        } else {
-            $this->topics = [];
         }
     }
 
@@ -82,10 +80,14 @@ new class extends Component {
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
+
+        if ($this->topics->count() === 1) {
+            $this->topic = $this->topics->first()->id;
+        }
     }
 
     public function createAssignment()
-    {   
+    {
         $this->validate();
 
         $assignment = Assignment::create([
@@ -95,7 +97,6 @@ new class extends Component {
             'due_date' => $this->due_date,
             'status' => $this->status,
             'topic_id' => $this->topic,
-            'subject_id' => $this->subject,
         ]);
 
         if (!empty($this->attachments)) {
@@ -104,12 +105,13 @@ new class extends Component {
 
                 $assignment->attachments()->create([
                     'file_path' => $filePath,
+                    // 'attachable_id' => $assignment->id,
+                    // 'attachable_type' => Assignment::class,
                 ]);
             }
         }
 
-        // $this->reset(['title', 'description', 'guidelines', 'attachments', 'due_date', 'status', 'topic', 'subject']);
-        $this->reset();
+        $this->reset(['title', 'description', 'guidelines', 'attachments', 'due_date', 'attachments']);
 
         $this->dispatch('assignmentCreated');
 
@@ -125,10 +127,11 @@ new class extends Component {
             <flux:heading size="lg">New assignment</flux:heading>
             <flux:subheading>Create a new assignment.</flux:subheading>
         </div>
-
+        
         <flux:input wire:model="title" label="Title" placeholder="Calculate quarterly revenue" />
 
-        <flux:input wire:model="description" label="Description" placeholder="Analyze case study to determine performance." />
+        <flux:input wire:model="description" label="Description"
+            placeholder="Analyze case study to determine performance." />
 
         <flux:textarea wire:model="guidelines" label="Guidelines"
             placeholder="Use financial statements to support your analysis, include charts, and ensure all calculations are accurate." />
@@ -147,12 +150,11 @@ new class extends Component {
         <flux:field>
             <div class="flex items-center justify-between mb-2">
                 <flux:label>Assignment topic</flux:label>
-                <flux:button as="link" size="xs" variant="subtle"
-                    icon-trailing="plus" x-on:click="createTopic = true">New topic</flux:button>
+                <flux:button as="link" size="xs" variant="subtle" icon-trailing="plus"
+                    x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select searchable variant="listbox" wire:model="topic"
-                placeholder="Select topic">
+            <flux:select searchable variant="listbox" wire:model="topic" placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>

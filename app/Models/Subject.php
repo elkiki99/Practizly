@@ -36,18 +36,13 @@ class Subject extends Model
         return $this->hasMany(Exam::class, 'subject_id');
     }
 
-    // public function attachments()
-    // {
-    //     return $this->hasMany(Attachment::class, 'attachable_id');
-    // }
-
-    public function assignments()
-    {
-        return $this->hasMany(Assignment::class, 'subject_id');
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    // public function assignments()
+    // {
+    //     return $this->hasManyThrough(Assignment::class, Topic::class);
+    // }
 }

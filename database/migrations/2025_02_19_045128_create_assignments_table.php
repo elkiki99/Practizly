@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('guidelines');
             $table->date('due_date');
             $table->string('status')->default('pending');
-            $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->foreignId('topic_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

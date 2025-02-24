@@ -54,6 +54,6 @@ class User extends Authenticatable // implements MustVerifyEmail
 
     public function subjects()
     {
-        return $this->hasManty(Subject::class);
+        return $this->hasMany(Subject::class);
     }
 }

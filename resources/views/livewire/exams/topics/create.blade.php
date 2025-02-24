@@ -11,7 +11,7 @@ new class extends Component {
 
     #[Validate('required|exists:subjects,id')]
     #[Reactive]
-    public ?int $subject_id = null;
+    public $subject_id = null;
 
     public function mount($subject_id)
     {

@@ -2,7 +2,7 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\On;
-use App\Models\Assignments;
+use App\Models\Assignment;
 use App\Models\Attachment;
 use App\Models\Subject;
 use App\Models\Topic;
@@ -20,17 +20,23 @@ new class extends Component {
     #[On('assignmentCreated')]
     public function mount()
     {
-        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
+        $this->subjects = Auth::user()->subjects()->latest()->get();
 
         if ($this->subjects->count() === 1) {
-            $this->subject = Subject::first()->id;
+            $this->subject = $this->subjects->first()->id;
 
             $this->topics = Topic::where('subject_id', $this->subject)->get();
 
             if ($this->topics->count() === 1) {
-                $this->topic = Topic::first()->id;
+                $this->topic = $this->topics->first()->id;
 
-                $this->attachments = Attachment::where('attachable_id', $this->topic)->get();
+                $this->attachments = Topic::find($this->topic)->attachments;
+
+                if ($this->attachments->count() === 1) {
+                    $this->attachment = $this->attachments->first()->id;
+                } else {
+                    $this->attachment = null;
+                }
             }
         }
     }
@@ -38,39 +44,49 @@ new class extends Component {
     #[On('subjectCreated')]
     public function updatedSubject($subject = null)
     {
-        $this->subjects = Subject::where('user_id', auth()->user()->id)->get();
+        $this->subjects = Auth::user()->subjects()->latest()->get();
 
         if ($this->subjects->count() === 1) {
-            $this->subject = Subject::first()->id;
+            $this->subject = $this->subjects->first()->id;
         }
 
         if (!empty($subject)) {
             $this->topics = Topic::where('subject_id', $subject)->get();
 
             if ($this->topics->count() === 1) {
-                $this->topic = Topic::first()->id;
-
-                $this->attachments = Attachment::where('attachable_id', $this->topic)->get();
+                $this->topic = $this->topics->first()->id;
             } else {
                 $this->topic = null;
             }
-        } else {
-            $this->topics = [];
         }
     }
 
     #[On('topicCreated')]
+    #[On('assignmentCreated')]
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
-        $this->attachments = Attachment::where('attachable_id', $this->topic)->get();
+
+        if ($this->topics->count() === 1) {
+            $this->topic = $this->topics->first()->id;
+        }
+
+        if (!empty($topic)) {
+            $this->attachments = Topic::find($topic)->attachments;
+
+            if ($this->attachments->count() === 1) {
+                $this->attachment = $this->attachments->first()->id;
+            } else {
+                $this->attachment = null;
+            }
+        }
     }
 
-    #[On('assignmentCreated')]
-    public function updatedAssignment($assignment = null)
-    {
-        $this->attachments = Attachment::where('attachable_id', $this->topic)->get();
-    }
+    // #[On('assignmentCreated')]
+    // public function updatedAssignment($assignment = null)
+    // {
+    //     // $this->attachments = Attachment::where('attachable_id', $this->topic)->get();
+    // }
 }; ?>
 
 <flux:modal name="create-summary" class="space-y-6 md:w-96">
@@ -105,7 +121,7 @@ new class extends Component {
             <flux:select.option value="{{ $attachment->id }}">{{ $attachment->file_path }}
             </flux:select.option>
         @empty
-            <flux:select.option disabled>Create an attachment first</flux:select.option>
+            <flux:select.option disabled>No attachments yet</flux:select.option>
         @endforelse
     </flux:select>
 

@@ -14,7 +14,6 @@ class Assignment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'subject_id', 
         'topic_id', 
         'title',
         'description',
@@ -31,10 +30,5 @@ class Assignment extends Model
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachable');
-    }
-
-    public function subject()
-    {
-        return $this->belongsTo(Subject::class);
     }
 }

@@ -37,8 +37,14 @@ class Topic extends Model
         return $this->hasMany(Assignment::class);
     }
 
+    // public function attachments()
+    // {
+    //     return $this->morphMany(Attachment::class, 'attachable');
+    // }
+    
     public function attachments()
     {
-        return $this->morphMany(Attachment::class, 'attachable');
+        return $this->hasManyThrough(Attachment::class, Assignment::class, 'topic_id', 'attachable_id')
+                    ->where('attachable_type', Assignment::class);
     }
 }
