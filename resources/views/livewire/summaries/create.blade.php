@@ -1,20 +1,28 @@
 <?php
 
 use Livewire\Volt\Component;
+use Livewire\Attributes\Validate;
 use Livewire\Attributes\On;
-use App\Models\Assignment;
-use App\Models\Attachment;
 use App\Models\Subject;
+use App\Models\Summary;
 use App\Models\Topic;
 
 new class extends Component {
-    public $subjects = [];
+    #[Validate('required|exists:subjects,id')]
     public $subject = '';
-    public $topics = [];
+
+    #[Validate('required|exists:topics,id')]
     public $topic = '';
+
+    #[Validate('required|exists:attachments,id')]
+    public $attachment;
+
+    #[Validate('required|in:short,medium,long')]
+    public string $size = 'short';
+
+    public $subjects = [];
+    public $topics = [];
     public $attachments = [];
-    public $attachment = '';
-    public $assignments = [];
 
     #[On('subjectCreated')]
     #[On('assignmentCreated')]
@@ -30,7 +38,7 @@ new class extends Component {
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
 
-                $this->attachments = Topic::find($this->topic)->attachments;
+                $this->attachments = Topic::find($this->topic)->all_attachments;
 
                 if ($this->attachments->count() === 1) {
                     $this->attachment = $this->attachments->first()->id;
@@ -72,7 +80,7 @@ new class extends Component {
         }
 
         if (!empty($topic)) {
-            $this->attachments = Topic::find($topic)->attachments;
+            $this->attachments = Topic::find($this->topic)->all_attachments;
 
             if ($this->attachments->count() === 1) {
                 $this->attachment = $this->attachments->first()->id;
@@ -82,52 +90,91 @@ new class extends Component {
         }
     }
 
-    // #[On('assignmentCreated')]
-    // public function updatedAssignment($assignment = null)
-    // {
-    //     // $this->attachments = Attachment::where('attachable_id', $this->topic)->get();
-    // }
+    public function createSummary()
+    {
+        $this->validate();
+
+        $topic = Topic::find($this->topic);
+
+        $summary = Summary::create([
+            'topic_id' => $this->topic,
+            'title' => $topic->name . ' Summary',
+            'content' => '',
+            'size' => $this->size,
+            'attachment_id' => $this->attachment
+        ]);
+
+        // if (!empty($this->attachment)) {
+        //     $fileName = Str::slug("{$summary->title} {$topic->name} {$topic->subject->name} summary", '-');
+        //     $filePath = $this->attachment->storeAs('attachments', "{$fileName}.{$this->attachment->getClientOriginalExtension()}", 'public');
+
+        //     $summary->attachments()->create([
+        //         'file_name' => $fileName,
+        //         'file_path' => $filePath,
+        //     ]);
+        // }
+
+        $summary->update([
+            'title' => $topic->name . ' Summary #' . $summary->id,
+        ]);
+
+        $this->dispatch('summaryCreated');
+
+        Flux::toast(heading: 'Summary created', text: 'Your summary was created successfully', variant: 'success');
+
+        $this->modal('create-summary')->close();
+    }
 }; ?>
 
-<flux:modal name="create-summary" class="space-y-6 md:w-96">
-    <div>
-        <flux:heading size="lg">New summary</flux:heading>
-        <flux:subheading>Create a new summary.</flux:subheading>
-    </div>
+<form wire:submit.prevent="createSummary">
+    <flux:modal name="create-summary" class="space-y-6 md:w-96">
+        <div>
+            <flux:heading size="lg">New summary</flux:heading>
+            <flux:subheading>Create a new summary.</flux:subheading>
+        </div>
 
-    <flux:select label="Summary subject" searchable variant="listbox" wire:model.live="subject"
-        placeholder="Select subject">
-        @forelse($subjects as $item)
-            <flux:select.option value="{{ $item->id }}">
-                {{ $item->name }}
-            </flux:select.option>
-        @empty
-            <flux:select.option disabled>Create a new subject first</flux:select.option>
-        @endforelse
-    </flux:select>
+        <flux:select required autofocus label="Summary subject" searchable variant="listbox" wire:model.live="subject"
+            placeholder="Select subject">
+            @forelse($subjects as $item)
+                <flux:select.option value="{{ $item->id }}">
+                    {{ $item->name }}
+                </flux:select.option>
+            @empty
+                <flux:select.option disabled>Create a new subject first</flux:select.option>
+            @endforelse
+        </flux:select>
 
-    <flux:select label="Summary topic" searchable variant="listbox" wire:model.live="topic" placeholder="Select topic">
-        @forelse($topics as $topic)
-            <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
-            </flux:select.option>
-        @empty
-            <flux:select.option disabled>Create a topic first</flux:select.option>
-        @endforelse
-    </flux:select>
+        <flux:select required label="Summary topic" searchable variant="listbox" wire:model.live="topic"
+            placeholder="Select topic">
+            @forelse($topics as $topic)
+                <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
+                </flux:select.option>
+            @empty
+                <flux:select.option disabled>Create a topic first</flux:select.option>
+            @endforelse
+        </flux:select>
 
-    <flux:select label="Summary attachments" searchable variant="listbox" wire:model="attachments"
-        placeholder="Select attachments">
-        @forelse($attachments as $attachment)
-            <flux:select.option value="{{ $attachment->id }}">{{ $attachment->file_path }}
-            </flux:select.option>
-        @empty
-            <flux:select.option disabled>No attachments yet</flux:select.option>
-        @endforelse
-    </flux:select>
+        <flux:select required label="Summary attachment" searchable variant="listbox" wire:model="attachment"
+            placeholder="Select attachments">
+            @forelse($attachments as $attachment)
+                <flux:select.option value="{{ $attachment->id }}">{{ $attachment->file_name }}
+                </flux:select.option>
+            @empty
+                <flux:select.option disabled>No attachments yet</flux:select.option>
+            @endforelse
+        </flux:select>
 
-    <div class="flex">
-        <flux:spacer />
+        <!-- Size -->
+        <flux:radio.group required wire:model='size' label="Summary size" class="flex-col">
+            <flux:radio value="short" label="Short" />
+            <flux:radio value="medium" label="Medium" />
+            <flux:radio value="long" label="Long" />
+        </flux:radio.group>
 
-        <flux:button type="submit" variant="primary">Create summary</flux:button>
-    </div>
-</flux:modal>
+        <div class="flex">
+            <flux:spacer />
+
+            <flux:button type="submit" variant="primary">Create summary</flux:button>
+        </div>
+    </flux:modal>
+</form>

@@ -19,10 +19,10 @@ new class extends Component {
 
     #[Validate('required|exists:topics,id')]
     public $topic;
-    
+
     #[Validate('required|exists:subjects,id')]
     public $subject;
-    
+
     public $topics = [];
     public $subjects = [];
 
@@ -51,7 +51,7 @@ new class extends Component {
             $this->subject = $this->subjects->first()->id;
         }
 
-        if(!empty($subject)) {
+        if (!empty($subject)) {
             $this->topics = Topic::where('subject_id', $subject)->get();
 
             if ($this->topics->count() === 1) {
@@ -77,7 +77,6 @@ new class extends Component {
         $this->validate();
 
         $subject = Subject::find($this->subject);
-        $topics = Topic::find($this->topic);
 
         $exam = Exam::create([
             'subject_id' => $this->subject,
@@ -88,7 +87,7 @@ new class extends Component {
         ]);
 
         $exam->update([
-            'title' => $subject->name . ' Test #' . $exam->id,
+            'title' => $subject->name . ' Test #' . $exam->id . ' (' . ucwords(str_replace('_', ' ', $exam->type)) . ')',
         ]);
 
         $exam->topics()->sync($this->topic);
@@ -110,7 +109,8 @@ new class extends Component {
             <flux:subheading>Generate a new AI exam.</flux:subheading>
         </div>
 
-        <flux:select label="Exam subject" searchable variant="listbox" wire:model.live="subject" placeholder="Select subject">
+        <flux:select label="Exam subject" searchable variant="listbox" wire:model.live="subject"
+            placeholder="Select subject" autofocus required>
             @forelse($subjects as $item)
                 <flux:select.option value="{{ $item->id }}">
                     {{ $item->name }}
@@ -123,11 +123,11 @@ new class extends Component {
         <flux:field>
             <div class="flex items-center justify-between mb-2">
                 <flux:label>Exam topic</flux:label>
-                <flux:button as="link" size="xs" variant="subtle"
-                    icon-trailing="plus" x-on:click="createTopic = true">New topic</flux:button>
+                <flux:button as="link" size="xs" variant="subtle" icon-trailing="plus"
+                    x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select multiple searchable variant="listbox" selected-suffix="{{ __('topics selected') }}"
+            <flux:select required multiple searchable variant="listbox" selected-suffix="{{ __('topics selected') }}"
                 wire:model="topic" placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
@@ -145,25 +145,25 @@ new class extends Component {
         @endif
 
         <!-- Difficulty -->
-        <flux:radio.group wire:model="difficulty" label="Difficulty" variant="segmented">
+        <flux:radio.group required wire:model="difficulty" label="Exam difficulty" variant="segmented">
             <flux:radio value="easy" label="Easy" icon="check-circle" />
             <flux:radio value="medium" label="Medium" icon="stop-circle" />
             <flux:radio value="hard" label="Hard" icon="exclamation-circle" />
         </flux:radio.group>
 
+        <!-- Size -->
+        <flux:radio.group required wire:model='size' label="Exam size" class="flex-col">
+            <flux:radio value="short" label="Short" description="Between 5 and 10 questions" />
+            <flux:radio value="medium" label="Medium" description="Between 10 and 15 questions" />
+            <flux:radio value="long" label="Long" description="Between 15 and 30 questions" />
+        </flux:radio.group>
+
         <!-- Type -->
-        <flux:radio.group wire:model="type" label="Select your exam type">
+        <flux:radio.group required wire:model="type" label="Exam type">
             <flux:radio label="Open ended" value="open_ended" />
             <flux:radio label="Multiple choice" value="multiple_choice" />
             <flux:radio label="True or false" value="true_or_false" />
             <flux:radio label="Quiz" value="quiz" />
-        </flux:radio.group>
-
-        <!-- Size -->
-        <flux:radio.group wire:model='size' label="Size" class="flex-col">
-            <flux:radio value="short" label="Short" description="Between 5 and 10 questions" />
-            <flux:radio value="medium" label="Medium" description="Between 10 and 15 questions" />
-            <flux:radio value="long" label="Long" description="Between 15 and 30 questions" />
         </flux:radio.group>
 
         <div class="flex">

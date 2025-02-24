@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('summaries', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('topic_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->string('size')->default('short');
+            $table->text('content')->nullable();
+            $table->foreignId('attachment_id')->nullable()->constrained('attachments')->onDelete('cascade');
             $table->timestamps();
         });
     }

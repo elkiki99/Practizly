@@ -12,16 +12,19 @@ class Summary extends Model
 
     protected $fillable = [
         'topic_id', 
-        'content', 
-        'word_count', 
-        'is_shared', 
-        'format', 
-        'key_points', 
-        'study_recommendations'
+        'title',
+        'size',
+        'content',
+        'attachment_id',
     ];
 
     public function topic()
     {
         return $this->belongsTo(Topic::class);
+    }
+
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 }

@@ -41,8 +41,8 @@ class Subject extends Model
         return $this->belongsTo(User::class);
     }
 
-    // public function assignments()
-    // {
-    //     return $this->hasManyThrough(Assignment::class, Topic::class);
-    // }
+    public function assignments()
+    {
+        return $this->hasManyThrough(Assignment::class, Topic::class);
+    }
 }

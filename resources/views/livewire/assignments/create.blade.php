@@ -40,7 +40,7 @@ new class extends Component {
     public $subjects = [];
     public $topics = [];
 
-    #[On('subjectCreated')] 
+    #[On('subjectCreated')]
     public function mount()
     {
         $this->subjects = Auth::user()->subjects()->latest()->get();
@@ -65,7 +65,7 @@ new class extends Component {
             $this->subject = $this->subjects->first()->id;
         }
 
-        if(!empty($subject)) {
+        if (!empty($subject)) {
             $this->topics = Topic::where('subject_id', $subject)->get();
 
             if ($this->topics->count() === 1) {
@@ -101,17 +101,17 @@ new class extends Component {
 
         if (!empty($this->attachments)) {
             foreach ($this->attachments as $attachmentFile) {
-                $filePath = $attachmentFile->store('attachments', 'public');
+                $fileName = Str::slug("{$assignment->title} {$assignment->topic->name} {$assignment->topic->subject->name} assignment", '-');
+                $filePath = $attachmentFile->storeAs('attachments', "{$fileName}.{$attachmentFile->getClientOriginalExtension()}", 'public');
 
                 $assignment->attachments()->create([
+                    'file_name' => $fileName,
                     'file_path' => $filePath,
-                    // 'attachable_id' => $assignment->id,
-                    // 'attachable_type' => Assignment::class,
                 ]);
             }
         }
 
-        $this->reset(['title', 'description', 'guidelines', 'attachments', 'due_date', 'attachments']);
+        $this->reset(['title', 'description', 'guidelines', 'attachments', 'due_date']);
 
         $this->dispatch('assignmentCreated');
 
@@ -127,16 +127,29 @@ new class extends Component {
             <flux:heading size="lg">New assignment</flux:heading>
             <flux:subheading>Create a new assignment.</flux:subheading>
         </div>
-        
-        <flux:input wire:model="title" label="Title" placeholder="Calculate quarterly revenue" />
 
-        <flux:input wire:model="description" label="Description"
+        <flux:field>
+            <div class="flex items-center gap-2 mb-2">
+                <flux:label>Assignment title</flux:label>
+                <flux:tooltip toggleable position="right">
+                    <flux:button icon="information-circle" size="sm" variant="ghost" />
+
+                    <flux:tooltip.content class="max-w-[20rem] space-y-2">
+                        <p>We recommend giving your assignment a descriptive name for better organization.</p>
+                    </flux:tooltip.content>
+                </flux:tooltip>
+            </div>
+            <flux:input required wire:model="title" placeholder="Calculate quarterly revenue" autofocus
+            autocomplete="name" />
+        </flux:field>
+
+        <flux:input required wire:model="description" label="Assignment description"
             placeholder="Analyze case study to determine performance." />
 
-        <flux:textarea wire:model="guidelines" label="Guidelines"
+        <flux:textarea required wire:model="guidelines" label="Assignment guidelines"
             placeholder="Use financial statements to support your analysis, include charts, and ensure all calculations are accurate." />
 
-        <flux:select label="Assignment subject" searchable variant="listbox" wire:model.live="subject"
+        <flux:select required label="Assignment subject" searchable variant="listbox" wire:model.live="subject"
             placeholder="Select subject">
             @forelse($subjects as $item)
                 <flux:select.option value="{{ $item->id }}">
@@ -154,7 +167,7 @@ new class extends Component {
                     x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select searchable variant="listbox" wire:model="topic" placeholder="Select topic">
+            <flux:select required searchable variant="listbox" wire:model="topic" placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>
@@ -170,18 +183,18 @@ new class extends Component {
             <livewire:exams.topics.create :subject_id="$subject" />
         @endif
 
-        <flux:date-picker label="Due date" wire:model="due_date">
+        <flux:date-picker required label="Assignment due date" wire:model="due_date">
             <x-slot name="trigger">
                 <flux:date-picker.input />
             </x-slot>
         </flux:date-picker>
 
-        <flux:radio.group wire:model="status" label="Status" variant="segmented">
+        <flux:radio.group required wire:model="status" label="Assignment status" variant="segmented">
             <flux:radio value="pending" icon="clock" label="Pending" />
             <flux:radio value="completed" icon="document-check" label="Completed" />
         </flux:radio.group>
 
-        <flux:input type="file" wire:model="attachments" label="Attachments" multiple />
+        <flux:input type="file" wire:model="attachments" label="Assignment attachments" multiple />
 
         <div class="flex">
             <flux:spacer />

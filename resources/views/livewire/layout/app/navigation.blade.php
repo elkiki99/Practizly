@@ -24,7 +24,7 @@ new class extends Component {
     class="z-20 flex items-center transition duration-300"
     x-bind:class="{
         'bg-transparent': atTop,
-        'dark:bg-zinc-800 border-b dark:border-none bg-zinc-100 dark:border-zinc-700': !atTop,
+        'dark:bg-zinc-800 border-b dark:border-none bg-zinc-100 border-zinc-200 dark:border-zinc-700': !atTop,
     }">
 
     @if (!request()->routeIs('pricing') && !request()->routeIs('contact'))

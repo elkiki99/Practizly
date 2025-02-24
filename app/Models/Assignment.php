@@ -24,7 +24,7 @@ class Assignment extends Model
 
     public function topic()
     {
-        return $this->belongsToMany(Topic::class);
+        return $this->belongsTo(Topic::class);
     }
 
     public function attachments()

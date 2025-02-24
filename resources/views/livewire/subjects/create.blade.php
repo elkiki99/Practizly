@@ -56,7 +56,7 @@ new class extends Component {
             autofocus required />
 
         <!-- Colors -->
-        <flux:select label="Subject color" wire:model="color" variant="listbox" placeholder="Select color">
+        <flux:select required label="Subject color" wire:model="color" variant="listbox" placeholder="Select color">
             <flux:select.option value="green"><span
                     class="inline-block mr-2 bg-green-500 rounded-full size-2"></span>Green</flux:select.option>
             <flux:select.option value="red"><span class="inline-block mr-2 bg-red-500 rounded-full size-2"></span>Red
@@ -76,7 +76,7 @@ new class extends Component {
         </flux:select>
 
         <!-- Favourites -->
-        <flux:switch wire:model.live="is_favorite" label="Mark as favorite" />
+        <flux:switch required wire:model.live="is_favorite" label="Mark subject as favorite" />
 
         <div class="flex">
             <flux:spacer />
