@@ -102,17 +102,7 @@ new class extends Component {
             'content' => '',
             'size' => $this->size,
             'attachment_id' => $this->attachment
-        ]);
-
-        // if (!empty($this->attachment)) {
-        //     $fileName = Str::slug("{$summary->title} {$topic->name} {$topic->subject->name} summary", '-');
-        //     $filePath = $this->attachment->storeAs('attachments', "{$fileName}.{$this->attachment->getClientOriginalExtension()}", 'public');
-
-        //     $summary->attachments()->create([
-        //         'file_name' => $fileName,
-        //         'file_path' => $filePath,
-        //     ]);
-        // }
+        ]);     
 
         $summary->update([
             'title' => $topic->name . ' Summary #' . $summary->id,

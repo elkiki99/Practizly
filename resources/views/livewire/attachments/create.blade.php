@@ -1,15 +1,27 @@
 <?php
 
 use Livewire\Volt\Component;
+use Livewire\Attributes\Validate;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\On;
+use App\Models\Attachment;
 use App\Models\Subject;
 use App\Models\Topic;
 
 new class extends Component {
+    use WithFileUploads;
+
     #[Validate('required|string|max:255')]
     public $name = '';
 
+    #[Validate('required|exists:subjects,id')]
     public $subject;
+
+    #[Validate('required|exists:topics,id')]
     public $topic;
+
+    #[Validate(['attachments.*' => 'required|file|mimes:jpg,jpeg,png,webp,doc,docx,pdf|max:10240'])]
+    public $attachments = [];
 
     public $topics = [];
     public $subjects = [];
@@ -59,10 +71,37 @@ new class extends Component {
             $this->topic = $this->topics->first()->id;
         }
     }
+
+    public function createAttachment()
+    {
+        $this->validate();
+
+        $topic = Topic::find($this->topic);
+
+        foreach ($this->attachments as $attachmentFile) {
+            $fileName = Str::slug("{$this->name} {$topic->name} {$topic->subject->name} attachment", '-');
+            $filePath = $attachmentFile->storeAs('attachments', "{$fileName}.{$attachmentFile->getClientOriginalExtension()}", 'public');
+
+            Attachment::create([
+                'file_name' => $fileName,
+                'file_path' => $filePath,
+                'attachable_type' => Topic::class,
+                'attachable_id' => $topic->id,
+            ]);
+        }
+
+        $this->reset(['name', 'attachments']);
+
+        $this->dispatch('attachmentCreated');
+
+        Flux::toast(heading: 'Attachment created', text: 'Your attachment was created successfully', variant: 'success');
+
+        $this->modal('create-attachment')->close();
+    }
 }; ?>
 
 <form wire:submit.prevent='createAttachment'>
-    <flux:modal name="create-attachment" class="space-y-6 md:w-96">
+    <flux:modal name="create-attachment" class="space-y-6 md:w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New attachment</flux:heading>
             <flux:subheading>Create a new attachment.</flux:subheading>
@@ -117,6 +156,8 @@ new class extends Component {
         @if ($subject)
             <livewire:exams.topics.create :subject_id="$subject" />
         @endif
+
+        <flux:input label="Attachment file" type="file" wire:model="attachments" multiple required />
 
         <div class="flex">
             <flux:spacer />

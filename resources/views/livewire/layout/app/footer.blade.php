@@ -7,20 +7,20 @@ new class extends Component {
 }; ?>
 
 <flux:footer container>
-    <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div class="flex flex-col items-center gap-4 md:flex-row max-md:gap-0">
-            <flux:subheading class="text-center md:text-left">
+    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div class="flex flex-col items-center gap-4 sm:flex-row max-sm:gap-0">
+            <flux:subheading class="text-center sm:text-left">
                 &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved
             </flux:subheading>
         </div>
 
-        <flux:subheading class="text-center md:text-right">
+        <flux:subheading class="text-center sm:text-right">
             <div class="flex gap-4">
-                <flux:link wire:navigate href="/terms" class="text-center max-md:mb-1 !text-sm md:text-left">Terms
+                <flux:link wire:navigate href="/terms" class="text-center max-sm:mb-1 !text-sm sm:text-left">Terms
                     of
                     service
                 </flux:link>
-                <flux:link wire:navigate href="/privacy" class="text-center max-md:mb-1 !text-sm md:text-left">
+                <flux:link wire:navigate href="/privacy" class="text-center max-sm:mb-1 !text-sm sm:text-left">
                     Privacy
                     policy
                 </flux:link>

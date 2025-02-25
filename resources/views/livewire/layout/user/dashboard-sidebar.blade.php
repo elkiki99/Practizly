@@ -40,7 +40,7 @@ new class extends Component {
             class="hidden px-2 dark:flex" />
 
         <flux:navlist variant="outline">
-            <flux:navlist.item wire:navigate icon="chart-bar" href="/dashboard">Dashboard</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="squares-2x2" href="/dashboard">Dashboard</flux:navlist.item>
 
             <flux:navlist.group expandable :expanded="false" heading="Subjects">
                 @forelse($subjects as $subject)

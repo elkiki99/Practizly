@@ -111,6 +111,8 @@ new class extends Component {
             }
         }
 
+        //Create new event
+
         $this->reset(['title', 'description', 'guidelines', 'attachments', 'due_date']);
 
         $this->dispatch('assignmentCreated');
@@ -122,7 +124,7 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createAssignment">
-    <flux:modal name="create-assignment" class="w-[90%] space-y-6 md:w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
+    <flux:modal name="create-assignment" class="space-y-6 w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New assignment</flux:heading>
             <flux:subheading>Create a new assignment.</flux:subheading>
