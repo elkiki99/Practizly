@@ -20,20 +20,20 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div class="flex flex-col items-center min-h-screen py-6 bg-white sm:justify-center sm:pt-0 dark:bg-zinc-800">
-        <div>
+    <div class="flex flex-col items-center min-h-screen py-6 bg-white sm:justify-center sm:pt-0 dark:bg-zinc-950 px-6">
+        <div class="mt-6">
             <a href="/" wire:navigate>
-                <x-application-logo class="mt-6" />
+                <x-application-logo />
             </a>
         </div>
 
-        <div class="w-full mt-6 overflow-hidden shadow-md sm:max-w-md rounded-xl">
+        <div class="w-full mt-6 overflow-hidden sm:max-w-md rounded-xl">
             {{ $slot }}
         </div>
     </div>
 
     @fluxScripts
-    
+
     @persist('toast')
         <flux:toast />
     @endpersist

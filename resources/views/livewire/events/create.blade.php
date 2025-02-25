@@ -7,7 +7,7 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createEvent">
-    <flux:modal name="create-event" class="space-y-6 md:w-96">
+    <flux:modal variant="flyout" name="create-event" class="space-y-6 md:w-96">
         <div>
             <flux:heading size="lg">New event</flux:heading>
             <flux:subheading>Create a new event.</flux:subheading>

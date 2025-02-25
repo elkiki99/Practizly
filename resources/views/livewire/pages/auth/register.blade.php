@@ -35,31 +35,28 @@ new #[Layout('layouts.guest')] #[Title('Register • Practizly')] class extends 
     }
 }; ?>
 
-<form wire:submit="register">
-    <flux:card class="space-y-6">
-        <div>
-            <flux:heading size="lg">Sign up</flux:heading>
-            <flux:subheading>Create your account!</flux:subheading>
-        </div>
+<form wire:submit="register" class="space-y-6">
+    <div class="text-center">
+        <flux:heading size="lg">Create an account</flux:heading>
+        <flux:subheading>Enter your details below to create an account.</flux:subheading>
+    </div>
 
-        <flux:input label="Name" type="text" autofocus placeholder="Your name" id="name" wire:model="name"
-            required />
+    <flux:input label="Name" type="text" autofocus placeholder="Your name" id="name" wire:model="name" required />
 
-        <flux:input label="Email" type="email" placeholder="Your email address" id="email" wire:model="email"
-            required />
+    <flux:input label="Email" type="email" placeholder="Your email address" id="email" wire:model="email"
+        required />
 
-        <flux:input viewable label="Password" type="password" placeholder="Your password" id="password"
-            wire:model="password" required />
+    <flux:input viewable label="Password" type="password" placeholder="Your password" id="password"
+        wire:model="password" required />
 
-        <flux:input viewable label="Confirm Password" type="password" placeholder="Confirm your password"
-            id="password_confirmation" wire:model="password_confirmation" required />
+    <flux:input viewable label="Confirm Password" type="password" placeholder="Confirm your password"
+        id="password_confirmation" wire:model="password_confirmation" required />
 
-        <div class="space-y-2">
-            <flux:button type="submit" variant="primary" class="w-full">Register</flux:button>
+    <div class="space-y-2">
+        <flux:button type="submit" variant="primary" class="w-full">Register</flux:button>
 
-            <flux:button variant="ghost" class="w-full" wire:navigate href="{{ route('login') }}">Already have an
-                account?
-            </flux:button>
-        </div>
-    </flux:card>
+        <flux:button variant="ghost" class="w-full" wire:navigate href="{{ route('login') }}">Already have an
+            account?
+        </flux:button>
+    </div>
 </form>

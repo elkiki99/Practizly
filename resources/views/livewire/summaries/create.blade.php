@@ -26,6 +26,7 @@ new class extends Component {
 
     #[On('subjectCreated')]
     #[On('assignmentCreated')]
+    #[On('attachmentCreated')]
     public function mount()
     {
         $this->subjects = Auth::user()->subjects()->latest()->get();
@@ -71,6 +72,7 @@ new class extends Component {
 
     #[On('topicCreated')]
     #[On('assignmentCreated')]
+    #[On('attachmentCreated')]
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
@@ -117,7 +119,7 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createSummary">
-    <flux:modal name="create-summary" class="space-y-6 md:w-96">
+    <flux:modal variant="flyout" name="create-summary" class="space-y-6 md:w-96">
         <div>
             <flux:heading size="lg">New summary</flux:heading>
             <flux:subheading>Create a new summary.</flux:subheading>

@@ -33,26 +33,21 @@ new #[Layout('layouts.guest')] #[Title('Forgot password • Practizly')] class e
     }
 }; ?>
 
-<div>
-    <form wire:submit="sendPasswordResetLink">
-        <flux:card class="space-y-6">
-            <div>
-                <flux:heading size="lg">Forgot your password?</flux:heading>
-                <flux:subheading>No problem. Just let us know your email address and we will email you a password reset
-                    link that will allow you to choose a new one.</flux:subheading>
-            </div>
+<form wire:submit="sendPasswordResetLink" class="space-y-6">
+    <div class="text-center">
+        <flux:heading size="lg">Forgot your password?</flux:heading>
+        <flux:subheading>No problem. We will email you a password reset link.</flux:subheading>
+    </div>
 
-            <flux:input wire:model='email' label="Email" type="email" placeholder="Your email address" id="email"
-                type="email" name="email" required autofocus />
+    <flux:input wire:model='email' label="Email" type="email" placeholder="Your email address" id="email"
+        type="email" name="email" required autofocus />
 
-            <div class="space-y-2">
-                <flux:button variant="primary" type="submit" class="w-full">
-                    {{ __('Send reset link') }}
-                </flux:button>
+    <div class="space-y-2">
+        <flux:button variant="primary" type="submit" class="w-full">
+            {{ __('Send reset link') }}
+        </flux:button>
 
-                <flux:button wire:navigate variant="ghost" class="w-full" href="{{ route('login') }}">Back to login
-                </flux:button>
-            </div>
-        </flux:card>
-    </form>
-</div>
+        <flux:button wire:navigate variant="ghost" class="w-full" href="{{ route('login') }}">Back to login
+        </flux:button>
+    </div>
+</form>

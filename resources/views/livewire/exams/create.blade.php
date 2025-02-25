@@ -103,7 +103,7 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createExam">
-    <flux:modal name="create-exam" class="w-[90%] space-y-6 md:w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
+    <flux:modal variant="flyout" name="create-exam" class="w-[90%] space-y-6 md:w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New exam prep</flux:heading>
             <flux:subheading>Generate a new AI exam.</flux:subheading>

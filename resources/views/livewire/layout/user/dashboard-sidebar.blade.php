@@ -1,6 +1,7 @@
 <?php
 
 use Livewire\Volt\Component;
+use App\Livewire\Actions\Logout;
 use Livewire\Attributes\On;
 use App\Models\Subject;
 
@@ -31,7 +32,7 @@ new class extends Component {
 
 <div>
     <flux:sidebar sticky stashable
-        class="h-screen border-r bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700">
+        class="h-screen border-r bg-zinc-100 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800">
         <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
         <flux:brand href="/" logo="{{ asset('practizly-logo-black.svg') }}" name="{{ config('app.name') }}"

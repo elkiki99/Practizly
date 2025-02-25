@@ -45,21 +45,19 @@ new #[Layout('layouts.guest')] #[Title('Confirm password • Practizly')] class 
     }
 }; ?>
 
-<flux:card>
-    <form wire:submit="confirmPassword" class="space-y-6">
-        <div>
-            <flux:heading size="lg">This is a secure area of the application</flux:heading>
-            <flux:subheading>Please confirm your password before continuing.</flux:subheading>
-        </div>
+<form wire:submit="confirmPassword" class="space-y-6">
+    <div class="text-center">
+        <flux:heading size="lg">This is a secure area of the application</flux:heading>
+        <flux:subheading>Please confirm your password before continuing.</flux:subheading>
+    </div>
 
-        <flux:input label="Password" type="password" wire:model='password' name="password" required
-            autocomplete="current-password" />
+    <flux:input label="Password" type="password" wire:model='password' name="password" required
+        autocomplete="current-password" />
 
-        <div class="space-y-2">
-            <flux:button variant="primary" type="submit" class="w-full">Confirm password</flux:button>
+    <div class="space-y-2">
+        <flux:button variant="primary" type="submit" class="w-full">Confirm password</flux:button>
 
-            <flux:button wire:click="logout" variant="ghost" class="w-full">Log out
-            </flux:button>
-        </div>
-    </form>
-</flux:card>
+        <flux:button wire:click="logout" variant="ghost" class="w-full">Log out
+        </flux:button>
+    </div>
+</form>

@@ -28,46 +28,42 @@ new #[Layout('layouts.guest')] #[Title('Login • Practizly')] class extends Com
     }
 }; ?>
 
-<div>
-    <form wire:submit="login">
-        <flux:card class="space-y-6">
-            <div>
-                <flux:heading size="lg">Log in to your account</flux:heading>
-                <flux:subheading>Welcome back!</flux:subheading>
+<form wire:submit="login" class="space-y-6">
+    <div class="text-center">
+        <flux:heading size="lg">Log in to your account</flux:heading>
+        <flux:subheading>Welcome back!</flux:subheading>
+    </div>
+
+    <div class="space-y-6">
+        <flux:input label="Email" type="email" placeholder="Your email address" id="email" wire:model="form.email"
+            required autofocus autocomplete="username" id="email" />
+
+        <flux:field>
+            <div class="flex justify-between mb-3">
+                <flux:label>Password</flux:label>
+
+                @if (Route::has('password.request'))
+                    <flux:link wire:navigate href="{{ route('password.request') }}" variant="subtle" class="text-sm">
+                        Forgot
+                        your
+                        password?</flux:link>
+                @endif
             </div>
 
-            <div class="space-y-6">
-                <flux:input label="Email" type="email" placeholder="Your email address" id="email"
-                    wire:model="form.email" required autofocus autocomplete="username" id="email" />
+            <flux:input type="password" viewable placeholder="Your password" wire:model="form.password" required
+                autocomplete="current-password" id="password" />
 
-                <flux:field>
-                    <div class="flex justify-between mb-3">
-                        <flux:label>Password</flux:label>
+            <flux:error name="form.password" />
+        </flux:field>
 
-                        @if (Route::has('password.request'))
-                            <flux:link wire:navigate href="{{ route('password.request') }}" variant="subtle"
-                                class="text-sm">Forgot
-                                your
-                                password?</flux:link>
-                        @endif
-                    </div>
+        <flux:checkbox label="Remember me" id="remember" wire:model='form.remember' value="remember" />
+    </div>
 
-                    <flux:input type="password" viewable placeholder="Your password" wire:model="form.password" required
-                        autocomplete="current-password" id="password" />
+    <div class="space-y-2">
+        <flux:button type="submit" variant="primary" class="w-full">Log in</flux:button>
 
-                    <flux:error name="form.password" />
-                </flux:field>
-
-                <flux:checkbox label="Remember me" id="remember" wire:model='form.remember' value="remember" />
-            </div>
-
-            <div class="space-y-2">
-                <flux:button type="submit" variant="primary" class="w-full">Log in</flux:button>
-
-                <flux:button variant="ghost" class="w-full" wire:navigate href="{{ route('register') }}">Sign up for a
-                    new account
-                </flux:button>
-            </div>
-        </flux:card>
-    </form>
-</div>
+        <flux:button variant="ghost" class="w-full" wire:navigate href="{{ route('register') }}">Sign up for a
+            new account
+        </flux:button>
+    </div>
+</form>

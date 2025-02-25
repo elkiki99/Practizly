@@ -11,9 +11,7 @@ use Livewire\Attributes\{Layout, Title};
 use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 
-new 
-#[Layout('layouts.guest')] #[Title('Reset password • Practizly')] class extends Component
-{
+new #[Layout('layouts.guest')] #[Title('Reset password • Practizly')] class extends Component {
     #[Locked]
     public string $token = '';
     public string $email = '';
@@ -44,17 +42,16 @@ new
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
         // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $this->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) {
-                $user->forceFill([
+        $status = Password::reset($this->only('email', 'password', 'password_confirmation', 'token'), function ($user) {
+            $user
+                ->forceFill([
                     'password' => Hash::make($this->password),
                     'remember_token' => Str::random(60),
-                ])->save();
+                ])
+                ->save();
 
-                event(new PasswordReset($user));
-            }
-        );
+            event(new PasswordReset($user));
+        });
 
         // If the password was successfully reset, we will redirect the user back to
         // the application's home authenticated view. If there is an error we can
@@ -69,11 +66,11 @@ new
 
         $this->redirectRoute('login', navigate: true);
     }
-    
+
     /**
      * Log the current user out of the application.
      */
-     public function logout(Logout $logout): void
+    public function logout(Logout $logout): void
     {
         $logout();
 
@@ -81,23 +78,25 @@ new
     }
 }; ?>
 
-<flux:card>
-    <form wire:submit="resetPassword" class="space-y-6">
-        <flux:input label="Email" type="email" placeholder="Your email address" id="email" wire:model="email"
-            name="email" required autofocus autocomplete="username" />
+<form wire:submit="resetPassword" class="space-y-6">
+    <div class="text-center">
+        <flux:heading size="lg">Reset your password</flux:heading>
+        <flux:subheading>Please fill out the form below to reset your password.</flux:subheading>
+    </div>
 
-        <flux:input label="Password" type="password" placeholder="Your password" id="password" wire:model="password"
-            name="password" required autocomplete="new-password" viewable />
+    <flux:input label="Email" type="email" placeholder="Your email address" id="email" wire:model="email"
+        name="email" required autofocus autocomplete="username" />
 
-        <flux:input label="Confirm password" type="password" placeholder="Confirm your password"
-            id="password_confirmation" wire:model="password_confirmation" name="password_confirmation" required
-            autocomplete="new-password" viewable />
+    <flux:input label="Password" type="password" placeholder="Your password" id="password" wire:model="password"
+        name="password" required autocomplete="new-password" viewable />
 
-            <div class="space-y-2">
-            <flux:button type="submit" variant="primary" class="w-full">Reset password</flux:button>
+    <flux:input label="Confirm password" type="password" placeholder="Confirm your password" id="password_confirmation"
+        wire:model="password_confirmation" name="password_confirmation" required autocomplete="new-password" viewable />
 
-            <flux:button wire:click="logout" variant="ghost" class="w-full">Log out
-            </flux:button>
-        </div>
-    </form>
-</flux:card>
+    <div class="space-y-2">
+        <flux:button type="submit" variant="primary" class="w-full">Reset password</flux:button>
+
+        <flux:button wire:click="logout" variant="ghost" class="w-full">Log out
+        </flux:button>
+    </div>
+</form>

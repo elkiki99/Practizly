@@ -25,7 +25,7 @@
     @fluxAppearance
 </head>
 
-<body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900">
+<body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-950">
     <div class="flex">
         <!-- Sidebar -->
         <div class="z-40 h-screen lg:fixed lg:w-64">
@@ -56,15 +56,5 @@
 
     @fluxScripts
 </body>
-
-{{-- Wire navigate bug fix for dropdown links --}}
-{{-- <script>
-    document.addEventListener("livewire:navigate", () => {
-        const htmlElement = document.documentElement;
-        if (htmlElement.hasAttribute("style")) {
-            htmlElement.removeAttribute("style");
-        }
-    });
-</script> --}}
 
 </html>

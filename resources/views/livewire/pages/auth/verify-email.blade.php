@@ -34,11 +34,10 @@ new #[Layout('layouts.guest')] #[Title('Verify email • Practizly')] class exte
     }
 }; ?>
 
-<flux:card class="space-y-6">
-    <div>
-        <flux:heading size="lg">Thanks for signing up!</flux:heading>
-        <flux:subheading>Before getting started, could you verify your email address by clicking on the link we just
-            emailed to you? If you didn't receive the email, we will gladly send you another.</flux:subheading>
+<div class="space-y-6">
+    <div class="text-center">
+        <flux:heading size="lg">Welcome aboard!</flux:heading>
+        <flux:subheading>Please verify your email address to get started.</flux:subheading>
     </div>
 
     <div class="space-y-2">
@@ -49,4 +48,4 @@ new #[Layout('layouts.guest')] #[Title('Verify email • Practizly')] class exte
         <flux:button wire:click="logout" variant="ghost" class="w-full">Log out
         </flux:button>
     </div>
-</flux:card>
+</div>

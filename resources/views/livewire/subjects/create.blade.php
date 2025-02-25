@@ -42,7 +42,7 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createSubject">
-    <flux:modal name="create-subject" class="space-y-6 md:w-96">
+    <flux:modal variant="flyout" name="create-subject" class="space-y-6 md:w-96">
         <div>
             <flux:heading size="lg">New subject</flux:heading>
             <flux:subheading>Create a new subject.</flux:subheading>

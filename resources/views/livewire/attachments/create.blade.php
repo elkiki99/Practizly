@@ -101,7 +101,7 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent='createAttachment'>
-    <flux:modal name="create-attachment" class="space-y-6 md:w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
+    <flux:modal variant="flyout" name="create-attachment" class="space-y-6 md:w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New attachment</flux:heading>
             <flux:subheading>Create a new attachment.</flux:subheading>

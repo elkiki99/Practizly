@@ -124,7 +124,7 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createAssignment">
-    <flux:modal name="create-assignment" class="space-y-6 w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
+    <flux:modal variant="flyout" name="create-assignment" class="space-y-6 w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New assignment</flux:heading>
             <flux:subheading>Create a new assignment.</flux:subheading>
