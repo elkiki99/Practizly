@@ -45,12 +45,9 @@ new class extends Component {
 
             <flux:menu.separator />
 
-            @if (Auth::user()->is_admin)
-                <flux:menu.item icon="home" wire:navigate href="/">Home</flux:menu.item>
-            @else
-                <flux:menu.item icon="user" wire:navigate href="/profile">Profile</flux:menu.item>
-            @endif
-            <flux:menu.item icon="cog-6-tooth" wire:navigate href="/configuration">Configuration</flux:menu.item>
+            <flux:menu.item icon="home" wire:navigate href="/">Home</flux:menu.item>
+            <flux:menu.item icon="user" wire:navigate href="/{{ Auth::user()->username }}/profile">Profile
+            </flux:menu.item>
 
             <flux:menu.separator />
 

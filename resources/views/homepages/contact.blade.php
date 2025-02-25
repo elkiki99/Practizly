@@ -6,9 +6,9 @@
                 <flux:subheading>Let's get in touch</flux:subheading>
             </div>
 
-            <flux:card class="max-w-xl space-y-6">
+            <div class="max-w-xl space-y-6">
                 <livewire:contact.contact-form />
-            </flux:card>
+            </div>
         </section>
     </flux:main>
 </x-app-layout>

@@ -12,6 +12,7 @@ new class extends Component {
 
     public string $name = '';
     public string $email = '';
+    public string $username = '';
     public $profile_picture = null;
 
     /**
@@ -21,6 +22,7 @@ new class extends Component {
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->username = Auth::user()->username;
         $this->profile_picture = Auth::user()->profile_picture ?? null;
     }
 
@@ -34,6 +36,7 @@ new class extends Component {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'username' => ['required', 'string', 'lowercase', 'min:3', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'profile_picture' => ['nullable', 'image', 'max:2048'],
         ]);
 
@@ -94,6 +97,12 @@ new class extends Component {
                 </flux:link>
             </div>
         @endif
+    </flux:field>
+
+    <flux:field>
+        <flux:label class="mb-2">Username</flux:label>
+        <flux:input placeholder="Your username" disabled wire:model='username' required autocomplete="username" />
+        <flux:error name="username" />
     </flux:field>
 
     <flux:field>

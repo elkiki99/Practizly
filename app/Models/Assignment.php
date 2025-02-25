@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Attachment;
-use App\Models\Subject;
 use App\Models\Topic;
 
 class Assignment extends Model

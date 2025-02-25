@@ -42,6 +42,7 @@ class UserFactory extends Factory
             [
                 'name' => 'Admin',
                 'email' => 'admin@laravel.com',
+                'username' => 'admin',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),
@@ -50,6 +51,7 @@ class UserFactory extends Factory
             [
                 'name' => 'User',
                 'email' => 'user@laravel.com',
+                'username' => 'user',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
                 'remember_token' => Str::random(10),

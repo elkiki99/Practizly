@@ -6,7 +6,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Assignment;
 use App\Models\Subject;
+use App\Models\Topic;
 
 class User extends Authenticatable // implements MustVerifyEmail
 {
@@ -21,6 +23,9 @@ class User extends Authenticatable // implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
+        'is_admin',
+        'profile_picture',
+        'username',
         'password',
     ];
 
@@ -55,5 +60,10 @@ class User extends Authenticatable // implements MustVerifyEmail
     public function subjects()
     {
         return $this->hasMany(Subject::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
     }
 }

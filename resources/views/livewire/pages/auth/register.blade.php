@@ -11,6 +11,7 @@ use Livewire\Volt\Component;
 new #[Layout('layouts.guest')] #[Title('Register • Practizly')] class extends Component {
     public string $name = '';
     public string $email = '';
+    public string $username = '';
     public string $password = '';
     public string $password_confirmation = '';
 
@@ -22,6 +23,7 @@ new #[Layout('layouts.guest')] #[Title('Register • Practizly')] class extends 
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'username' => ['required', 'string', 'lowercase', 'min:3', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -31,7 +33,11 @@ new #[Layout('layouts.guest')] #[Title('Register • Practizly')] class extends 
 
         Auth::login($user);
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+        if (!Auth::user()->is_admin) {
+            $this->redirectIntended(default: route('dashboard', ['user' => $user->username], absolute: false), navigate: true);
+        } else {
+            $this->redirectIntended(default: route('panel', absolute: false), navigate: true);
+        }
     }
 }; ?>
 
@@ -45,6 +51,8 @@ new #[Layout('layouts.guest')] #[Title('Register • Practizly')] class extends 
 
     <flux:input label="Email" type="email" placeholder="Your email address" id="email" wire:model="email"
         required />
+    
+    <flux:input label="Username" type="text" placeholder="Your username" id="username" wire:model="username" required />
 
     <flux:input viewable label="Password" type="password" placeholder="Your password" id="password"
         wire:model="password" required />

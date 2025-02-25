@@ -31,7 +31,11 @@ new #[Layout('layouts.guest')] #[Title('Confirm password • Practizly')] class 
 
         session(['auth.password_confirmed_at' => time()]);
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        if (!Auth::user()->is_admin) {
+            $this->redirectIntended(default: route('dashboard', ['user' => Auth::user()->username], absolute: false), navigate: true);
+        } else {
+            $this->redirectIntended(default: route('panel', absolute: false), navigate: true);
+        }
     }
 
     /**

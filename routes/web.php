@@ -18,15 +18,15 @@ Route::get('clients', [HomePages::class, 'clients'])->name('clients');
 Route::get('pricing', [HomePages::class, 'pricing'])->name('pricing');
 
 Route::middleware([EnsureUserIsNotAdmin::class])->group(function () {
-    Route::get('dashboard', [UserDashboard::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
-    Route::get('profile', [UserDashboard::class, 'profile'])->middleware(['auth', 'verified'])->name('profile');
-    Route::get('calendar', [UserDashboard::class, 'calendar'])->middleware(['auth', 'verified'])->name('calendar');
-    Volt::route('subjects', 'subjects.index')->name('subjects');
-    Route::get('settings', [UserDashboard::class, 'settings'])->middleware(['auth', 'verified'])->name('settings');
-    Route::get('summaries', [UserDashboard::class, 'summaries'])->middleware(['auth', 'verified'])->name('summaries');
-    Route::get('library', [UserDashboard::class, 'library'])->middleware(['auth', 'verified'])->name('library');
-    Route::get('assignments', [UserDashboard::class, 'assignments'])->middleware(['auth', 'verified'])->name('assignments');
-    Route::get('exams', [UserDashboard::class, 'exams'])->middleware(['auth', 'verified'])->name('exams');
+    Route::get('{user:username}/dashboard', [UserDashboard::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('{user:username}/profile', [UserDashboard::class, 'profile'])->middleware(['auth', 'verified'])->name('profile');
+    Volt::route('{user:username}/calendar', 'calendar.index')->name('calendar');
+    Volt::route('{user:username}/subjects', 'subjects.index')->name('subjects');
+    Route::get('{user:username}/settings', [UserDashboard::class, 'settings'])->middleware(['auth', 'verified'])->name('settings');
+    Route::get('{user:username}/summaries', [UserDashboard::class, 'summaries'])->middleware(['auth', 'verified'])->name('summaries');
+    Route::get('{user:username}/library', [UserDashboard::class, 'library'])->middleware(['auth', 'verified'])->name('library');
+    Volt::route('{user:username}/assignments', 'assignments.index')->name('assignments');
+    Volt::route('{user:username}/exams', 'exams.index')->name('exams');
 });
 
 Route::middleware([EnsureUserIsAdmin::class])->group(function () {

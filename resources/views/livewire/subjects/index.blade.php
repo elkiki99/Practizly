@@ -18,10 +18,21 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
     }
 }; ?>
 
-<div>
+<div class="space-y-6">
+    <div class="space-y-3">
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>Subjects</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+        <flux:heading size="xl">Subjects</flux:heading>
+        <flux:separator variant="subtle" />
+    </div>
+    
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
+            <flux:subheading class="whitespace-nowrap">Filter by:</flux:subheading>
+
             <flux:select size="sm" class="">
                 <option selected>Creation</option>
                 <option>Latest exam</option>
@@ -60,10 +71,9 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
                         </flux:tooltip>
                     </div>
-                    <flux:subheading>{{ $subject->description }}</flux:subheading>
                 </div>
 
-                <flux:separator variant="subtle" />
+                {{-- <flux:separator variant="subtle" /> --}}
 
                 <!-- Last exams -->
                 <div class="flex-1">

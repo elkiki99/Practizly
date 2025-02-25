@@ -110,7 +110,7 @@ new class extends Component {
         <flux:field>
             <div class="flex items-center gap-2 mb-2">
                 <flux:label>Attachment name</flux:label>
-                <flux:tooltip toggleable position="right">
+                <flux:tooltip toggleable position="left">
                     <flux:button icon="information-circle" size="sm" variant="ghost" />
 
                     <flux:tooltip.content class="max-w-[20rem] space-y-2">

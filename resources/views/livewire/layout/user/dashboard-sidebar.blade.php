@@ -41,7 +41,7 @@ new class extends Component {
             class="hidden px-2 dark:flex" />
 
         <flux:navlist variant="outline">
-            <flux:navlist.item wire:navigate icon="squares-2x2" href="/dashboard">Dashboard</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="squares-2x2" href="/{{ Auth::user()->username}}/dashboard">Dashboard</flux:navlist.item>
 
             <flux:navlist.group expandable :expanded="false" heading="Subjects">
                 @forelse($subjects as $subject)
@@ -51,10 +51,10 @@ new class extends Component {
                 @endforelse
             </flux:navlist.group>
 
-            <flux:navlist.item wire:navigate icon="paper-clip" href="/library">Library</flux:navlist.item>
-            <flux:navlist.item wire:navigate icon="light-bulb" href="/summaries">Summaries</flux:navlist.item>
-            <flux:navlist.item wire:navigate icon="user" href="/profile">Profile</flux:navlist.item>
-            <flux:navlist.item wire:navigate icon="cog-6-tooth" href="/settings">Settings</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="paper-clip" href="/{{ Auth::user()->username}}/library">Library</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="light-bulb" href="/{{ Auth::user()->username}}/summaries">Summaries</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="user" href="/{{ Auth::user()->username}}/profile">Profile</flux:navlist.item>
+            <flux:navlist.item wire:navigate icon="cog-6-tooth" href="/{{ Auth::user()->username}}/settings">Settings</flux:navlist.item>
         </flux:navlist>
 
         <flux:spacer />
@@ -81,7 +81,7 @@ new class extends Component {
                 <flux:menu.separator />
 
                 <flux:menu.item wire:navigate icon="home" href="/">Home</flux:menu.item>
-                <flux:menu.item wire:navigate icon="cog-6-tooth" href="/settings">Settings</flux:menu.item>
+                <flux:menu.item wire:navigate icon="user" href="/{{ Auth::user()->username}}/profile">Profile</flux:menu.item>
 
                 <flux:menu.separator />
 

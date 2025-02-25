@@ -12,15 +12,15 @@ new class extends Component {
         'border-b lg:dark:border-none dark:border-zinc-900 border-zinc-200 lg:bg-zinc-100 dark:lg:bg-zinc-900': !atTop,
     }"
     class="z-50 px-2 transition-[scroll] duration-300 max-lg:items-center max-lg:justify-center max-lg:flex">
-    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="book-open" href="/subjects">Subjects</flux:navbar.item>
-    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="academic-cap" href="/exams">Exams</flux:navbar.item>
-    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="document-text" href="/assignments">Assignments
+    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="book-open" href="/{{ Auth::user()->username}}/subjects">Subjects</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="academic-cap" href="/{{ Auth::user()->username}}/exams">Exams</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="document-text" href="/{{ Auth::user()->username}}/assignments">Assignments
     </flux:navbar.item>
-    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="calendar" href="/calendar">Calendar
+    <flux:navbar.item wire:navigate class="hidden sm:flex" icon="calendar" href="/{{ Auth::user()->username}}/calendar">Calendar
     </flux:navbar.item>
 
-    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/subjects">Subjects</flux:navbar.item>
-    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/exams">Exams</flux:navbar.item>
-    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/assignments">Assignments</flux:navbar.item>
-    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/calendar">Calendar</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/{{ Auth::user()->username}}/subjects">Subjects</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/{{ Auth::user()->username}}/exams">Exams</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/{{ Auth::user()->username}}/assignments">Assignments</flux:navbar.item>
+    <flux:navbar.item wire:navigate class="flex sm:hidden" href="/{{ Auth::user()->username}}/calendar">Calendar</flux:navbar.item>
 </flux:navbar>

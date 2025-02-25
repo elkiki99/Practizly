@@ -21,7 +21,7 @@ new #[Layout('layouts.guest')] #[Title('Login • Practizly')] class extends Com
         Session::regenerate();
 
         if (!Auth::user()->is_admin) {
-            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+            $this->redirectIntended(default: route('dashboard', ['user' => Auth::user()->username], absolute: false), navigate: true);
         } else {
             $this->redirectIntended(default: route('panel', absolute: false), navigate: true);
         }

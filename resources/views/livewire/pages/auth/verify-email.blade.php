@@ -13,11 +13,16 @@ new #[Layout('layouts.guest')] #[Title('Verify email • Practizly')] class exte
     public function sendVerification(): void
     {
         if (Auth::user()->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+            if (!Auth::user()->is_admin) {
+                $this->redirectIntended(default: route('dashboard', ['user' => Auth::user()->username], absolute: false), navigate: true);
+            } else {
+                $this->redirectIntended(default: route('panel', absolute: false), navigate: true);
+            }
 
             return;
         }
 
+        Auth::user()->sendEmailVerificationNotification();
         Auth::user()->sendEmailVerificationNotification();
 
         Flux::toast(heading: 'Verification link sent.', text: 'We have emailed you a verification link. Please check your email.', variant: 'success');
