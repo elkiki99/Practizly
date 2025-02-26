@@ -8,35 +8,64 @@ use App\Models\Exam;
 
 new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends Component {
     public $exams;
+    // public $viewType = 'grid';
 
-    #[On('examCreated')]
     public function mount()
     {
-        $this->exams = Auth::user()->subjects()->with('topics.exams')->get()->pluck('topics')->flatten()->pluck('exams')->flatten()->sortByDesc('created_at');
+        $this->exams = Auth::user()->exams()->latest()->get();
+        // $this->viewType = 'grid';
+    }
+
+    #[On('examCreated')]
+    public function updatedExams()
+    {
+        $this->exams = Auth::user()->exams()->latest()->get();
     }
 }; ?>
 
 <div class="space-y-6">
-    <div class="space-y-3">
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard</flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Exams</flux:breadcrumbs.item>
-        </flux:breadcrumbs>
-        <flux:heading size="xl">Exams</flux:heading>
-        <flux:separator variant="subtle" />
-    </div>
+    <flux:heading level="1" size="xl">Exams</flux:heading>
+    <flux:separator variant="subtle" />
 
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-            <flux:subheading class="whitespace-nowrap">Filter by:</flux:subheading>
+            {{-- <flux:subheading class="whitespace-nowrap">Filter by:</flux:subheading>
 
             <flux:select size="sm" class="">
                 <option selected>Creation</option>
                 <option>Subject</option>
                 <option>Topic</option>
-            </flux:select>
+            </flux:select> --}}
 
+            <div class="flex items-center gap-2">
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.funnel variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
+
+                    <flux:select.option value="all" selected>All</flux:select.option>
+                    <flux:select.option value="unapproved">Unapproved</flux:select.option>
+                    <flux:select.option value="approved">Approved</flux:select.option>
+                </flux:select>
+
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.arrows-up-down variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
+
+                    <flux:select.option value="popular" selected>Most popular</flux:select.option>
+                    <flux:select.option value="newest">Newest</flux:select.option>
+                    <flux:select.option value="oldest">Oldest</flux:select.option>
+                </flux:select>
+            </div>
+            
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
             <div class="flex items-center justify-start gap-2 max-lg:hidden">
@@ -47,9 +76,9 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
             </div>
         </div>
 
-        <flux:tabs wire:model='viewType' variant="segmented" class="w-auto! ml-2" size="sm">
+        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
+            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
             <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-            <flux:tab value="grid" icon="squares-2x2" icon-variant="outline" />
         </flux:tabs>
     </div>
 
@@ -72,8 +101,10 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                     <flux:heading class="mb-2">Details</flux:heading>
                     <flux:subheading><strong>Subject: </strong> {{ $exam->subject->name }}</flux:subheading>
                     <flux:subheading><strong>Size: </strong>{{ Str::of($exam->size)->ucfirst() }}</flux:subheading>
-                    <flux:subheading><strong>Difficulty: </strong> {{ Str::of($exam->difficulty)->ucfirst() }}</flux:subheading>
-                    <flux:subheading><strong>Type: </strong>{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}</flux:subheading>
+                    <flux:subheading><strong>Difficulty: </strong> {{ Str::of($exam->difficulty)->ucfirst() }}
+                    </flux:subheading>
+                    <flux:subheading><strong>Type: </strong>{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}
+                    </flux:subheading>
                 </div>
 
                 <flux:separator variant="subtle" />
@@ -97,12 +128,10 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                 </div>
             </flux:card>
         @empty
-            <flux:subheading>You don't have any exams yet!</flux:subheading>
+            <flux:subheading>You don't have any exams yet.</flux:subheading>
         @endforelse
     </div>
 
     <!-- Modal actions -->
-    <div>
-        <livewire:exams.create />
-    </div>
+    <livewire:exams.create />
 </div>

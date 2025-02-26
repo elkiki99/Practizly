@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('type');
             $table->date('date');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->string('status')->default('pending');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();

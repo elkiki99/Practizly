@@ -12,7 +12,7 @@ new class extends Component {
     public string $type = 'open_ended';
 
     #[Validate('required|string|in:easy,medium,hard')]
-    public string $difficulty = 'easy';
+    public string $difficulty = 'medium';
 
     #[Validate('required|in:short,medium,long')]
     public string $size = 'short';
@@ -26,7 +26,6 @@ new class extends Component {
     public $topics = [];
     public $subjects = [];
 
-    #[On('subjectCreated')]
     public function mount()
     {
         $this->subjects = Auth::user()->subjects()->latest()->get();

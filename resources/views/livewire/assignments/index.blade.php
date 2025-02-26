@@ -7,6 +7,7 @@ use App\Models\Assignment;
 
 new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class extends Component {
     public $assignments = [];
+    // public $viewType = 'grid';
 
     #[On('assignmentCreated')]
     public function mount()
@@ -24,14 +25,8 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
 }; ?>
 
 <div class="space-y-6">
-    <div class="space-y-3">
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard</flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Assignments</flux:breadcrumbs.item>
-        </flux:breadcrumbs>
-        <flux:heading size="xl">Assignments</flux:heading>
-        <flux:separator variant="subtle" />
-    </div>
+    <flux:heading level="1" size="xl">Assignments</flux:heading>
+    <flux:separator variant="subtle" />
 
     <!-- Panel navbar -->
     <div class="flex items-center justify-between">
@@ -57,9 +52,9 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
             </div>
         </div>
 
-        <flux:tabs wire:model='viewType' variant="segmented" class="w-auto! ml-2" size="sm">
+        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
+            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
             <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-            <flux:tab value="grid" icon="squares-2x2" icon-variant="outline" />
         </flux:tabs>
     </div>
 
@@ -78,12 +73,10 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
                 </div>
             </flux:card>
         @empty
-            <flux:subheading>You don't have any assignments yet!</flux:subheading>
+            <flux:subheading>You don't have any assignments yet.</flux:subheading>
         @endforelse
     </div>
 
     <!-- Modal actions -->
-    <div>
-        <livewire:assignments.create />
-    </div>
+    <livewire:assignments.create />
 </div>

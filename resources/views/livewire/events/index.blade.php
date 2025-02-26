@@ -10,25 +10,25 @@ use Carbon\Carbon;
 new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class extends Component {
     public $events;
     public $dates = [];
+    // public $viewType = 'grid';
 
-    #[On('eventCreated')]
     public function mount()
     {
-        $this->events = Auth::user()->events()->where('type', 'exam')->get();
+        $this->events = Auth::user()->events()->get();
+        $this->dates = $this->events->pluck('date')->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))->unique()->toArray();
+    }
+
+    #[On('eventCreated')]
+    public function updatedEvent()
+    {
+        $this->events = Auth::user()->events()->get();
         $this->dates = $this->events->pluck('date')->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))->unique()->toArray();
     }
 }; ?>
 
 <div class="space-y-6">
-    <div class="space-y-3">
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-            </flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Calendar</flux:breadcrumbs.item>
-        </flux:breadcrumbs>
-        <flux:heading size="xl">Calendar</flux:heading>
-        <flux:separator variant="subtle" />
-    </div>
+    <flux:heading level="1" size="xl">Calendar</flux:heading>
+    <flux:separator variant="subtle" />
 
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
@@ -55,9 +55,9 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
             </div>
         </div>
 
-        <flux:tabs wire:model='viewType' variant="segmented" class="w-auto! ml-2" size="sm">
+        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
+            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />    
             <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-            <flux:tab value="grid" icon="squares-2x2" icon-variant="outline" />
         </flux:tabs>
     </div>
 
@@ -111,7 +111,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                     </flux:table.row>
                 @empty
                     <flux:table.row>
-                        <flux:table.cell colspan="4">No events found.</flux:table.cell>
+                        <flux:table.cell colspan="4">You don't have any events yet.</flux:table.cell>
                     </flux:table.row>
                 @endforelse
             </flux:table.rows>
@@ -119,7 +119,5 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
     </div>
 
     <!-- Modal actions -->
-    <div>
-        <livewire:events.create />
-    </div>
+    <livewire:events.create />
 </div>

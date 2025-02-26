@@ -24,9 +24,6 @@ new class extends Component {
     public $topics = [];
     public $attachments = [];
 
-    #[On('subjectCreated')]
-    #[On('assignmentCreated')]
-    #[On('attachmentCreated')]
     public function mount()
     {
         $this->subjects = Auth::user()->subjects()->latest()->get();
@@ -39,7 +36,7 @@ new class extends Component {
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
 
-                $this->attachments = Topic::find($this->topic)->all_attachments;
+                $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
 
                 if ($this->attachments->count() === 1) {
                     $this->attachment = $this->attachments->first()->id;
@@ -71,8 +68,6 @@ new class extends Component {
     }
 
     #[On('topicCreated')]
-    #[On('assignmentCreated')]
-    #[On('attachmentCreated')]
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
@@ -82,13 +77,26 @@ new class extends Component {
         }
 
         if (!empty($topic)) {
-            $this->attachments = Topic::find($this->topic)->all_attachments;
+            $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
 
             if ($this->attachments->count() === 1) {
                 $this->attachment = $this->attachments->first()->id;
             } else {
                 $this->attachment = null;
             }
+        }
+    }
+
+    #[On('attachmentCreated')]
+    #[On('assignmentCreated')]
+    public function updateAttachment($attachment = null)
+    {
+        $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+
+        if ($this->attachments->count() === 1) {
+            $this->attachment = $this->attachments->first()->id;
+        } else {
+            $this->attachment = null;
         }
     }
 
@@ -103,8 +111,8 @@ new class extends Component {
             'title' => $topic->name . ' Summary',
             'content' => '',
             'size' => $this->size,
-            'attachment_id' => $this->attachment
-        ]);     
+            'attachment_id' => $this->attachment,
+        ]);
 
         $summary->update([
             'title' => $topic->name . ' Summary #' . $summary->id,

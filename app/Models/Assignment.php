@@ -30,4 +30,9 @@ class Assignment extends Model
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }
+
+    public function subject()
+    {
+        return $this->hasOneThrough(Subject::class, Topic::class, 'id', 'id', 'topic_id', 'subject_id');
+    }
 }

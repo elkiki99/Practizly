@@ -26,7 +26,6 @@ new class extends Component {
     public $topics = [];
     public $subjects = [];
 
-    #[On('subjectCreated')]
     public function mount()
     {
         $this->subjects = Auth::user()->subjects()->latest()->get();

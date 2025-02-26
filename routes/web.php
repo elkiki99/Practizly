@@ -3,7 +3,6 @@
 use Livewire\Volt\Volt;
 use App\Http\Controllers\HomePages;
 use App\Http\Controllers\AdminPanel;
-use App\Http\Controllers\UserDashboard;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsNotAdmin;
@@ -18,15 +17,15 @@ Route::get('clients', [HomePages::class, 'clients'])->name('clients');
 Route::get('pricing', [HomePages::class, 'pricing'])->name('pricing');
 
 Route::middleware([EnsureUserIsNotAdmin::class])->group(function () {
-    Route::get('{user:username}/dashboard', [UserDashboard::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
-    Route::get('{user:username}/profile', [UserDashboard::class, 'profile'])->middleware(['auth', 'verified'])->name('profile');
-    Volt::route('{user:username}/calendar', 'calendar.index')->name('calendar');
-    Volt::route('{user:username}/subjects', 'subjects.index')->name('subjects');
-    Route::get('{user:username}/settings', [UserDashboard::class, 'settings'])->middleware(['auth', 'verified'])->name('settings');
-    Route::get('{user:username}/summaries', [UserDashboard::class, 'summaries'])->middleware(['auth', 'verified'])->name('summaries');
-    Route::get('{user:username}/library', [UserDashboard::class, 'library'])->middleware(['auth', 'verified'])->name('library');
-    Volt::route('{user:username}/assignments', 'assignments.index')->name('assignments');
-    Volt::route('{user:username}/exams', 'exams.index')->name('exams');
+    Volt::route('{user:username}/dashboard', 'user.dashboard')->name('dashboard')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/profile', 'user.profile')->name('profile')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/calendar', 'events.index')->name('calendar')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/subjects', 'subjects.index')->name('subjects')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/settings', 'user.settings')->name('settings')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/summaries', 'summaries.index')->name('summaries')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/library', 'attachments.index')->name('library')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/assignments', 'assignments.index')->name('assignments')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/exams', 'exams.index')->name('exams')->middleware(['auth', 'verified']);
 });
 
 Route::middleware([EnsureUserIsAdmin::class])->group(function () {

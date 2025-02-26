@@ -6,28 +6,26 @@ use Livewire\Attributes\On;
 use App\Models\Subject;
 
 new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class extends Component {
-    public $viewType;
+    // public $viewType;
     public $subjects;
 
-    #[On('subjectCreated')]
     public function mount()
     {
-        $this->viewType = 'grid';
+        // $this->viewType = 'grid';
+        $this->subjects = Auth::user()->subjects()->latest()->get();
+    }
 
+    #[On('subjectCreated')]
+    public function updatedSubjects()
+    {
         $this->subjects = Auth::user()->subjects()->latest()->get();
     }
 }; ?>
 
 <div class="space-y-6">
-    <div class="space-y-3">
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard</flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Subjects</flux:breadcrumbs.item>
-        </flux:breadcrumbs>
-        <flux:heading size="xl">Subjects</flux:heading>
-        <flux:separator variant="subtle" />
-    </div>
-    
+    <flux:heading level="1" size="xl">Subjects</flux:heading>
+    <flux:separator variant="subtle" />
+
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
@@ -44,16 +42,15 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
 
             <div class="flex items-center justify-start gap-2 max-lg:hidden">
                 <flux:modal.trigger name="create-subject">
-                    <flux:badge as="button" variant="pill" color="zinc" icon="plus"
-                        size="lg">New subject
+                    <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New subject
                     </flux:badge>
                 </flux:modal.trigger>
             </div>
         </div>
 
-        <flux:tabs wire:model='viewType' variant="segmented" class="w-auto! ml-2" size="sm">
+        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
+            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
             <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-            <flux:tab value="grid" icon="squares-2x2" icon-variant="outline" />
         </flux:tabs>
     </div>
 
@@ -138,12 +135,10 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                 </div>
             </flux:card>
         @empty
-            <flux:subheading>You don't have any subjects yet</flux:subheading>
+            <flux:subheading>You don't have any subjects yet.</flux:subheading>
         @endforelse
     </div>
 
     <!-- Modal actions -->
-    <div>
-        <livewire:subjects.create />
-    </div>
+    <livewire:subjects.create />
 </div>

@@ -37,6 +37,11 @@ class Topic extends Model
         return $this->hasMany(Assignment::class);
     }
 
+    public function summaries()
+    {
+        return $this->hasMany(Summary::class);
+    }
+
     public function directAttachments()
     {
         return $this->morphMany(Attachment::class, 'attachable');

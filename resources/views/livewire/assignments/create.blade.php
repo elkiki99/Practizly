@@ -9,6 +9,7 @@ use Livewire\Attributes\On;
 use App\Models\Assignment;
 use App\Models\Subject;
 use App\Models\Topic;
+use App\Models\Event;
 
 new class extends Component {
     use WithFileUploads;
@@ -37,10 +38,11 @@ new class extends Component {
     #[Validate('required|exists:subjects,id')]
     public $subject;
 
+    public $makeEvent = true;
+
     public $subjects = [];
     public $topics = [];
 
-    #[On('subjectCreated')]
     public function mount()
     {
         $this->subjects = Auth::user()->subjects()->latest()->get();
@@ -111,7 +113,18 @@ new class extends Component {
             }
         }
 
-        //Create new event
+        // Create assignment event
+        if ($this->makeEvent) {
+            Event::create([
+                'name' => $this->title,
+                'type' => 'assignment',
+                'date' => $this->due_date,
+                'status' => $this->status,
+                'user_id' => Auth::id(),
+            ]);
+
+            $this->dispatch('eventCreated');
+        }
 
         $this->reset(['title', 'description', 'guidelines', 'attachments', 'due_date']);
 
@@ -124,7 +137,8 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createAssignment">
-    <flux:modal variant="flyout" name="create-assignment" class="space-y-6 w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
+    <flux:modal variant="flyout" name="create-assignment" class="space-y-6 w-96" x-data="{ createTopic: false }"
+        x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New assignment</flux:heading>
             <flux:subheading>Create a new assignment.</flux:subheading>
@@ -142,7 +156,7 @@ new class extends Component {
                 </flux:tooltip>
             </div>
             <flux:input required wire:model="title" placeholder="Calculate quarterly revenue" autofocus
-            autocomplete="name" />
+                autocomplete="name" />
         </flux:field>
 
         <flux:input required wire:model="description" label="Assignment description"
@@ -195,6 +209,9 @@ new class extends Component {
             <flux:radio value="pending" icon="clock" label="Pending" />
             <flux:radio value="completed" icon="document-check" label="Completed" />
         </flux:radio.group>
+
+        <flux:switch label="Make calendar event" wire:model.live="makeEvent" />
+
 
         <flux:input type="file" wire:model="attachments" label="Assignment attachments" multiple />
 
