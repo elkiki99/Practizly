@@ -21,8 +21,8 @@ class Subject extends Model
         'name',
         'description', 
         'color', 
-        'goal', 
-        'completion_percentage', 
+        // 'goal', 
+        // 'completion_percentage', 
         'is_favorite'
     ];
 

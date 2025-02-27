@@ -66,7 +66,7 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
         </flux:tabs>
     </div>
 
-    <div class="grid grid-cols-3 gap-6 sm:grid-cols-4 lg:grid-cols-6">
+    <div class="grid grid-cols-1    ">
         @forelse($attachments as $attachment)
             <flux:card>
                 <div class="space-y-6">
@@ -80,6 +80,7 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
                     </div>
                 </div>
             </flux:card>
+            <iframe src="{{ asset('storage/' . $attachment->file_path) }}" width="100%" height="600px"></iframe>
         @empty
             <flux:subheading>You don't have any attachments yet.</flux:subheading>
         @endforelse

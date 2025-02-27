@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('description')->nullable();
-            $table->integer('order')->nullable();
-            $table->string('difficulty')->nullable();
             $table->timestamps();
         });
     }

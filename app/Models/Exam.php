@@ -17,6 +17,7 @@ class Exam extends Model
         'type',
         'size',
         'difficulty',
+        'attachment_id',
     ];
 
     public function subject()
@@ -27,5 +28,10 @@ class Exam extends Model
     public function topics()
     {
         return $this->belongsToMany(Topic::class);
+    }
+    
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 }

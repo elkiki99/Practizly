@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\Validate;
 use Livewire\Attributes\On;
+use App\Models\Attachment;
 use App\Models\Subject;
 use App\Models\Topic;
 use App\Models\Exam;
@@ -23,8 +24,12 @@ new class extends Component {
     #[Validate('required|exists:subjects,id')]
     public $subject;
 
+    #[Validate('required|exists:attachments,id')]
+    public $attachment;
+
     public $topics = [];
     public $subjects = [];
+    public $attachments = [];
 
     public function mount()
     {
@@ -37,6 +42,14 @@ new class extends Component {
 
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
+
+                $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+
+                if ($this->attachments->count() === 1) {
+                    $this->attachment = $this->attachments->first()->id;
+                } else {
+                    $this->attachment = null;
+                }
             }
         }
     }
@@ -69,6 +82,42 @@ new class extends Component {
         if ($this->topics->count() === 1) {
             $this->topic = $this->topics->first()->id;
         }
+
+        // if (!empty($topic)) {
+        //     $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+
+        //     if ($this->attachments->count() === 1) {
+        //         $this->attachment = $this->attachments->first()->id;
+        //     } else {
+        //         $this->attachment = null;
+        //     }
+        // }
+        if (!empty($this->topic)) {
+            // Si topic es un array, obtenemos los attachments de todos los topics
+            $topics = Topic::whereIn('id', (array) $this->topic)->get();
+
+            // Unimos todos los attachments en una colección
+            $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
+
+            if ($this->attachments->count() === 1) {
+                $this->attachment = $this->attachments->first()->id;
+            } else {
+                $this->attachment = null;
+            }
+        }
+    }
+
+    #[On('attachmentCreated')]
+    #[On('assignmentCreated')]
+    public function updateAttachment($attachment = null)
+    {
+        $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+
+        if ($this->attachments->count() === 1) {
+            $this->attachment = $this->attachments->first()->id;
+        } else {
+            $this->attachment = null;
+        }
     }
 
     public function createExam()
@@ -83,6 +132,7 @@ new class extends Component {
             'type' => $this->type,
             'difficulty' => $this->difficulty,
             'size' => $this->size,
+            'attachment_id' => $this->attachment,
         ]);
 
         $exam->update([
@@ -91,7 +141,7 @@ new class extends Component {
 
         $exam->topics()->sync($this->topic);
 
-        // $this->reset();
+        $this->reset('attachment_id');
 
         $this->dispatch('examCreated');
 
@@ -102,7 +152,9 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createExam">
-    <flux:modal variant="flyout" name="create-exam" class="w-[90%] space-y-6 md:w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
+    <flux:modal variant="flyout" name="create-exam" class="w-[90%] space-y-6 md:w-96" x-data="{ createTopic: false, createAttachment: false }"
+        x-init="window.addEventListener('topicCreated', () => { createTopic = false });
+        window.addEventListener('attachmentCreated', () => { createAttachment = false });">
         <div>
             <flux:heading size="lg">New exam prep</flux:heading>
             <flux:subheading>Generate a new AI exam.</flux:subheading>
@@ -123,11 +175,12 @@ new class extends Component {
             <div class="flex items-center justify-between mb-2">
                 <flux:label>Exam topic</flux:label>
                 <flux:button as="link" size="xs" variant="subtle" icon-trailing="plus"
-                    x-on:click="createTopic = true">New topic</flux:button>
+                    x-on:click="createTopic = true">
+                    New topic</flux:button>
             </div>
 
             <flux:select required multiple searchable variant="listbox" selected-suffix="{{ __('topics selected') }}"
-                wire:model="topic" placeholder="Select topic">
+                wire:model.live="topic" placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>
@@ -141,6 +194,29 @@ new class extends Component {
 
         @if ($subject)
             <livewire:exams.topics.create :subject_id="$subject" />
+        @endif
+
+        <!-- Attachment -->
+        <flux:field>
+            <div class="flex items-center justify-between mb-2">
+                <flux:label>Exam attachment</flux:label>
+                <flux:button as="link" size="xs" variant="subtle" icon-trailing="plus"
+                    x-on:click="createAttachment = true">
+                    New attachment</flux:button>
+            </div>
+
+            <flux:select required searchable variant="listbox" wire:model="attachment" placeholder="Select attachment">
+                @forelse($attachments as $attachment)
+                    <flux:select.option value="{{ $attachment->id }}">{{ $attachment->file_name }}
+                    </flux:select.option>
+                @empty
+                    <flux:select.option disabled>No attachments found</flux:select.option>
+                @endforelse
+            </flux:select>
+        </flux:field>
+
+        @if ($this->topic)
+            <livewire:exams.attachments.create :topic_id="$this->topic" />
         @endif
 
         <!-- Difficulty -->
