@@ -27,7 +27,9 @@ new class extends Component {
     #[Validate('required|exists:attachments,id')]
     public $attachment;
 
+    // #[Validate(['topics.*' => 'required|exists:topics,id'])]
     public $topics = [];
+
     public $subjects = [];
     public $attachments = [];
 
@@ -43,7 +45,14 @@ new class extends Component {
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
 
-                $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+                // $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+
+                // if ($this->attachments->count() === 1) {
+                //     $this->attachment = $this->attachments->first()->id;
+                // } else {
+                //     $this->attachment = null;
+                // }
+                $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
 
                 if ($this->attachments->count() === 1) {
                     $this->attachment = $this->attachments->first()->id;
@@ -93,10 +102,7 @@ new class extends Component {
         //     }
         // }
         if (!empty($this->topic)) {
-            // Si topic es un array, obtenemos los attachments de todos los topics
             $topics = Topic::whereIn('id', (array) $this->topic)->get();
-
-            // Unimos todos los attachments en una colección
             $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
 
             if ($this->attachments->count() === 1) {
@@ -111,7 +117,16 @@ new class extends Component {
     #[On('assignmentCreated')]
     public function updateAttachment($attachment = null)
     {
-        $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+        // $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+
+        // if ($this->attachments->count() === 1) {
+        //     $this->attachment = $this->attachments->first()->id;
+        // } else {
+        //     $this->attachment = null;
+        // }
+        $topics = Topic::whereIn('id', (array) $this->topic)->get();
+
+        $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
 
         if ($this->attachments->count() === 1) {
             $this->attachment = $this->attachments->first()->id;
@@ -122,6 +137,8 @@ new class extends Component {
 
     public function createExam()
     {
+        // dd($this->all());
+
         $this->validate();
 
         $subject = Subject::find($this->subject);
@@ -213,6 +230,8 @@ new class extends Component {
                     <flux:select.option disabled>No attachments found</flux:select.option>
                 @endforelse
             </flux:select>
+
+            <flux:error name="attachment" />
         </flux:field>
 
         @if ($this->topic)

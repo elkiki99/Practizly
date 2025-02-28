@@ -28,7 +28,8 @@ new class extends Component {
     {
         $this->validate();
 
-        $topic = Topic::find($this->topic_id);
+        $topic = Topic::where('id', $this->topic_id)->first();
+        // dd($topic);
 
         $fileName = Str::slug("{$topic->name} {$topic->subject->name} attachment", '-');
         $filePath = $this->attachment->storeAs('attachments', "{$fileName}.{$this->attachment->getClientOriginalExtension()}", 'public');
