@@ -13,7 +13,7 @@ new class extends Component {
     use WithFileUploads;
 
     #[Validate('required|file|mimes:jpg,jpeg,png,webp,doc,docx,pdf|max:10240')]
-    public $attachment;
+    public $file;
 
     #[Validate('required|exists:topics,id')]
     #[Reactive]
@@ -26,13 +26,14 @@ new class extends Component {
 
     public function createAttachment()
     {
+        dd($this->all());
+
         $this->validate();
 
         $topic = Topic::where('id', $this->topic_id)->first();
-        // dd($topic);
 
-        $fileName = Str::slug("{$topic->name} {$topic->subject->name} attachment", '-');
-        $filePath = $this->attachment->storeAs('attachments', "{$fileName}.{$this->attachment->getClientOriginalExtension()}", 'public');
+        $fileName = Str::slug("{$topic->name} {$topic->subject->name} attachment-for-exam", '-');
+        $filePath = $this->file->storeAs('attachments', "{$fileName}.{$this->file->getClientOriginalExtension()}", 'public');
 
         Attachment::create([
             'file_name' => $fileName,
@@ -41,22 +42,32 @@ new class extends Component {
             'attachable_id' => $topic->id,
         ]);
 
-        $this->reset(['attachment']);
+        if ($this->file) {
+            $this->reset(['file']);
+            
+            $this->dispatch('attachmentCreated');
+            
+            Flux::toast(heading: 'Attachment created', text: 'Your attachment was created successfully', variant: 'success');
+            
+            $this->modal('create-attachment')->close();
+        } else {
+            $this->reset(['file']);
 
-        $this->dispatch('attachmentCreated');
-
-        Flux::toast(heading: 'Attachment created', text: 'Your attachment was created successfully', variant: 'success');
+            Flux::toast(heading: 'Attachment error', text: 'There was an error creating your attachment', variant: 'warning');
+            
+            $this->modal('create-attachment')->close();
+        }
     }
 }; ?>
 
 <flux:field x-show="createAttachment">
     <flux:label class="mb-2">New attachment</flux:label>
     <div class="flex items-center gap-2 mb-3">
-        <flux:input type="file" wire:model="attachment" required></flux:input>
+        <flux:input type="file" wire:model="file"></flux:input>
 
         <flux:button class="px-2" variant="ghost" wire:click.prevent='createAttachment' icon="plus">
         </flux:button>
     </div>
 
-    <flux:error name="attachment" />
+    <flux:error name="file" />
 </flux:field>

@@ -17,7 +17,6 @@ class Exam extends Model
         'type',
         'size',
         'difficulty',
-        'attachment_id',
     ];
 
     public function subject()
@@ -29,9 +28,9 @@ class Exam extends Model
     {
         return $this->belongsToMany(Topic::class);
     }
-    
+
     public function attachments()
     {
-        return $this->morphMany(Attachment::class, 'attachable');
+        return $this->belongsToMany(Attachment::class, 'exam_attachment')->withTimestamps();
     }
 }

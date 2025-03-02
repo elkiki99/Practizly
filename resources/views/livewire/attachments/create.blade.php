@@ -89,13 +89,21 @@ new class extends Component {
             ]);
         }
 
-        $this->reset(['name', 'attachments']);
+        if ($this->attachments) {
+            $this->reset(['name', 'attachments']);
+            
+            $this->dispatch('attachmentCreated');
+            
+            Flux::toast(heading: 'Attachment created', text: 'Your attachment was created successfully', variant: 'success');
+            
+            $this->modal('create-attachment')->close();
+        } else {
+            $this->reset(['name', 'attachments']);
 
-        $this->dispatch('attachmentCreated');
-
-        Flux::toast(heading: 'Attachment created', text: 'Your attachment was created successfully', variant: 'success');
-
-        $this->modal('create-attachment')->close();
+            Flux::toast(heading: 'Attachment error', text: 'There was an error creating your attachment', variant: 'warning');
+            
+            $this->modal('create-attachment')->close();
+        }
     }
 }; ?>
 
@@ -117,7 +125,7 @@ new class extends Component {
                     </flux:tooltip.content>
                 </flux:tooltip>
             </div>
-            <flux:input wire:model='name' placeholder="Math algebra polynomials attachment" autofocus required
+            <flux:input wire:model='name' placeholder="Math algebra polynomials" autofocus required
                 autocomplete="name" />
         </flux:field>
 

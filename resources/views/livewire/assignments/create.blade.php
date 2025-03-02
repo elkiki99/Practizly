@@ -111,6 +111,8 @@ new class extends Component {
                     'file_path' => $filePath,
                 ]);
             }
+
+            $this->dispatch('attachmentCreated');
         }
 
         // Create assignment event

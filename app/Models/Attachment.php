@@ -21,4 +21,9 @@ class Attachment extends Model
     {
         return $this->morphTo();
     }
+
+    public function exams()
+    {
+        return $this->belongsToMany(Exam::class, 'exam_attachment')->withTimestamps();
+    }
 }

@@ -88,7 +88,6 @@ new class extends Component {
     }
 
     #[On('attachmentCreated')]
-    #[On('assignmentCreated')]
     public function updateAttachment($attachment = null)
     {
         $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();

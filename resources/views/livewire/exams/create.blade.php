@@ -9,6 +9,15 @@ use App\Models\Topic;
 use App\Models\Exam;
 
 new class extends Component {
+    #[Validate('required|exists:subjects,id')]
+    public $subject;
+
+    #[Validate('required|exists:topics,id')]
+    public $topic;
+
+    #[Validate('required|exists:attachments,id')]
+    public $attachment = null;
+
     #[Validate('required|string|in:open_ended,multiple_choice,true_or_false,quiz')]
     public string $type = 'open_ended';
 
@@ -18,20 +27,9 @@ new class extends Component {
     #[Validate('required|in:short,medium,long')]
     public string $size = 'short';
 
-    #[Validate('required|exists:topics,id')]
-    public $topic;
-
-    #[Validate('required|exists:subjects,id')]
-    public $subject;
-
-    #[Validate('required|exists:attachments,id')]
-    public $attachment;
-
-    // #[Validate(['topics.*' => 'required|exists:topics,id'])]
-    public $topics = [];
-
-    public $subjects = [];
     public $attachments = [];
+    public $topics = [];
+    public $subjects = [];
 
     public function mount()
     {
@@ -45,14 +43,7 @@ new class extends Component {
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
 
-                // $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
-
-                // if ($this->attachments->count() === 1) {
-                //     $this->attachment = $this->attachments->first()->id;
-                // } else {
-                //     $this->attachment = null;
-                // }
-                $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
+                $this->attachments = $this->topics->flatMap->all_attachments->unique() ?? collect();
 
                 if ($this->attachments->count() === 1) {
                     $this->attachment = $this->attachments->first()->id;
@@ -92,15 +83,6 @@ new class extends Component {
             $this->topic = $this->topics->first()->id;
         }
 
-        // if (!empty($topic)) {
-        //     $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
-
-        //     if ($this->attachments->count() === 1) {
-        //         $this->attachment = $this->attachments->first()->id;
-        //     } else {
-        //         $this->attachment = null;
-        //     }
-        // }
         if (!empty($this->topic)) {
             $topics = Topic::whereIn('id', (array) $this->topic)->get();
             $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
@@ -114,16 +96,8 @@ new class extends Component {
     }
 
     #[On('attachmentCreated')]
-    #[On('assignmentCreated')]
     public function updateAttachment($attachment = null)
     {
-        // $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
-
-        // if ($this->attachments->count() === 1) {
-        //     $this->attachment = $this->attachments->first()->id;
-        // } else {
-        //     $this->attachment = null;
-        // }
         $topics = Topic::whereIn('id', (array) $this->topic)->get();
 
         $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
@@ -137,8 +111,6 @@ new class extends Component {
 
     public function createExam()
     {
-        // dd($this->all());
-
         $this->validate();
 
         $subject = Subject::find($this->subject);
@@ -149,8 +121,11 @@ new class extends Component {
             'type' => $this->type,
             'difficulty' => $this->difficulty,
             'size' => $this->size,
-            'attachment_id' => $this->attachment,
         ]);
+
+        foreach ($this->attachment as $attachment) {
+            $exam->attachments()->attach($attachment);
+        }
 
         $exam->update([
             'title' => $subject->name . ' Test #' . $exam->id . ' (' . ucwords(str_replace('_', ' ', $exam->type)) . ')',
@@ -158,7 +133,7 @@ new class extends Component {
 
         $exam->topics()->sync($this->topic);
 
-        $this->reset('attachment_id');
+        $this->reset('attachment');
 
         $this->dispatch('examCreated');
 
@@ -222,7 +197,8 @@ new class extends Component {
                     New attachment</flux:button>
             </div>
 
-            <flux:select required searchable variant="listbox" wire:model="attachment" placeholder="Select attachment">
+            <flux:select multiple required searchable selected-suffix="{{ __('attachments selected') }}"
+                variant="listbox" wire:model="attachment" placeholder="Select attachment">
                 @forelse($attachments as $attachment)
                     <flux:select.option value="{{ $attachment->id }}">{{ $attachment->file_name }}
                     </flux:select.option>
@@ -234,7 +210,7 @@ new class extends Component {
             <flux:error name="attachment" />
         </flux:field>
 
-        @if ($this->topic)
+        @if (is_countable($this->topic) && count($this->topic) === 1)
             <livewire:exams.attachments.create :topic_id="$this->topic" />
         @endif
 
