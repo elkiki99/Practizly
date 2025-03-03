@@ -63,7 +63,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
 
     <!-- Calendar -->
     <div>
-        <flux:calendar static fixed-weeks multiple wire:model='dates' />
+        <flux:calendar min="today" static fixed-weeks multiple wire:model='dates' />
     </div>
 
     <div class="space-y-6 ">

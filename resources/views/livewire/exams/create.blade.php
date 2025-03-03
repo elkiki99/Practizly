@@ -4,11 +4,14 @@ use Livewire\Volt\Component;
 use Livewire\Attributes\Validate;
 use Livewire\Attributes\On;
 use App\Models\Attachment;
+use Livewire\WithFileUploads;
 use App\Models\Subject;
 use App\Models\Topic;
 use App\Models\Exam;
 
 new class extends Component {
+    use WithFileUploads;
+
     #[Validate('required|exists:subjects,id')]
     public $subject;
 

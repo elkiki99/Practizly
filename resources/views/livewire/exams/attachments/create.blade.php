@@ -26,8 +26,6 @@ new class extends Component {
 
     public function createAttachment()
     {
-        dd($this->all());
-
         $this->validate();
 
         $topic = Topic::where('id', $this->topic_id)->first();
