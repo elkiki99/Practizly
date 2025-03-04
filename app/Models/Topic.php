@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Exam;
+use App\Models\Event;
 use App\Models\Subject;
 use App\Models\Assignment;
 use App\Models\Attachment;
@@ -17,8 +18,13 @@ class Topic extends Model
     protected $fillable = [
         'subject_id', 
         'name', 
-        'description',
+        // 'description',
     ];
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
 
     public function subject()
     {

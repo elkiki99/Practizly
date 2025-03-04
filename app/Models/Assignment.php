@@ -13,7 +13,7 @@ class Assignment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'topic_id', 
+        'topic_id',
         'title',
         'description',
         'guidelines',

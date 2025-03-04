@@ -1,24 +1,27 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title};
-use Livewire\Attributes\On;
+use Livewire\Attributes\{Layout, Title, On};
+use Illuminate\Support\Facades\Auth;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 use App\Models\Subject;
 
 new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class extends Component {
-    // public $viewType;
-    public $subjects;
+    use WithoutUrlPagination;
+    use WithPagination;
 
-    public function mount()
+    public function with()
     {
-        // $this->viewType = 'grid';
-        $this->subjects = Auth::user()->subjects()->latest()->get();
+        return [
+            'subjects' => Auth::user()->subjects()->latest()->paginate(6),
+        ];
     }
 
     #[On('subjectCreated')]
     public function updatedSubjects()
     {
-        $this->subjects = Auth::user()->subjects()->latest()->get();
+        $this->dispatch('$refresh');
     }
 }; ?>
 
@@ -54,11 +57,11 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
         </flux:tabs>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @forelse($subjects as $subject)
             <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6">
                 <!-- Subject heading -->
-                <div class="flex-1">
+                <div>
                     <div class="flex items-center">
                         <flux:heading size="lg">{{ $subject->name }}</flux:heading>
                         <!-- Indicador de color -->
@@ -70,12 +73,13 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                     </div>
                 </div>
 
-                {{-- <flux:separator variant="subtle" /> --}}
-
                 <!-- Last exams -->
-                <div class="flex-1">
-                    <flux:heading>Recent tests</flux:heading>
-                    <ul>
+                <div>
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.academic-cap variant="micro" />
+                        <flux:heading>Recent tests</flux:heading>
+                    </div>
+                    <ul class="ml-7">
                         @forelse ($subject->exams()->latest()->take(2)->get() as $exam)
                             <li class="flex items-center justify-between">
                                 <flux:subheading>{{ $exam->title }}</flux:subheading>
@@ -97,9 +101,12 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                 </div>
 
                 <!-- Last assignments -->
-                <div class="flex-1">
-                    <flux:heading>Recent assignments</flux:heading>
-                    <ul>
+                <div>
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.document-text variant="micro" />
+                        <flux:heading>Recent assignments</flux:heading>
+                    </div>
+                    <ul class="ml-7">
                         @forelse ($subject->assignments()->latest()->take(2)->get() as $assignment)
                             <li class="flex items-center justify-between">
                                 <flux:subheading>{{ $assignment->title }}</flux:subheading>
@@ -120,12 +127,43 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                     </ul>
                 </div>
 
-                <flux:separator variant="subtle" />
+                 <!-- Last events -->
+                 <div>
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.calendar variant="micro" />
+                        <flux:heading>Next events</flux:heading>
+                    </div>
+                    <ul class="ml-7">
+                        @forelse ($subject->events()->take(2)->get() as $event)
+                            <li class="flex items-center justify-between">
+                                <flux:subheading>{{ $event->name }}</flux:subheading>
+                                <flux:tooltip content="Finish event" position="left">
+                                    <flux:button size="sm" as="link" variant="ghost" href="#"
+                                        icon="chevron-right" />
+                                </flux:tooltip>
+                            </li>
+                        @empty
+                            <li class="flex items-center justify-between">
+                                <flux:subheading>No events yet</flux:subheading>
+                                <flux:tooltip content="New event" position="left">
+                                    <flux:button size="sm" as="link" variant="ghost" href="#"
+                                        icon="plus" />
+                                </flux:tooltip>
+                            </li>
+                        @endforelse
+                    </ul>
+                </div>
 
                 <!-- Topics list -->
-                <div class="flex-1">
-                    <flux:heading class="mb-2">Topics</flux:heading>
-                    <div class="flex flex-wrap gap-2">
+                <div class="mt-auto">
+                    <flux:separator variant="subtle" class="mb-6" />
+
+                    <div class="flex mb-2 items-center gap-3">
+                        <flux:icon.tag variant="micro" />
+                        <flux:heading>Topics</flux:heading>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 ml-7">
                         @forelse($subject->topics as $topic)
                             <flux:badge size="sm">{{ $topic->name }}</flux:badge>
                         @empty
@@ -138,6 +176,9 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
             <flux:subheading>You don't have any subjects yet.</flux:subheading>
         @endforelse
     </div>
+
+    <!-- Paginator -->
+    <flux:table :paginate="$subjects" />
 
     <!-- Modal actions -->
     <livewire:subjects.create />

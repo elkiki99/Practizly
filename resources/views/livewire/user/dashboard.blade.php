@@ -10,21 +10,40 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
 
     public function mount()
     {
-        $this->events = Auth::user()->events()->take(3)->get();
+        $this->events = Auth::user()
+            ->subjects()
+            ->with('topics.events')
+            ->orderBy('date', 'asc')
+            ->take(3)
+            ->get()
+            ->flatMap(function ($subject) {
+                return $subject->topics->flatMap(function ($topic) {
+                    return $topic->events->sortByDesc('date');
+                });
+            });
     }
 
     #[On('eventCreated')]
     public function updatedEvents()
     {
-        $this->events = Auth::user()->events()->take(3)->get();
+        $this->events = Auth::user()
+            ->subjects()
+            ->with('topics.events')
+            ->orderBy('date', 'asc')
+            ->take(3)
+            ->get()
+            ->flatMap(function ($subject) {
+                return $subject->topics->flatMap(function ($topic) {
+                    return $topic->events->sortByDesc('date');
+                });
+            });
     }
 }; ?>
 
 <div class="space-y-6">
-    {{-- <div> --}}
     <flux:heading class="mb-6" size="xl">Welcome back {{ Auth::user()->name }}</flux:heading>
+
     <flux:separator variant="subtle" />
-    {{-- </div> --}}
 
     <div class="space-y-12">
         <!-- Actions (overview) -->
@@ -76,8 +95,8 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
             <div class="">
                 <div class="flex items-center gap-2 mb-2">
                     <flux:heading level="2">Next events</flux:heading>
-                    <flux:button as="link" href="/{{ Auth::user()->username }}/calendar" wire:navigate icon-trailing="chevron-right"
-                        size="xs" variant="ghost" />
+                    <flux:button as="link" href="/{{ Auth::user()->username }}/calendar" wire:navigate
+                        icon-trailing="chevron-right" size="xs" variant="ghost" />
                 </div>
 
                 <flux:subheading>Check out your upcoming events.</flux:subheading>
@@ -129,188 +148,6 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                     @endforelse
                 </flux:table.rows>
             </flux:table>
-        </div>
-
-        <!-- Uploaded files -->
-        <div class="space-y-6">
-            <div class="">
-                <div class="flex items-center gap-2 mb-2">
-                    <flux:heading level="2">Last uploaded files</flux:heading>
-                    <flux:button as="link" href="/{{ Auth::user()->username }}/library" wire:navigate icon-trailing="chevron-right"
-                        size="xs" variant="ghost" />
-                </div>
-
-                <flux:subheading>Check out latest file uploads.</flux:subheading>
-            </div>
         </div>
     </div>
 </div>
-
-{{-- 
-<div class="space-y-6">
-    <flux:heading level="1" size="xl">Welcome back {{ Auth::user()->name }}</flux:heading>
-    <flux:separator variant="subtle" />
-    <div class="space-y-12">
-        <!-- Actions (overview) -->
-        <div class="space-y-6">
-            <div class="">
-                <flux:heading level="2">Overview</flux:heading>
-                <flux:subheading>Let's get you organized!</flux:subheading>
-            </div>
-
-            <!-- Important links (Subjects, Exams, Assignments, Calendar, Library, Summaries) -->
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <!-- New subject -->
-                <flux:card as="link" wire:navigate href="/{{ Auth::user()->username }}/subjects"
-                    class="flex gap-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:cursor-pointer">
-                    <flux:icon.book-open variant="mini" />
-                    <div class="flex flex-col items-start">
-                        <div class="flex items-center gap-2 mb-2">
-                            <flux:heading level="2">New subject</flux:heading>
-                            <flux:icon.chevron-right variant="mini" />
-                        </div>
-                        <flux:subheading>Create and manage study subjects.</flux:subheading>
-                    </div>
-                </flux:card>
-
-                <!-- New exam -->
-                <flux:card as="link" wire:navigate href="/{{ Auth::user()->username }}/exams"
-                    class="flex gap-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:cursor-pointer">
-                    <flux:icon.academic-cap variant="mini" />
-                    <div class="flex flex-col items-start">
-                        <div class="flex items-center gap-2 mb-2">
-                            <flux:heading level="2">New exam</flux:heading>
-                            <flux:icon.chevron-right variant="mini" />
-                        </div>
-                        <flux:subheading>Generate AI-powered practice tests.</flux:subheading>
-                    </div>
-                </flux:card>
-
-                <!-- New event -->
-                <flux:card as="link" wire:navigate href="/{{ Auth::user()->username }}/events"
-                    class="flex gap-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:cursor-pointer">
-                    <flux:icon.calendar variant="mini" />
-                    <div class="flex flex-col items-start">
-                        <div class="flex items-center gap-2 mb-2">
-                            <flux:heading level="2">New event</flux:heading>
-                            <flux:icon.chevron-right variant="mini" />
-                        </div>
-                        <flux:subheading>Create a new calendar event.</flux:subheading>
-                    </div>
-                </flux:card>
-
-                <!-- New assignment -->
-                <flux:card as="link" wire:navigate href="/{{ Auth::user()->username }}/assignments"
-                    class="flex gap-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:cursor-pointer">
-                    <flux:icon.document-text variant="mini" />
-                    <div class="flex flex-col items-start">
-                        <div class="flex items-center gap-2 mb-2">
-                            <flux:heading level="2">New assignment</flux:heading>
-                            <flux:icon.chevron-right variant="mini" />
-                        </div>
-                        <flux:subheading>Create and track your tasks.</flux:subheading>
-                    </div>
-                </flux:card>
-
-                <!-- New summary -->
-                <flux:card as="link" wire:navigate href="/{{ Auth::user()->username }}/summaries"
-                    class="flex gap-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:cursor-pointer">
-                    <flux:icon.light-bulb variant="mini" />
-                    <div class="flex flex-col items-start">
-                        <div class="flex items-center gap-2 mb-2">
-                            <flux:heading level="2">New summary</flux:heading>
-                            <flux:icon.chevron-right variant="mini" />
-                        </div>
-                        <flux:subheading>Save and organize study notes.</flux:subheading>
-                    </div>
-                </flux:card>
-
-                <!-- New attachment -->
-                <flux:card as="link" wire:navigate href="/{{ Auth::user()->username }}/library"
-                    class="flex gap-4 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:cursor-pointer">
-                    <flux:icon.paper-clip variant="mini" />
-                    <div class="flex flex-col items-start">
-                        <div class="flex items-center gap-2 mb-2">
-                            <flux:heading level="2">New attachment</flux:heading>
-                            <flux:icon.chevron-right variant="mini" />
-                        </div>
-                        <flux:subheading>Save and organize study notes.</flux:subheading>
-                    </div>
-                </flux:card>
-            </div>
-        </div>
-
-        <!-- Next events (exams, assignments, etc.) -->
-        <div class="space-y-6">
-            <div class="">
-                <div class="flex items-center gap-2 mb-2">
-                    <flux:heading level="2">Next events</flux:heading>
-                    <flux:button as="link" href="/calendar" wire:navigate icon-trailing="chevron-right"
-                        size="xs" variant="ghost" />
-                </div>
-
-                <flux:subheading>Check out your upcoming events.</flux:subheading>
-            </div>
-
-            <flux:table>
-                <flux:table.columns>
-                    <flux:table.column sortable>Event</flux:table.column>
-                    <flux:table.column sortable>Date</flux:table.column>
-                    <flux:table.column sortable>Status</flux:table.column>
-                </flux:table.columns>
-
-                <flux:table.rows>
-                    @forelse($events as $event)
-                        <flux:table.row>
-                            <flux:table.cell class="flex items-center gap-3 whitespace-nowrap">
-                                @if ($event->type === 'test')
-                                    <flux:icon.document-text />
-                                @elseif($event->type === 'exam')
-                                    <flux:icon.book-open />
-                                @elseif($event->type === 'evaluation')
-                                    <flux:icon.clipboard-document-check />
-                                @elseif($event->type === 'oral_presentation')
-                                    <flux:icon.microphone />
-                                @elseif($event->type === 'assignment')
-                                    <flux:icon.pencil-square />
-                                @endif
-                                {{ Str::of($event->type)->ucfirst() }}
-                            </flux:table.cell>
-
-                            <flux:table.cell class="whitespace-nowrap">
-                                {{ Carbon::parse($event->date)->format('F j, Y') }}
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
-                            </flux:table.cell>
-
-                            <flux:table.cell>
-                                <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
-                                    inset="top bottom">
-                                </flux:button>
-                            </flux:table.cell>
-                        </flux:table.row>
-                    @empty
-                        <flux:table.row>
-                            <flux:table.cell colspan="4">You don't have any events yet.</flux:table.cell>
-                        </flux:table.row>
-                    @endforelse
-                </flux:table.rows>
-            </flux:table>
-        </div>
-
-        <!-- Uploaded files -->
-        <div class="space-y-6">
-            <div class="">
-                <div class="flex items-center gap-2 mb-2">
-                    <flux:heading level="2">Last uploaded files</flux:heading>
-                    <flux:button as="link" href="/library" wire:navigate icon-trailing="chevron-right"
-                        size="xs" variant="ghost" />
-                </div>
-
-                <flux:subheading>Check out latest file uploads.</flux:subheading>
-            </div>
-        </div>
-    </div>
-</div> --}}

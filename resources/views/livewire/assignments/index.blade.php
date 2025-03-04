@@ -1,26 +1,36 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title};
-use Livewire\Attributes\On;
+use Livewire\Attributes\{Layout, Title, On};
+use Illuminate\Support\Facades\Auth;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 use App\Models\Assignment;
 
 new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class extends Component {
-    public $assignments = [];
-    // public $viewType = 'grid';
+    use WithPagination;
+    use WithoutUrlPagination;
+
+    public function with()
+    {
+        return [
+            'assignments' => Auth::user()
+                ->subjects()
+                ->with('topics.assignments')
+                ->orderBy('due_date', 'asc')
+                ->get()
+                ->flatMap(function ($subject) {
+                    return $subject->topics->flatMap(function ($topic) {
+                        return $topic->assignments->sortByDesc('due_date');
+                    });
+                }),
+        ];
+    }
 
     #[On('assignmentCreated')]
-    public function mount()
+    public function updatedAssignments()
     {
-        $this->assignments = Auth::user()
-            ->subjects()
-            ->with('topics.assignments')
-            ->get()
-            ->flatMap(function ($subject) {
-                return $subject->topics->flatMap(function ($topic) {
-                    return $topic->assignments->sortByDesc('created_at');
-                });
-            });
+        $this->dispatch('$refresh');
     }
 }; ?>
 
@@ -69,6 +79,7 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
                     <div>
                         <flux:subheading>{{ $assignment->description }}</flux:subheading>
                         <flux:subheading>{{ $assignment->guidelines }}</flux:subheading>
+                        <flux:subheading>{{ $assignment->due_date }}</flux:subheading>
                     </div>
                 </div>
             </flux:card>

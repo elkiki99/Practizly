@@ -1,16 +1,26 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title};
+use Livewire\Attributes\{Layout, Title, On};
 use Illuminate\Support\Str;
-use Livewire\Attributes\On;
 use App\Models\Attachment;
 
 new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class extends Component {
     public $attachments = [];
 
-    #[On('attachmentCreated')]
+    public function with()
+    {
+        return [
+            'attachments' => $this->attachments,
+        ];
+    }
+
     public function mount()
+    {
+        $this->loadAttachments();
+    }
+
+    private function loadAttachments()
     {
         $subjectIds = Auth::user()->subjects()->pluck('id')->toArray();
 
@@ -20,13 +30,21 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
             });
         })
             ->latest()
-            ->get()
+            ->paginate(24)
             ->map(function ($attachment) {
                 $filePath = $attachment->file_path;
-                $attachment->isImage = Str::endsWith($filePath, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                $attachment->isPDF = Str::endsWith($filePath, 'pdf');
+                $extension = Str::lower(pathinfo($filePath, PATHINFO_EXTENSION));
+                $attachment->isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'webp']);
+                $attachment->isPDF = in_array($extension, ['pdf']);
+                $attachment->isDOCX = in_array($extension, ['docs', 'docx']);
                 return $attachment;
             });
+    }
+
+    #[On('attachmentCreated')]
+    public function updatedAttachments()
+    {
+        $this->loadAttachments();
     }
 }; ?>
 
@@ -42,7 +60,6 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
             <flux:select size="sm" class="">
                 <option selected>Subject</option>
                 <option>Topic</option>
-                {{-- <option>Exam</option> --}}
             </flux:select>
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
@@ -61,15 +78,22 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
             <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
         </flux:tabs>
     </div>
-    <div class="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-4 xl:grid-cols-5">
+
+    <div class="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8">
         @forelse($attachments as $attachment)
             <div
-                class="relative group w-[120px] h-[180px] sm:w-[150px] sm:h-[200px] md:w-[180px] md:h-[220px] lg:w-[200px] lg:h-[250px] overflow-hidden bg-gray-900/10 rounded-lg flex items-center justify-center">
+                class="relative group w-[100px] h-[130px] md:w-[110px] md:h-[140px] overflow-hidden bg-gray-900/10 rounded-lg flex items-center justify-center">
                 @if ($attachment->isImage)
                     <img src="{{ asset('storage/' . $attachment->file_path) }}" class="w-full h-full object-cover">
                 @elseif ($attachment->isPDF)
                     <iframe src="{{ asset('storage/' . $attachment->file_path) }}" scrolling="no"
                         class="w-full h-full"></iframe>
+                @elseif ($attachment->isDOCX)
+                    <a href="{{ asset('storage/' . $attachment->file_path) }}" download
+                        class="flex flex-col items-center justify-center gap-2">
+                        <flux:icon.document-arrow-down class="size-16" />
+                        <flux:subheading class="text-xs text-center">{{ $attachment->file_name }}</flux:subheading>
+                    </a>
                 @else
                     <p class="text-center text-xs text-gray-500">Archivo no soportado</p>
                 @endif
@@ -77,6 +101,11 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
         @empty
             <flux:subheading>You don't have any attachments yet.</flux:subheading>
         @endforelse
+    </div>
+    
+    <!-- Pagination Links -->
+    <div class="flex justify-center mt-4">
+        {{ $attachments->links() }} <!-- This will show the pagination links -->
     </div>
 
     <!-- Modal actions -->

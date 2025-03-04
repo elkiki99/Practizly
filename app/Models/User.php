@@ -66,11 +66,16 @@ class User extends Authenticatable // implements MustVerifyEmail
 
     public function events()
     {
-        return $this->hasMany(Event::class);
+        return $this->hasManyThrough(Event::class, Subject::class);
     }
 
     public function exams()
     {
         return $this->hasManyThrough(Exam::class, Subject::class);
+    }
+
+    public function assignments()
+    {
+        return $this->hasManyThrough(Assignment::class, Topic::class);
     }
 }

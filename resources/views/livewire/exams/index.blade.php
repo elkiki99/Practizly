@@ -1,25 +1,26 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title};
-use Livewire\Attributes\On;
+use Livewire\Attributes\{Layout, Title, On};
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use App\Models\Exam;
 
 new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends Component {
-    public $exams;
-    // public $viewType = 'grid';
+    use WithPagination, WithoutUrlPagination;
 
-    public function mount()
+    public function with()
     {
-        $this->exams = Auth::user()->exams()->latest()->get();
-        // $this->viewType = 'grid';
+        return [
+            'exams' => Auth::user()->exams()->latest()->paginate(6),
+        ];
     }
 
     #[On('examCreated')]
     public function updatedExams()
     {
-        $this->exams = Auth::user()->exams()->latest()->get();
+        $this->dispatch('$refresh');
     }
 }; ?>
 
@@ -30,14 +31,6 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-            {{-- <flux:subheading class="whitespace-nowrap">Filter by:</flux:subheading>
-
-            <flux:select size="sm" class="">
-                <option selected>Creation</option>
-                <option>Subject</option>
-                <option>Topic</option>
-            </flux:select> --}}
-
             <div class="flex items-center gap-2">
                 <flux:select variant="listbox" class="sm:max-w-fit">
                     <x-slot name="trigger">
@@ -65,7 +58,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                     <flux:select.option value="oldest">Oldest</flux:select.option>
                 </flux:select>
             </div>
-            
+
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
             <div class="flex items-center justify-start gap-2 max-lg:hidden">
@@ -82,7 +75,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
         </flux:tabs>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @forelse($exams as $exam)
             <flux:card class="space-y-6">
                 <!-- Exam heading -->
@@ -131,6 +124,9 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
             <flux:subheading>You don't have any exams yet.</flux:subheading>
         @endforelse
     </div>
+
+    <!-- Paginator -->
+    <flux:table :paginate="$exams" />
 
     <!-- Modal actions -->
     <livewire:exams.create />

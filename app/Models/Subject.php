@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use App\Models\User;
-use App\Models\Topic;
-use App\Models\Assignment;
-use App\Models\Attachment;
 use App\Models\Exam;
+use App\Models\Topic;
+use App\Models\Event;
+use App\Models\Assignment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 
 class Subject extends Model
 {
@@ -17,12 +16,10 @@ class Subject extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 
+        'user_id',
         'name',
-        'description', 
-        'color', 
-        // 'goal', 
-        // 'completion_percentage', 
+        'description',
+        'color',
         'is_favorite'
     ];
 
@@ -44,5 +41,10 @@ class Subject extends Model
     public function assignments()
     {
         return $this->hasManyThrough(Assignment::class, Topic::class);
+    }
+
+    public function events()
+    {
+        return $this->hasManyThrough(Event::class, Topic::class);
     }
 }

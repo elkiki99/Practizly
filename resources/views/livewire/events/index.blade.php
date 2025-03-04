@@ -1,28 +1,46 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title};
-use Livewire\Attributes\On;
+use Livewire\Attributes\{Layout, Title, On};
+use Illuminate\Support\Facades\Auth;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use App\Models\Event;
 use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class extends Component {
-    public $events;
-    public $dates = [];
-    // public $viewType = 'grid';
+    use WithPagination;
+    use WithoutUrlPagination;
 
-    public function mount()
-    {
-        $this->events = Auth::user()->events()->get();
-        $this->dates = $this->events->pluck('date')->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))->unique()->toArray();
-    }
+    // public $dates = [];
 
-    #[On('eventCreated')]
-    public function updatedEvent()
+    // public function mount()
+    // {
+    //     $this->loadDates();
+    // }
+
+    // #[On('eventCreated')]
+    // public function loadDates()
+    // {
+    //     $events = Auth::user()->events()->get();
+    //     $this->dates = $events->pluck('date')->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))->unique()->toArray();
+    // }
+
+    public function with()
     {
-        $this->events = Auth::user()->events()->get();
-        $this->dates = $this->events->pluck('date')->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))->unique()->toArray();
+        return [
+            'events' => Auth::user()
+                ->subjects()
+                ->with('topics.events')
+                ->orderBy('date', 'asc')
+                ->paginate(2),
+                // ->flatMap(function ($subject) {
+                //     return $subject->topics->flatMap(function ($topic) {
+                //         return $topic->events->sortByDesc('date');
+                //     });
+                // }),
+        ];
     }
 }; ?>
 
@@ -56,14 +74,14 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
         </div>
 
         <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
-            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />    
+            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
             <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
         </flux:tabs>
     </div>
 
     <!-- Calendar -->
     <div>
-        <flux:calendar min="today" static fixed-weeks multiple wire:model='dates' />
+        {{-- <flux:calendar min="today" static fixed-weeks multiple wire:model='dates' /> --}}
     </div>
 
     <div class="space-y-6 ">
@@ -72,7 +90,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
             <flux:subheading>Check out your upcoming events.</flux:subheading>
         </div>
 
-        <flux:table>
+        <flux:table :paginate="$events">
             <flux:table.columns>
                 <flux:table.column sortable>Event</flux:table.column>
                 <flux:table.column sortable>Date</flux:table.column>
@@ -117,6 +135,9 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
             </flux:table.rows>
         </flux:table>
     </div>
+
+    <!-- Paginator -->
+    <flux:table :paginate="$events" />
 
     <!-- Modal actions -->
     <livewire:events.create />

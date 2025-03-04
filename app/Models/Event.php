@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Subject;
+use App\Models\Topic;
 
 class Event extends Model
 {
@@ -17,6 +21,16 @@ class Event extends Model
         'date',
         'note',
         'status',
-        'user_id',
+        'topic_id'
     ];
+
+    public function topic() : BelongsTo
+    {
+        return $this->belongsTo(Topic::class);
+    }
+
+    public function subject() : hasOneThrough
+    {
+        return $this->hasOneThrough(Subject::class, Topic::class, 'id', 'id', 'topic_id', 'subject_id');
+    }
 }
