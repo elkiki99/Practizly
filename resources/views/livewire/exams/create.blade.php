@@ -45,13 +45,15 @@ new class extends Component {
 
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
+                $this->topics = collect([$this->topics->first()]);
 
-                $this->attachments = $this->topics->flatMap->all_attachments->unique() ?? collect();
+                $this->attachments = $this->topics->flatMap->all_attachments->unique();
 
                 if ($this->attachments->count() === 1) {
                     $this->attachment = $this->attachments->first()->id;
+                    $this->attachments = collect([$this->attachments->first()]);
                 } else {
-                    $this->attachment = null;
+                    $this->attachment = collect();
                 }
             }
         }
@@ -70,9 +72,10 @@ new class extends Component {
             $this->topics = Topic::where('subject_id', $subject)->get();
 
             if ($this->topics->count() === 1) {
+                $this->topics = collect([$this->topics->first()]);
                 $this->topic = $this->topics->first()->id;
             } else {
-                $this->topic = null;
+                $this->topic = collect();
             }
         }
     }
@@ -84,16 +87,19 @@ new class extends Component {
 
         if ($this->topics->count() === 1) {
             $this->topic = $this->topics->first()->id;
+            $this->topics = collect([$this->topics->first()]);
         }
 
-        if (!empty($this->topic)) {
-            $topics = Topic::whereIn('id', (array) $this->topic)->get();
-            $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
+        if (!empty($topic)) {
+            $topics = Topic::whereIn('id', (array) $topic)->get();
+
+            $this->attachments = $topics->flatMap->all_attachments->unique();
 
             if ($this->attachments->count() === 1) {
                 $this->attachment = $this->attachments->first()->id;
+                $this->attachments = collect([$this->attachments->first()]);
             } else {
-                $this->attachment = null;
+                $this->attachment = collect();
             }
         }
     }
@@ -101,14 +107,15 @@ new class extends Component {
     #[On('attachmentCreated')]
     public function updateAttachment($attachment = null)
     {
-        $topics = Topic::whereIn('id', (array) $this->topic)->get();
+        $this->topics = Topic::whereIn('id', (array) $this->topic)->get();
 
-        $this->attachments = $topics->flatMap->all_attachments->unique() ?? collect();
+        $this->attachments = $this->topics->flatMap->all_attachments->unique();
 
         if ($this->attachments->count() === 1) {
             $this->attachment = $this->attachments->first()->id;
+            $this->attachments = collect([$this->attachments->first()]);
         } else {
-            $this->attachment = null;
+            $this->attachment = collect();
         }
     }
 
@@ -213,7 +220,7 @@ new class extends Component {
             <flux:error name="attachment" />
         </flux:field>
 
-        @if (is_countable($this->topic) && count($this->topic) === 1)
+        @if (!empty($this->topics) && count($this->topics) === 1 || (!empty($this->topic) && ($this->topic)->count() === 1))
             <livewire:exams.attachments.create :topic_id="$this->topic" />
         @endif
 

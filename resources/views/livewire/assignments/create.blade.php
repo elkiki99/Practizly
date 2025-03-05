@@ -122,7 +122,7 @@ new class extends Component {
                 'type' => 'assignment',
                 'date' => $this->due_date,
                 'status' => $this->status,
-                'user_id' => Auth::id(),
+                'topic_id' => $this->topic
             ]);
 
             $this->dispatch('eventCreated');
@@ -185,7 +185,7 @@ new class extends Component {
                     x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select required searchable variant="listbox" wire:model="topic" placeholder="Select topic">
+            <flux:select wire:key="{{ $subject }}" required searchable variant="listbox" wire:model="topic" placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>
