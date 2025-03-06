@@ -18,9 +18,13 @@ Route::get('pricing', [HomePages::class, 'pricing'])->name('pricing');
 
 Route::middleware([EnsureUserIsNotAdmin::class])->group(function () {
     Volt::route('{user:username}/dashboard', 'user.dashboard')->name('dashboard')->middleware(['auth', 'verified']);
+
+    Volt::route('{user:username}/subjects', 'subjects.index')->name('subjects')->middleware(['auth', 'verified']);
+    Volt::route('{user:username}/subjects/{slug}', 'subjects.show')->name('subjects.show')->middleware(['auth', 'verified']);
+    // Volt::route('{user:username}/subjects/{slug}/edit', 'subjects.edit')->name('subjects.edit')->middleware(['auth', 'verified']);
+
     Volt::route('{user:username}/profile', 'user.profile')->name('profile')->middleware(['auth', 'verified']);
     Volt::route('{user:username}/calendar', 'events.index')->name('calendar')->middleware(['auth', 'verified']);
-    Volt::route('{user:username}/subjects', 'subjects.index')->name('subjects')->middleware(['auth', 'verified']);
     Volt::route('{user:username}/settings', 'user.settings')->name('settings')->middleware(['auth', 'verified']);
     Volt::route('{user:username}/summaries', 'summaries.index')->name('summaries')->middleware(['auth', 'verified']);
     Volt::route('{user:username}/library', 'attachments.index')->name('library')->middleware(['auth', 'verified']);

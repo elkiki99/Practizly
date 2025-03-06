@@ -114,14 +114,12 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                     </div>
                 </div>
 
-                {{-- <flux:separator variant="subtle" /> --}}
-
                 <!-- Topics list -->
                 <div class="flex-1">
                     <flux:heading class="mb-2">Topics</flux:heading>
                     <div class="flex flex-wrap gap-2">
                         @forelse($exam->topics as $topic)
-                            <flux:badge size="sm">{{ $topic->name }}</flux:badge>
+                            <flux:badge size="sm">{{ Str::of($topic->name)->ucfirst() }}</flux:badge>
                         @empty
                             <flux:subheading>No topics yet</flux:subheading>
                         @endforelse

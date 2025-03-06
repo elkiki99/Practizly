@@ -19,6 +19,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
     }
 
     #[On('subjectCreated')]
+    #[On('subjectUpdated')]
     public function updatedSubjects()
     {
         $this->dispatch('$refresh');
@@ -28,7 +29,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
 <div class="space-y-6">
     <flux:heading level="1" size="xl">Subjects</flux:heading>
     <flux:separator variant="subtle" />
-    
+
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
@@ -71,24 +72,39 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
             </div>
         </div>
 
-        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
+        {{-- <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
             <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
             <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-        </flux:tabs>
+        </flux:tabs> --}}
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @forelse($subjects as $subject)
-            <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6">
+            <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6"
+                wire:key="subject-{{ $subject->id }}">
                 <!-- Subject heading -->
                 <div>
                     <div class="flex items-center">
-                        <flux:heading size="lg">{{ $subject->name }}</flux:heading>
+                        <flux:link href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}" wire:navigate
+                            size="lg">{{ Str::of($subject->name)->ucfirst() }}</flux:link>
                         <span class="inline-block ml-2 size-2 bg-{{ $subject->color }}-500 rounded-full"></span>
                         <flux:spacer />
-                        <flux:tooltip content="Options" position="left">
+                        <flux:dropdown>
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
-                        </flux:tooltip>
+
+                            <flux:menu>
+                                <flux:menu.item as="link" wire:navigate
+                                    href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}"
+                                    icon-trailing="chevron-right">View subject</flux:menu.item>
+                                <flux:menu.separator />
+
+                                <flux:modal.trigger name="edit-subject-{{ $subject->id }}">
+                                    <flux:menu.item icon="pencil-square">Edit</flux:menu.item>
+                                </flux:modal.trigger>
+
+                                <flux:menu.item variant="danger" icon="trash">Delete</flux:menu.item>
+                            </flux:menu>
+                        </flux:dropdown>
                     </div>
                 </div>
 
@@ -127,7 +143,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                     </div>
                     <ul class="ml-7">
                         @forelse ($subject->assignments()->latest()->take(2)->get() as $assignment)
-                            <li class="flex items-center justify-between">
+                            <li class="flex items-center justify-between" wire:key="assignment-{{ $assignment->id }}">
                                 <flux:subheading>{{ $assignment->title }}</flux:subheading>
                                 <flux:tooltip content="Finish assignment" position="left">
                                     <flux:button size="sm" as="link" variant="ghost" href="#"
@@ -146,15 +162,15 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                     </ul>
                 </div>
 
-                 <!-- Last events -->
-                 <div>
+                <!-- Last events -->
+                <div>
                     <div class="gap-3 items-center flex">
                         <flux:icon.calendar variant="micro" />
                         <flux:heading>Next events</flux:heading>
                     </div>
                     <ul class="ml-7">
                         @forelse ($subject->events()->take(2)->get() as $event)
-                            <li class="flex items-center justify-between">
+                            <li class="flex items-center justify-between" wire:key="event-{{ $event->id }}">
                                 <flux:subheading>{{ $event->name }}</flux:subheading>
                                 <flux:tooltip content="Finish event" position="left">
                                     <flux:button size="sm" as="link" variant="ghost" href="#"
@@ -173,6 +189,10 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                     </ul>
                 </div>
 
+                <!-- Update subject modal -->
+                <livewire:subjects.edit :subject="$subject" wire:key="subject-{{ $subject->id }}" />
+
+
                 <!-- Topics list -->
                 <div class="mt-auto">
                     <flux:separator variant="subtle" class="mb-6" />
@@ -181,15 +201,16 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                         <flux:icon.tag variant="micro" />
                         <flux:heading>Topics</flux:heading>
                     </div>
-                    
+
                     <div class="flex flex-wrap gap-2 ml-7">
                         @forelse($subject->topics as $topic)
-                            <flux:badge size="sm">{{ $topic->name }}</flux:badge>
+                            <flux:badge size="sm" wire:key="topic-{{ $topic->id }}">{{ $topic->name }}</flux:badge>
                         @empty
                             <flux:subheading>No topics yet</flux:subheading>
                         @endforelse
                     </div>
                 </div>
+
             </flux:card>
         @empty
             <flux:subheading>You don't have any subjects yet.</flux:subheading>
@@ -199,6 +220,6 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
     <!-- Paginator -->
     <flux:table :paginate="$subjects" />
 
-    <!-- Modal actions -->
+    <!-- Create subject modal -->
     <livewire:subjects.create />
 </div>

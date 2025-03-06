@@ -6,6 +6,7 @@ use Livewire\Attributes\{Layout, Title};
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Models\Summary;
 use Carbon\Carbon;
@@ -87,19 +88,19 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
                 <div class="space-y-6">
                     <div>
                         <div class="flex items-center">
-                            <flux:subheading>{{ $summary->topic->name }} - {{ $summary->subject->name }}</flux:subheading>
+                            <flux:subheading>{{ Str::of($summary->topic->name)->ucfirst() }} - {{ Str::of($summary->subject->name)->ucfirst() }}</flux:subheading>
                             <flux:spacer />
                             <flux:tooltip content="Options" position="left">
                                 <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
                             </flux:tooltip>
                         </div>
 
-                        <flux:heading size="lg">{{ $summary->title }}</flux:heading>
+                        <flux:heading size="lg">{{ Str::of($summary->title)->ucfirst() }}</flux:heading>
                     </div>
                     <div class="space-y-3">
                         <div class="gap-3 items-center flex">
                             <flux:icon.arrows-up-down variant="micro" />
-                            <flux:heading>{{ $summary->size }}</flux:heading>
+                            <flux:heading>{{ Str::of($summary->size)->ucfirst() }}</flux:heading>
                         </div>
 
                         <div class="gap-3 items-center flex">

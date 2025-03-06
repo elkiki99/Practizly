@@ -15,16 +15,12 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
     public function with()
     {
         return [
-            'assignments' => Auth::user()
-                ->subjects()
-                ->with('topics.assignments')
+            'assignments' => Assignment::whereHas('topic.subject', function ($query) {
+                    $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
+                })
+                ->with(['topic.subject'])
                 ->orderBy('due_date', 'asc')
-                ->get()
-                ->flatMap(function ($subject) {
-                    return $subject->topics->flatMap(function ($topic) {
-                        return $topic->assignments->sortByDesc('due_date');
-                    });
-                }),
+                ->paginate(10),
         ];
     }
 
@@ -93,34 +89,36 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
                 <div class="space-y-6">
                     <div>
                         <div class="flex items-center">
-                            <flux:subheading>{{ $assignment->topic->name }} - {{ $assignment->subject->name }}</flux:subheading>
+                            <flux:subheading>{{ Str::of($assignment->topic->name)->ucfirst() }} -
+                                {{ Str::of($assignment->subject->name)->ucfirst() }}</flux:subheading>
                             <flux:spacer />
                             <flux:tooltip content="Options" position="left">
                                 <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
                             </flux:tooltip>
                         </div>
 
-                        <flux:heading size="lg">{{ $assignment->title }}</flux:heading>
+                        <flux:heading size="lg">{{ Str::of($assignment->title)->ucfirst() }}</flux:heading>
                     </div>
                     <div class="space-y-3">
                         <div class="gap-3 items-center flex">
                             <flux:icon.clipboard-document variant="micro" />
-                            <flux:heading>{{ $assignment->description }}</flux:heading>
+                            <flux:heading>{{ Str::of($assignment->description)->ucfirst() }}</flux:heading>
                         </div>
-                        
+
                         <div class="gap-3 items-center flex">
                             <flux:icon.command-line variant="micro" />
                             <flux:heading>{{ $assignment->guidelines }}</flux:heading>
+                        </div>
+
+                        <div class="gap-3 items-center flex">
+                            <flux:icon.paper-clip variant="micro" />
+                            <flux:heading x-data="{ count: {{ $assignment->attachments->count() }} }"
+                                x-text="count === 1 ? count + ' attachment' : count + ' attachments'"></flux:heading>
                         </div>
                         
                         <div class="gap-3 items-center flex">
                             <flux:icon.clock variant="micro" />
                             <flux:heading>{{ Carbon::parse($assignment->due_date)->format('F j, Y') }}</flux:heading>
-                        </div>
-                        
-                        <div class="gap-3 items-center flex">
-                            <flux:icon.paper-clip variant="micro" />
-                            <flux:heading x-data="{ count: {{ $assignment->attachments->count() }} }" x-text="count === 1 ? count + ' attachment' : count + ' attachments'"></flux:heading>
                         </div>
                     </div>
                 </div>

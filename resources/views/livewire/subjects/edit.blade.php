@@ -2,24 +2,41 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\Validate;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
 use App\Models\Subject;
-use App\Models\Topic;
 
 new class extends Component {
-    #[Validate('required|string|max:255')]
+    public ?Subject $subject;
+
     public string $name = '';
-
-    #[Validate('required|string|max:1000')]
     public string $description = '';
-
-    #[Validate('required|string|max:50')]
     public string $color = '';
+    public string $slug = '';
+    public bool $is_favorite = true;
 
-    #[Validate('boolean')]
-    public bool $is_favorite = false;
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'color' => 'required|string|max:50',
+            'slug' => ['required', Rule::unique('subjects')->ignore($this->subject)],
+            'is_favorite' => 'boolean',
+        ];
+    }
 
-    public function createSubject()
+    public function mount(Subject $subject)
+    {
+        $this->subject = $subject;
+        $this->name = $this->subject->name;
+        $this->description = $this->subject->description;
+        $this->color = $this->subject->color;
+        $this->is_favorite = $this->subject->is_favorite;
+        $this->slug = $this->subject->slug;
+    }
+
+    public function editSubject()
     {
         $this->validate();
 
@@ -31,7 +48,7 @@ new class extends Component {
             $slug = $slug . '-' . ($count + 1);
         }
 
-        $subject = Subject::create([
+        $this->subject->update([
             'name' => $this->name,
             'slug' => $slug,
             'description' => $this->description,
@@ -40,21 +57,21 @@ new class extends Component {
             'user_id' => auth()->user()->id,
         ]);
 
-        $this->reset();
+        $this->reset(['name', 'description', 'color', 'slug', 'is_favorite']);
 
-        $this->dispatch('subjectCreated');
+        $this->dispatch('subjectUpdated');
 
-        Flux::toast(heading: 'Subject created', text: 'Your subject was created successfully', variant: 'success');
+        Flux::toast(heading: 'Subject updated', text: 'Your subject was updated successfully', variant: 'success');
 
-        $this->modal('create-subject')->close();
+        Flux::modals()->close();
     }
 }; ?>
 
-<form wire:submit.prevent="createSubject">
-    <flux:modal variant="flyout" name="create-subject" class="space-y-6 md:w-96">
+<form wire:submit.prevent="editSubject">
+    <flux:modal variant="flyout" name="edit-subject-{{ $subject->id }}" class="space-y-6 md:w-96">
         <div>
-            <flux:heading size="lg">New subject</flux:heading>
-            <flux:subheading>Create a new subject.</flux:subheading>
+            <flux:heading size="lg">Edit subject</flux:heading>
+            <flux:subheading>Edit {{ Str::of($subject->name)->lower() }} subject.</flux:subheading>
         </div>
 
         <!-- Name -->
@@ -89,7 +106,7 @@ new class extends Component {
 
         <div class="flex">
             <flux:spacer />
-            <flux:button type="submit" variant="primary">Create subject</flux:button>
+            <flux:button type="submit" variant="primary">Update subject</flux:button>
         </div>
     </flux:modal>
 </form>
