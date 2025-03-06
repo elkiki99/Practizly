@@ -40,7 +40,7 @@ class Subject extends Model
 
     public function assignments()
     {
-        return $this->hasManyThrough(Assignment::class, Topic::class);
+        return $this->hasManyThrough(Assignment::class, Topic::class, 'subject_id', 'topic_id');
     }
 
     public function events()

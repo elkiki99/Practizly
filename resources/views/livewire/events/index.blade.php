@@ -5,9 +5,8 @@ use Livewire\Attributes\{Layout, Title, On};
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
-use Illuminate\Support\Str;
-use App\Models\Event;
 use Carbon\Carbon;
+use App\Models\Event;
 
 new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class extends Component {
     use WithPagination;
@@ -23,51 +22,79 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
     // #[On('eventCreated')]
     // public function loadDates()
     // {
-    //     $events = Auth::user()->events()->get();
-    //     $this->dates = $events->pluck('date')->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))->unique()->toArray();
+    //     $this->dates = Event::whereHas('topic.subject', function ($query) {
+    //         $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
+    //     })
+    //     ->pluck('date')
+    //     ->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))
+    //     ->unique()
+    //     ->toArray();
     // }
 
     public function with()
     {
         return [
-            'events' => Auth::user()
-                ->subjects()
-                ->with('topics.events')
-                ->orderBy('date', 'asc')
-                ->paginate(2),
-                // ->flatMap(function ($subject) {
-                //     return $subject->topics->flatMap(function ($topic) {
-                //         return $topic->events->sortByDesc('date');
-                //     });
-                // }),
+            'events' => Event::whereHas('topic.subject', function ($query) {
+                $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
+            })
+            ->orderBy('date', 'asc')
+            ->paginate(12),
         ];
+    }
+
+    #[On('eventCreated')]
+    public function updatedEvents()
+    {
+        $this->events = Event::whereHas('topic.subject', function ($query) {
+            $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
+        })
+        ->orderBy('date', 'asc')
+        ->paginate(12);
     }
 }; ?>
 
 <div class="space-y-6">
     <flux:heading level="1" size="xl">Calendar</flux:heading>
     <flux:separator variant="subtle" />
-
+    
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-            <flux:subheading class="whitespace-nowrap">Filter by:</flux:subheading>
+            <div class="flex items-center gap-2">
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.funnel variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
 
-            <flux:select size="sm" class="">
-                <option selected>All events</option>
-                <option>Tests</option>
-                <option>Exams</option>
-                <option>Evaluations</option>
-                <option>Oral presentations</option>
-                <option>Assignments</option>
-            </flux:select>
+                    <flux:select.option value="all" selected>All</flux:select.option>
+                    <flux:select.option value="tests">Tests</flux:select.option>
+                    <flux:select.option value="evaluations">Evaluations</flux:select.option>
+                    <flux:select.option value="oral_presentations">Oral presentations</flux:select.option>
+                    <flux:select.option value="assignments">Assignments</flux:select.option>
+                </flux:select>
+
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.arrows-up-down variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
+
+                    <flux:select.option value="status" selected>Status</flux:select.option>
+                    <flux:select.option value="pending">Pending</flux:select.option>
+                    <flux:select.option value="completed">Completed</flux:select.option>
+                </flux:select>
+            </div>
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
             <div class="flex items-center justify-start gap-2 max-lg:hidden">
                 <flux:modal.trigger name="create-event">
-                    <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New calendar
-                        event
+                    <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New event
                     </flux:badge>
                 </flux:modal.trigger>
             </div>
@@ -81,7 +108,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
 
     <!-- Calendar -->
     <div>
-        {{-- <flux:calendar min="today" static fixed-weeks multiple wire:model='dates' /> --}}
+        <flux:calendar min="today" static fixed-weeks multiple wire:model='dates' />
     </div>
 
     <div class="space-y-6 ">
@@ -135,9 +162,6 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
             </flux:table.rows>
         </flux:table>
     </div>
-
-    <!-- Paginator -->
-    <flux:table :paginate="$events" />
 
     <!-- Modal actions -->
     <livewire:events.create />

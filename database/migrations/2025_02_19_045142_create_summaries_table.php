@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('topic_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('size')->default('short');
-            $table->text('content')->nullable();
+            // $table->text('content')->nullable();
             $table->foreignId('attachment_id')->nullable();
             $table->timestamps();
         });

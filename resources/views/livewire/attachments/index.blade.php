@@ -2,49 +2,44 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
+use Illuminate\Support\Facades\Auth;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use App\Models\Attachment;
 
 new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class extends Component {
-    public $attachments = [];
+    use WithPagination, WithoutUrlPagination;
 
     public function with()
     {
-        return [
-            'attachments' => $this->attachments,
-        ];
-    }
-
-    public function mount()
-    {
-        $this->loadAttachments();
-    }
-
-    private function loadAttachments()
-    {
         $subjectIds = Auth::user()->subjects()->pluck('id')->toArray();
 
-        $this->attachments = Attachment::whereHas('attachable', function ($query) use ($subjectIds) {
-            $query->whereHas('subject', function ($subjectQuery) use ($subjectIds) {
-                $subjectQuery->whereIn('subjects.id', $subjectIds);
-            });
-        })
-            ->latest()
-            ->paginate(24)
-            ->map(function ($attachment) {
+        return [
+            'attachments' => ($attachments = Attachment::whereHas('attachable', function ($query) use ($subjectIds) {
+                $query->whereHas('subject', function ($subjectQuery) use ($subjectIds) {
+                    $subjectQuery->whereIn('subjects.id', $subjectIds);
+                });
+            })
+                ->latest()
+                ->paginate(12)),
+
+            $attachments->getCollection()->transform(function ($attachment) {
                 $filePath = $attachment->file_path;
                 $extension = Str::lower(pathinfo($filePath, PATHINFO_EXTENSION));
                 $attachment->isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'webp']);
                 $attachment->isPDF = in_array($extension, ['pdf']);
                 $attachment->isDOCX = in_array($extension, ['docs', 'docx']);
+
                 return $attachment;
-            });
+            }),
+        ];
     }
 
     #[On('attachmentCreated')]
     public function updatedAttachments()
     {
-        $this->loadAttachments();
+        $this->dispatch('$refresh');
     }
 }; ?>
 
@@ -91,7 +86,7 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
                 @elseif ($attachment->isDOCX)
                     <a href="{{ asset('storage/' . $attachment->file_path) }}" download
                         class="flex flex-col items-center justify-center gap-2">
-                        <flux:icon.document-arrow-down class="size-16" />
+                        <flux:icon.document-arrow-down class="size-12" />
                         <flux:subheading class="text-xs text-center">{{ $attachment->file_name }}</flux:subheading>
                     </a>
                 @else
@@ -102,11 +97,9 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
             <flux:subheading>You don't have any attachments yet.</flux:subheading>
         @endforelse
     </div>
-    
-    <!-- Pagination Links -->
-    <div class="flex justify-center mt-4">
-        {{ $attachments->links() }} <!-- This will show the pagination links -->
-    </div>
+
+    <!-- Paginator -->
+    <flux:table :paginate="$attachments" />
 
     <!-- Modal actions -->
     <livewire:attachments.create />

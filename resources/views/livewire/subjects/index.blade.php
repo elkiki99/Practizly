@@ -28,18 +28,38 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
 <div class="space-y-6">
     <flux:heading level="1" size="xl">Subjects</flux:heading>
     <flux:separator variant="subtle" />
-
+    
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-            <flux:subheading class="whitespace-nowrap">Filter by:</flux:subheading>
+            <div class="flex items-center gap-2">
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.funnel variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
 
-            <flux:select size="sm" class="">
-                <option selected>Creation</option>
-                <option>Latest exam</option>
-                <option>Latest assignment</option>
-                <option>Favorite</option>
-            </flux:select>
+                    <flux:select.option value="all" selected>Creation</flux:select.option>
+                    <flux:select.option value="unapproved">Last exam</flux:select.option>
+                    <flux:select.option value="approved">Latest assignment</flux:select.option>
+                    <flux:select.option value="approved">Favorite</flux:select.option>
+                </flux:select>
+
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.arrows-up-down variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
+
+                    <flux:select.option value="popular" selected>Most popular</flux:select.option>
+                    <flux:select.option value="newest">Newest</flux:select.option>
+                    <flux:select.option value="oldest">Oldest</flux:select.option>
+                </flux:select>
+            </div>
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
@@ -64,7 +84,6 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                 <div>
                     <div class="flex items-center">
                         <flux:heading size="lg">{{ $subject->name }}</flux:heading>
-                        <!-- Indicador de color -->
                         <span class="inline-block ml-2 size-2 bg-{{ $subject->color }}-500 rounded-full"></span>
                         <flux:spacer />
                         <flux:tooltip content="Options" position="left">

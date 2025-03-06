@@ -17,7 +17,7 @@ class Summary extends Model
         'topic_id', 
         'title',
         'size',
-        'content',
+        // 'content',
         'attachment_id',
     ];
 

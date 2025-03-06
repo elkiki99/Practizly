@@ -3,8 +3,12 @@
 use Livewire\Volt\Component;
 
 use Livewire\Attributes\{Layout, Title};
+use Illuminate\Support\Facades\Auth;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
 use Livewire\Attributes\On;
 use App\Models\Summary;
+use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class extends Component {
     public $summaries = [];
@@ -33,13 +37,32 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-            <flux:subheading class="whitespace-nowrap">Filter by:</flux:subheading>
+            <div class="flex items-center gap-2">
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.funnel variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
 
-            <flux:select size="sm" class="">
-                <option selected>Subject</option>
-                <option>Topic</option>
-                {{-- <option>Exam</option> --}}
-            </flux:select>
+                    <flux:select.option value="all" selected>Subject</flux:select.option>
+                    <flux:select.option value="tests">Topic</flux:select.option>
+                </flux:select>
+
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.arrows-up-down variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
+
+                    <flux:select.option value="status" selected>Status</flux:select.option>
+                    <flux:select.option value="pending">Pending</flux:select.option>
+                    <flux:select.option value="completed">Completed</flux:select.option>
+                </flux:select>
+            </div>
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
@@ -58,12 +81,31 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
         </flux:tabs>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        @forelse ($this->summaries as $summary)
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        @forelse($summaries as $summary)
             <flux:card>
                 <div class="space-y-6">
                     <div>
-                        <flux:heading>{{ $summary->title }}</flux:heading>
+                        <div class="flex items-center">
+                            <flux:subheading>{{ $summary->topic->name }} - {{ $summary->subject->name }}</flux:subheading>
+                            <flux:spacer />
+                            <flux:tooltip content="Options" position="left">
+                                <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
+                            </flux:tooltip>
+                        </div>
+
+                        <flux:heading size="lg">{{ $summary->title }}</flux:heading>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="gap-3 items-center flex">
+                            <flux:icon.arrows-up-down variant="micro" />
+                            <flux:heading>{{ $summary->size }}</flux:heading>
+                        </div>
+
+                        <div class="gap-3 items-center flex">
+                            <flux:icon.paper-clip variant="micro" />
+                            <flux:heading x-data="{ count: {{ $summary->attachments->count() }} }" x-text="count === 1 ? count + ' attachment' : count + ' attachments'"></flux:heading>
+                        </div>
                     </div>
                 </div>
             </flux:card>

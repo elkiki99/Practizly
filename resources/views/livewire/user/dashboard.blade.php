@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title};
 use Livewire\Attributes\On;
+use App\Models\Event;
 use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class extends Component {
@@ -10,33 +11,23 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
 
     public function mount()
     {
-        $this->events = Auth::user()
-            ->subjects()
-            ->with('topics.events')
+        $this->events = Event::whereHas('topic.subject', function ($query) {
+            $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
+        })
             ->orderBy('date', 'asc')
             ->take(3)
-            ->get()
-            ->flatMap(function ($subject) {
-                return $subject->topics->flatMap(function ($topic) {
-                    return $topic->events->sortByDesc('date');
-                });
-            });
+            ->get();
     }
 
     #[On('eventCreated')]
     public function updatedEvents()
     {
-        $this->events = Auth::user()
-            ->subjects()
-            ->with('topics.events')
+        $this->events = Event::whereHas('topic.subject', function ($query) {
+            $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
+        })
             ->orderBy('date', 'asc')
             ->take(3)
-            ->get()
-            ->flatMap(function ($subject) {
-                return $subject->topics->flatMap(function ($topic) {
-                    return $topic->events->sortByDesc('date');
-                });
-            });
+            ->get();
     }
 }; ?>
 

@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
+use Illuminate\Support\Facades\Auth;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
@@ -90,17 +91,30 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                 </div>
 
                 <!-- Details -->
-                <div class="flex-1">
-                    <flux:heading class="mb-2">Details</flux:heading>
-                    <flux:subheading><strong>Subject: </strong> {{ $exam->subject->name }}</flux:subheading>
-                    <flux:subheading><strong>Size: </strong>{{ Str::of($exam->size)->ucfirst() }}</flux:subheading>
-                    <flux:subheading><strong>Difficulty: </strong> {{ Str::of($exam->difficulty)->ucfirst() }}
-                    </flux:subheading>
-                    <flux:subheading><strong>Type: </strong>{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}
-                    </flux:subheading>
+                <div class="flex-1 space-y-2">
+                    <flux:heading>Details</flux:heading>
+
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.book-open variant="micro" />
+                        <flux:heading>{{ $exam->subject->name }}</flux:heading>
+                    </div>
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.arrows-up-down variant="micro" />
+                        <flux:heading>{{ Str::of($exam->size)->ucfirst() }}</flux:heading>
+                    </div>
+
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.chart-bar variant="micro" />
+                        <flux:heading>{{ Str::of($exam->difficulty)->ucfirst() }}</flux:heading>
+                    </div>
+
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.adjustments-vertical variant="micro" />
+                        <flux:heading>{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}</flux:heading>
+                    </div>
                 </div>
 
-                <flux:separator variant="subtle" />
+                {{-- <flux:separator variant="subtle" /> --}}
 
                 <!-- Topics list -->
                 <div class="flex-1">
