@@ -23,12 +23,13 @@ new class extends Component {
     {
         $this->validate();
 
-        $slug = Str::slug($this->name);
+        $baseSlug = Str::slug($this->name);
+        $slug = $baseSlug;
+        $counter = 1;
 
-        $count = Subject::where('slug', $slug)->count();
-
-        if ($count > 0) {
-            $slug = $slug . '-' . ($count + 1);
+        while (Subject::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
         }
 
         $subject = Subject::create([

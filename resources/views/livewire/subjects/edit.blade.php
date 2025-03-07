@@ -39,13 +39,14 @@ new class extends Component {
     public function editSubject()
     {
         $this->validate();
+        
+        $baseSlug = Str::slug($this->name);
+        $slug = $baseSlug;
+        $counter = 1;
 
-        $slug = Str::slug($this->name);
-
-        $count = Subject::where('slug', $slug)->count();
-
-        if ($count > 0) {
-            $slug = $slug . '-' . ($count + 1);
+        while (Subject::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
         }
 
         $this->subject->update([
@@ -56,8 +57,6 @@ new class extends Component {
             'is_favorite' => $this->is_favorite,
             'user_id' => auth()->user()->id,
         ]);
-
-        $this->reset(['name', 'description', 'color', 'slug', 'is_favorite']);
 
         $this->dispatch('subjectUpdated');
 
