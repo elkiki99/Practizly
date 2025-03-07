@@ -3,12 +3,10 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
 use Illuminate\Support\Facades\Auth;
-use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use App\Models\Subject;
 
 new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class extends Component {
-    use WithoutUrlPagination;
     use WithPagination;
 
     public function with()
@@ -20,6 +18,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
 
     #[On('subjectCreated')]
     #[On('subjectUpdated')]
+    #[On('subjectDeleted')]
     public function updatedSubjects()
     {
         $this->dispatch('$refresh');
@@ -71,11 +70,6 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                 </flux:modal.trigger>
             </div>
         </div>
-
-        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
-            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
-            <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-        </flux:tabs>
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -102,9 +96,17 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                                     <flux:menu.item icon="pencil-square">Edit</flux:menu.item>
                                 </flux:modal.trigger>
 
-                                <flux:menu.item variant="danger" icon="trash">Delete</flux:menu.item>
+                                <flux:modal.trigger name="delete-subject-{{ $subject->id }}">
+                                    <flux:menu.item variant="danger" icon="trash">Delete subject</flux:menu.button>
+                                </flux:modal.trigger>
                             </flux:menu>
                         </flux:dropdown>
+
+                        <!-- Update subject modal -->
+                        <livewire:subjects.edit :$subject wire:key="edit-subject-{{ $subject->id }}" />
+
+                        <!-- Delete subject modal -->
+                        <livewire:subjects.delete :$subject wire:key="delete-subject-{{ $subject->id }}" />
                     </div>
                 </div>
 
@@ -119,7 +121,8 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             <li class="flex items-center justify-between">
                                 <flux:subheading>{{ $exam->title }}</flux:subheading>
                                 <flux:tooltip content="Finish test" position="left">
-                                    <flux:button size="sm" as="link" variant="ghost" href="#"
+                                    <flux:button size="sm" as="link" variant="ghost" wire:navigate
+                                        href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}"
                                         icon="chevron-right" />
                                 </flux:tooltip>
                             </li>
@@ -127,8 +130,8 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             <li class="flex items-center justify-between">
                                 <flux:subheading>No tests yet</flux:subheading>
                                 <flux:tooltip content="New test" position="left">
-                                    <flux:button size="sm" as="link" variant="ghost" href="#"
-                                        icon="plus" />
+                                    <flux:button size="sm" as="link" variant="ghost" wire:navigate
+                                        href="/{{ Auth::user()->username }}/exams" icon="chevron-right" />
                                 </flux:tooltip>
                             </li>
                         @endforelse
@@ -146,7 +149,8 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             <li class="flex items-center justify-between" wire:key="assignment-{{ $assignment->id }}">
                                 <flux:subheading>{{ $assignment->title }}</flux:subheading>
                                 <flux:tooltip content="Finish assignment" position="left">
-                                    <flux:button size="sm" as="link" variant="ghost" href="#"
+                                    <flux:button size="sm" as="link" variant="ghost" wire:navigate
+                                        href="/{{ Auth::user()->username }}/assignments/{{ $assignment->slug }}"
                                         icon="chevron-right" />
                                 </flux:tooltip>
                             </li>
@@ -154,8 +158,8 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             <li class="flex items-center justify-between">
                                 <flux:subheading>No assignments yet</flux:subheading>
                                 <flux:tooltip content="New assignment" position="left">
-                                    <flux:button size="sm" as="link" variant="ghost" href="#"
-                                        icon="plus" />
+                                    <flux:button size="sm" as="link" variant="ghost" wire:navigate
+                                        href="/{{ Auth::user()->username }}/assignments" icon="chevron-right" />
                                 </flux:tooltip>
                             </li>
                         @endforelse
@@ -173,7 +177,8 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             <li class="flex items-center justify-between" wire:key="event-{{ $event->id }}">
                                 <flux:subheading>{{ $event->name }}</flux:subheading>
                                 <flux:tooltip content="Finish event" position="left">
-                                    <flux:button size="sm" as="link" variant="ghost" href="#"
+                                    <flux:button size="sm" as="link" variant="ghost" wire:navigate
+                                        href="/{{ Auth::user()->username }}/events/{{ $event->slug }}"
                                         icon="chevron-right" />
                                 </flux:tooltip>
                             </li>
@@ -181,17 +186,13 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                             <li class="flex items-center justify-between">
                                 <flux:subheading>No events yet</flux:subheading>
                                 <flux:tooltip content="New event" position="left">
-                                    <flux:button size="sm" as="link" variant="ghost" href="#"
-                                        icon="plus" />
+                                    <flux:button size="sm" as="link" variant="ghost" wire:navigate
+                                        href="/{{ Auth::user()->username }}/calendar" icon="chevron-right" />
                                 </flux:tooltip>
                             </li>
                         @endforelse
                     </ul>
                 </div>
-
-                <!-- Update subject modal -->
-                <livewire:subjects.edit :subject="$subject" wire:key="subject-{{ $subject->id }}" />
-
 
                 <!-- Topics list -->
                 <div class="mt-auto">
@@ -204,7 +205,8 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
 
                     <div class="flex flex-wrap gap-2 ml-7">
                         @forelse($subject->topics as $topic)
-                            <flux:badge size="sm" wire:key="topic-{{ $topic->id }}">{{ $topic->name }}</flux:badge>
+                            <flux:badge size="sm" wire:key="topic-{{ $topic->id }}">{{ $topic->name }}
+                            </flux:badge>
                         @empty
                             <flux:subheading>No topics yet</flux:subheading>
                         @endforelse

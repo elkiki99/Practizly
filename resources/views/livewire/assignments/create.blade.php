@@ -198,7 +198,7 @@ new class extends Component {
         </flux:field>
 
         @if ($subject)
-            <livewire:exams.topics.create :subject_id="$subject" />
+            <livewire:components.topics.create :subject_id="$subject" />
         @endif
 
         <flux:date-picker required label="Assignment due date" wire:model="due_date">

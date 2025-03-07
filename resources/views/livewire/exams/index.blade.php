@@ -70,10 +70,10 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
             </div>
         </div>
 
-        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
+        {{-- <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
             <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
             <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-        </flux:tabs>
+        </flux:tabs> --}}
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -161,7 +161,7 @@ new class extends Component {
         </flux:field>
 
         @if ($subject)
-            <livewire:exams.topics.create :subject_id="$subject" />
+            <livewire:components.topics.create :subject_id="$subject" />
         @endif
 
         <flux:input label="Attachment file" type="file" wire:model="attachments" multiple required />

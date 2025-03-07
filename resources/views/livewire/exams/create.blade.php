@@ -84,6 +84,7 @@ new class extends Component {
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
+        // dd($this->topics);
 
         if ($this->topics->count() === 1) {
             $this->topic = $this->topics->first()->id;
@@ -133,6 +134,10 @@ new class extends Component {
             'size' => $this->size,
         ]);
 
+        if (!is_array($this->attachment)) {
+            $this->attachment = is_null($this->attachment) ? [] : [$this->attachment];
+        }
+        
         foreach ($this->attachment as $attachment) {
             $exam->attachments()->attach($attachment);
         }
@@ -195,7 +200,7 @@ new class extends Component {
         </flux:field>
 
         @if ($subject)
-            <livewire:exams.topics.create :subject_id="$subject" />
+            <livewire:components.topics.create :subject_id="$subject" />
         @endif
 
         <!-- Attachment -->
@@ -220,8 +225,10 @@ new class extends Component {
             <flux:error name="attachment" />
         </flux:field>
 
-        @if (!empty($this->topics) && count($this->topics) === 1 || (!empty($this->topic) && ($this->topic)->count() === 1))
-            <livewire:exams.attachments.create :topic_id="$this->topic" />
+        @if (
+            (!empty($this->topics) && count($this->topics) === 1) ||
+                (!empty($this->topic) && is_countable($this->topic) && count($this->topic) === 1))
+            <livewire:components.attachments.create :topic_id="$this->topic" />
         @endif
 
         <!-- Difficulty -->

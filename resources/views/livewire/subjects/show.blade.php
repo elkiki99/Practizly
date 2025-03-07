@@ -21,14 +21,33 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
 }; ?>
 
 <div class="space-y-6">
-    <div class="space-y-3">
-        <flux:heading level="1" size="xl">{{ Str::of($subject->name)->ucfirst() }}</flux:heading>
+    <div class="flex items-center justify-between">
+        <div class="space-y-3">
+            <flux:heading level="1" size="xl" class="text-{{ $subject->color }}">
+                {{ Str::of($subject->name)->ucfirst() }}
+            </flux:heading>
 
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username}}/subjects">Subjects</flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>{{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
-        </flux:breadcrumbs>
+            <flux:breadcrumbs>
+                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
+                </flux:breadcrumbs.item>
+                <flux:breadcrumbs.item>{{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
+            </flux:breadcrumbs>
+        </div>
+
+        <flux:button icon="star" variant="{{ $subject->is_favorite ? 'primary' : 'ghost' }}"
+            wire:click="toggleFavorite">
+            {{ $subject->is_favorite ? 'Favorito' : 'Marcar como favorito' }}
+        </flux:button>
     </div>
 
-    <flux:separator variant="subtle" />
+    <!-- Tabs -->
+    <flux:tabs>
+        <flux:tab name="exams">Overview</flux:tab>
+        <flux:tab wire:navigate href="" name="exams">Exams</flux:tab>
+        <flux:tab wire:navigate href="" name="assignments">Assignments</flux:tab>
+        <flux:tab wire:navigate href="" name="topics">Topics</flux:tab>
+        <flux:tab wire:navigate href="" name="events">Events</flux:tab>
+    </flux:tabs>
+
+    <flux:subheading>{{ $subject->description }}</flux:subheading>
 </div>
