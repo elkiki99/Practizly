@@ -19,12 +19,9 @@ new class extends Component {
     }
 }; ?>
 
-<flux:header x-data="{ atTop: true }" @scroll.window="atTop = window.pageYOffset <= 25"
-    class="flex items-center transition-[scroll] duration-300 lg:hidden"
-    x-bind:class="{
-        'bg-transparent': atTop,
-        'dark:bg-zinc-900 border-b dark:border-none bg-zinc-100 border-zinc-200 dark:border-zinc-900': !atTop,
-    }">
+<flux:header
+    class="flex items-center dark:bg-zinc-900 border-b bg-zinc-100 border-zinc-200 dark:border-zinc-800 lg:hidden">
+    
     <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
     <flux:spacer />

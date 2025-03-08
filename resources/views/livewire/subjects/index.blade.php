@@ -26,7 +26,17 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
 }; ?>
 
 <div class="space-y-6">
-    <flux:heading level="1" size="xl">Subjects</flux:heading>
+    <div class="space-y-3">
+        <flux:heading level="1" size="xl">Subjects</flux:heading>
+
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>Subjects
+        </flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+    </div>
+
     <flux:separator variant="subtle" />
 
     <!-- Panel navbar -->

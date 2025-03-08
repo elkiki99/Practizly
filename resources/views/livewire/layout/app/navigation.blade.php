@@ -21,10 +21,10 @@ new class extends Component {
 }; ?>
 
 <flux:header container sticky x-data="{ atTop: true }" @scroll.window="atTop = window.pageYOffset <= 25"
-    class="z-20 flex items-center transition duration-300"
+    class="z-20 flex items-center"
     x-bind:class="{
         'bg-transparent': atTop,
-        'dark:bg-zinc-800 border-b dark:border-none bg-zinc-100 border-zinc-200 dark:border-zinc-700': !atTop,
+        'dark:bg-zinc-800 border-b bg-zinc-100 border-zinc-200 dark:border-zinc-700': !atTop,
     }">
 
     @if (!request()->routeIs('pricing') && !request()->routeIs('contact'))

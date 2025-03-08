@@ -40,15 +40,6 @@ class UserFactory extends Factory
     {
         return [
             [
-                'name' => 'Admin',
-                'email' => 'admin@laravel.com',
-                'username' => 'admin',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
-                'remember_token' => Str::random(10),
-                'is_admin' => true
-            ],
-            [
                 'name' => 'User',
                 'email' => 'user@laravel.com',
                 'username' => 'user',

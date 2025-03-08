@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class PanelLayout extends Component
+class DashboardComponentLayout extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class PanelLayout extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('layouts.panel');
+        return view('layouts.dashboard-component');
     }
 }

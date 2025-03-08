@@ -52,5 +52,5 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
 
     <flux:separator />
 
-    <flux:subheading>{{ $subject->description }}</flux:subheading>
+    <flux:subheading>{{ $subject->name }} assignments</flux:subheading>
 </div>

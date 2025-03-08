@@ -5,8 +5,9 @@ use Livewire\Volt\Component;
 new class extends Component {
     //
 }; ?>
+
 <flux:navbar
-    class="z-50 px-2 max-lg:items-center max-lg:justify-center max-lg:flex border-b lg:dark:border-none dark:border-zinc-900 border-zinc-200 lg:bg-zinc-100 dark:lg:bg-zinc-900">
+    class="z-50 px-2 max-lg:items-center max-lg:justify-center max-lg:flex border-b lg:dark:border-zinc-800 dark:border-zinc-900 border-zinc-100 lg:border-zinc-200 lg:bg-zinc-100 dark:lg:bg-zinc-900 dark:bg-zinc-900 bg-gray-100">
     <!-- Desktop -->
     <flux:navbar.item wire:navigate class="hidden sm:flex" icon="book-open" href="/{{ Auth::user()->username }}/subjects"
         :current="request()->is(Auth::user()->username.

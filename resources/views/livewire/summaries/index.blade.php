@@ -32,7 +32,17 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
 }; ?>
 
 <div class="space-y-6">
-    <flux:heading level="1" size="xl">Summaries</flux:heading>
+    <div class="space-y-3">
+        <flux:heading level="1" size="xl">Summaries</flux:heading>
+
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>Summaries
+            </flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+    </div>
+
     <flux:separator variant="subtle" />
 
     <!-- Panel navbar -->
@@ -88,7 +98,8 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
                 <div class="space-y-6">
                     <div>
                         <div class="flex items-center">
-                            <flux:subheading>{{ Str::of($summary->topic->name)->ucfirst() }} - {{ Str::of($summary->subject->name)->ucfirst() }}</flux:subheading>
+                            <flux:subheading>{{ Str::of($summary->topic->name)->ucfirst() }} -
+                                {{ Str::of($summary->subject->name)->ucfirst() }}</flux:subheading>
                             <flux:spacer />
                             <flux:tooltip content="Options" position="left">
                                 <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
@@ -105,7 +116,8 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
 
                         <div class="gap-3 items-center flex">
                             <flux:icon.paper-clip variant="micro" />
-                            <flux:heading x-data="{ count: {{ $summary->attachments->count() }} }" x-text="count === 1 ? count + ' attachment' : count + ' attachments'"></flux:heading>
+                            <flux:heading x-data="{ count: {{ $summary->attachments->count() }} }"
+                                x-text="count === 1 ? count + ' attachment' : count + ' attachments'"></flux:heading>
                         </div>
                     </div>
                 </div>

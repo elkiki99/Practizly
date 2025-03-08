@@ -25,36 +25,31 @@
     @fluxAppearance
 </head>
 
-<body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900 ">
+<body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-950">
     <div class="flex">
         <!-- Sidebar -->
         <div class="z-40 h-screen lg:fixed lg:w-64">
-            <livewire:layout.admin.panel-sidebar />
+            <livewire:layout.user.dashboard-sidebar />
         </div>
 
         <div class="flex-1 lg:ml-64">
-            <!-- Secondary Navigation -->
+            <!-- Navigation -->
             <div class="sticky top-0 z-20">
-                <livewire:layout.admin.panel-secondary-navigation />
-            </div>
-
-            <!-- Primary Navigation -->
-            <div class="lg:sticky lg:top-[0rem] z-50">
-                <livewire:layout.admin.panel-primary-navigation />
+                <livewire:layout.user.dashboard-secondary-navigation />
             </div>
 
             <!-- Main Content -->
-            <main class="flex-1 p-6 mb-6 max-lg:max-w-2xl max-lg:mx-auto">
+            <main class="self-stretch flex-1 p-6 space-y-6">
                 {{ $slot }}
             </main>
-        </div>    
+        </div>
     </div>
-    
-    @fluxScripts
-    
+
     @persist('toast')
         <flux:toast />
     @endpersist
+
+    @fluxScripts
 </body>
 
 </html>

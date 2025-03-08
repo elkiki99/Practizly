@@ -84,8 +84,6 @@ new class extends Component {
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
-        // dd($this->topics);
-
         if ($this->topics->count() === 1) {
             $this->topic = $this->topics->first()->id;
             $this->topics = collect([$this->topics->first()]);
@@ -122,6 +120,8 @@ new class extends Component {
 
     public function createExam()
     {
+        // dd($this->all());
+
         $this->validate();
 
         $subject = Subject::find($this->subject);

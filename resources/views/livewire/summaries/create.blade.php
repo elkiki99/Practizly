@@ -35,13 +35,15 @@ new class extends Component {
 
             if ($this->topics->count() === 1) {
                 $this->topic = $this->topics->first()->id;
+                $this->topics = collect([$this->topics->first()]);
 
-                $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+                $this->attachments = $this->topics->flatMap->all_attachments->unique();
 
                 if ($this->attachments->count() === 1) {
                     $this->attachment = $this->attachments->first()->id;
+                    $this->attachments = collect([$this->attachments->first()]);
                 } else {
-                    $this->attachment = null;
+                    $this->attachment = collect();
                 }
             }
         }
@@ -60,9 +62,10 @@ new class extends Component {
             $this->topics = Topic::where('subject_id', $subject)->get();
 
             if ($this->topics->count() === 1) {
+                $this->topics = collect([$this->topics->first()]);
                 $this->topic = $this->topics->first()->id;
             } else {
-                $this->topic = null;
+                $this->topic = collect();
             }
         }
     }
@@ -74,15 +77,19 @@ new class extends Component {
 
         if ($this->topics->count() === 1) {
             $this->topic = $this->topics->first()->id;
+            $this->topics = collect([$this->topics->first()]);
         }
 
         if (!empty($topic)) {
-            $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+            $topics = Topic::whereIn('id', (array) $topic)->get();
+
+            $this->attachments = $topics->flatMap->all_attachments->unique();
 
             if ($this->attachments->count() === 1) {
                 $this->attachment = $this->attachments->first()->id;
+                $this->attachments = collect([$this->attachments->first()]);
             } else {
-                $this->attachment = null;
+                $this->attachment = collect();
             }
         }
     }
@@ -90,12 +97,15 @@ new class extends Component {
     #[On('attachmentCreated')]
     public function updateAttachment($attachment = null)
     {
-        $this->attachments = Topic::find($this->topic)->all_attachments ?? collect();
+        $this->topics = Topic::whereIn('id', (array) $this->topic)->get();
+
+        $this->attachments = $this->topics->flatMap->all_attachments->unique();
 
         if ($this->attachments->count() === 1) {
             $this->attachment = $this->attachments->first()->id;
+            $this->attachments = collect([$this->attachments->first()]);
         } else {
-            $this->attachment = null;
+            $this->attachment = collect();
         }
     }
 
@@ -126,7 +136,9 @@ new class extends Component {
 }; ?>
 
 <form wire:submit.prevent="createSummary">
-    <flux:modal variant="flyout" name="create-summary" class="space-y-6 md:w-96">
+    <flux:modal variant="flyout" name="create-summary" class="w-[90%] space-y-6 md:w-96" x-data="{ createTopic: false, createAttachment: false }"
+        x-init="window.addEventListener('topicCreated', () => { createTopic = false });
+        window.addEventListener('attachmentCreated', () => { createAttachment = false });">
         <div>
             <flux:heading size="lg">New summary</flux:heading>
             <flux:subheading>Create a new summary.</flux:subheading>
@@ -143,25 +155,58 @@ new class extends Component {
             @endforelse
         </flux:select>
 
-        <flux:select required label="Summary topic" searchable variant="listbox" wire:model.live="topic"
-            placeholder="Select topic">
-            @forelse($topics as $topic)
-                <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
-                </flux:select.option>
-            @empty
-                <flux:select.option disabled>Create a topic first</flux:select.option>
-            @endforelse
-        </flux:select>
+        <flux:field>
+            <div class="flex items-center justify-between mb-2">
+                <flux:label>Summary topic</flux:label>
+                <flux:button as="link" size="xs" variant="subtle" icon-trailing="plus"
+                    x-on:click="createTopic = true">
+                    New topic</flux:button>
+            </div>
 
-        <flux:select required label="Summary attachment" searchable variant="listbox" wire:model="attachment"
-            placeholder="Select attachments">
-            @forelse($attachments as $attachment)
-                <flux:select.option value="{{ $attachment->id }}">{{ $attachment->file_name }}
-                </flux:select.option>
-            @empty
-                <flux:select.option disabled>No attachments yet</flux:select.option>
-            @endforelse
-        </flux:select>
+            <flux:select required multiple searchable variant="listbox" selected-suffix="{{ __('topics selected') }}"
+                wire:model.live="topic" placeholder="Select topic">
+                @forelse($topics as $topic)
+                    <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
+                    </flux:select.option>
+                @empty
+                    <flux:select.option disabled>No topics found</flux:select.option>
+                @endforelse
+            </flux:select>
+
+            <flux:error name="topic" />
+        </flux:field>
+
+        @if ($subject)
+            <livewire:components.topics.create :subject_id="$subject" />
+        @endif
+
+        <!-- Attachment -->
+        <flux:field>
+            <div class="flex items-center justify-between mb-2">
+                <flux:label>Summary attachment</flux:label>
+                <flux:button as="link" size="xs" variant="subtle" icon-trailing="plus"
+                    x-on:click="createAttachment = true">
+                    New attachment</flux:button>
+            </div>
+
+            <flux:select multiple required searchable selected-suffix="{{ __('attachments selected') }}"
+                variant="listbox" wire:model="attachment" placeholder="Select attachment">
+                @forelse($attachments as $attachment)
+                    <flux:select.option value="{{ $attachment->id }}">{{ $attachment->file_name }}
+                    </flux:select.option>
+                @empty
+                    <flux:select.option disabled>No attachments found</flux:select.option>
+                @endforelse
+            </flux:select>
+
+            <flux:error name="attachment" />
+        </flux:field>
+
+        @if (
+            (!empty($this->topics) && count($this->topics) === 1) ||
+                (!empty($this->topic) && is_countable($this->topic) && count($this->topic) === 1))
+            <livewire:components.attachments.create :topic_id="$this->topic" />
+        @endif
 
         <!-- Size -->
         <flux:radio.group required wire:model='size' label="Summary size" class="flex-col">

@@ -33,11 +33,7 @@ new #[Layout('layouts.guest')] #[Title('Register • Practizly')] class extends 
 
         Auth::login($user);
 
-        if (!Auth::user()->is_admin) {
-            $this->redirectIntended(default: route('dashboard', ['user' => $user->username], absolute: false), navigate: true);
-        } else {
-            $this->redirectIntended(default: route('panel', absolute: false), navigate: true);
-        }
+        $this->redirectIntended(default: route('dashboard', ['user' => Auth::user()->username], absolute: false), navigate: true);
     }
 }; ?>
 

@@ -37,8 +37,8 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
             'events' => Event::whereHas('topic.subject', function ($query) {
                 $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
             })
-            ->orderBy('date', 'asc')
-            ->paginate(12),
+                ->orderBy('date', 'asc')
+                ->paginate(12),
         ];
     }
 
@@ -48,15 +48,25 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
         $this->events = Event::whereHas('topic.subject', function ($query) {
             $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
         })
-        ->orderBy('date', 'asc')
-        ->paginate(12);
+            ->orderBy('date', 'asc')
+            ->paginate(12);
     }
 }; ?>
 
 <div class="space-y-6">
-    <flux:heading level="1" size="xl">Calendar</flux:heading>
+    <div class="space-y-3">
+        <flux:heading level="1" size="xl">Events</flux:heading>
+
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>Events
+            </flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+    </div>
+
     <flux:separator variant="subtle" />
-    
+
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
