@@ -222,7 +222,6 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                         @endforelse
                     </div>
                 </div>
-
             </flux:card>
         @empty
             <flux:subheading>You don't have any subjects yet.</flux:subheading>

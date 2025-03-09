@@ -15,7 +15,6 @@ new class extends Component {
     {
         $this->subject->delete();
         
-
         $this->dispatch('subjectDeleted');
 
         Flux::toast(heading: 'Subject deleted', text: 'Your subject was deleted successfully', variant: 'danger');

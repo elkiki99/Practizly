@@ -1,7 +1,7 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title};
+use Livewire\Attributes\{Layout, Title, On};
 use App\Models\Subject;
 
 new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] class extends Component {
@@ -24,11 +24,12 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
         ];
     }
 
-    // #[On('examCreated')]
-    // public function updatedExam()
-    // {
-    //     $this->dispatch('$refresh');
-    // }
+    #[On('examCreated')]
+    #[On('examDeleted')]
+    public function updatedExams()
+    {
+        $this->dispatch('$refresh');
+    }
 }; ?>
 
 <div class="space-y-6">
@@ -66,9 +67,27 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                     <div class="flex items-center">
                         <flux:heading size="lg">{{ $exam->title }}</flux:heading>
                         <flux:spacer />
-                        <flux:tooltip content="Options" position="left">
+                        
+                        <flux:dropdown>
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
-                        </flux:tooltip>
+
+                            <flux:menu>
+                                <flux:menu.item as="link" wire:navigate
+                                    href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}"
+                                    icon-trailing="chevron-right">Take exam</flux:menu.item>
+                                <flux:menu.separator />
+
+                                <flux:modal.trigger name="download-exam-{{ $exam->id }}">
+                                    <flux:menu.item icon="arrow-down-tray">Download exam</flux:menu.button>
+                                </flux:modal.trigger>
+                                <flux:modal.trigger name="delete-exam-{{ $exam->id }}">
+                                    <flux:menu.item variant="danger" icon="trash">Delete exam</flux:menu.button>
+                                </flux:modal.trigger>
+                            </flux:menu>
+                        </flux:dropdown>
+
+                        <!-- Delete exam modal -->
+                        <livewire:exams.delete :$exam wire:key="delete-exam-{{ $exam->id }}" />
                     </div>
                 </div>
 
@@ -111,7 +130,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                 <div class="flex">
                     <flux:spacer />
                     <flux:button as="link" variant="primary" icon-trailing="chevron-right"
-                        href="{{-- route('exams.show', $exam) --}}">Take exam</flux:button>
+                        href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}">Take exam</flux:button>
                 </div>
             </flux:card>
         @empty

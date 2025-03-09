@@ -19,6 +19,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
     }
 
     #[On('examCreated')]
+    #[On('examDeleted')]
     public function updatedExams()
     {
         $this->dispatch('$refresh');
@@ -94,9 +95,27 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                     <div class="flex items-center">
                         <flux:heading size="lg">{{ $exam->title }}</flux:heading>
                         <flux:spacer />
-                        <flux:tooltip content="Options" position="left">
+                        
+                        <flux:dropdown>
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
-                        </flux:tooltip>
+
+                            <flux:menu>
+                                <flux:menu.item as="link" wire:navigate
+                                    href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}"
+                                    icon-trailing="chevron-right">Take exam</flux:menu.item>
+                                <flux:menu.separator />
+
+                                <flux:modal.trigger name="download-exam-{{ $exam->id }}">
+                                    <flux:menu.item icon="arrow-down-tray">Download exam</flux:menu.button>
+                                </flux:modal.trigger>
+                                <flux:modal.trigger name="delete-exam-{{ $exam->id }}">
+                                    <flux:menu.item variant="danger" icon="trash">Delete exam</flux:menu.button>
+                                </flux:modal.trigger>
+                            </flux:menu>
+                        </flux:dropdown>
+
+                        <!-- Delete exam modal -->
+                        <livewire:exams.delete :$exam wire:key="delete-exam-{{ $exam->id }}" />
                     </div>
                 </div>
 

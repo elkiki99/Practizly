@@ -120,8 +120,6 @@ new class extends Component {
 
     public function createExam()
     {
-        // dd($this->all());
-
         $this->validate();
 
         $subject = Subject::find($this->subject);
@@ -147,8 +145,6 @@ new class extends Component {
         ]);
 
         $exam->topics()->sync($this->topic);
-
-        $this->reset('attachment');
 
         $this->dispatch('examCreated');
 

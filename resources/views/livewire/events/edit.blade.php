@@ -8,23 +8,25 @@ use App\Models\Topic;
 use Carbon\Carbon;
 
 new class extends Component {
+    public ?Event $event;
+
     #[Validate('required|string|max:255')]
-    public string $name = '';
+    public string $name;
 
     #[Validate('nullable|string|max:1000')]
-    public string $description = '';
+    public string $description;
 
     #[Validate('required|string|in:test,exam,evaluation,oral_presentation,assignment')]
-    public string $type = '';
+    public string $type;
 
     #[Validate('required|date')]
     public Carbon $date;
 
     #[Validate('nullable|string|max:1000')]
-    public string $note = '';
+    public string $note;
 
     #[Validate('required|in:pending,completed')]
-    public string $status = 'pending';
+    public string $status;
 
     #[Validate('required|exists:topics,id')]
     public $topic;
@@ -35,21 +37,22 @@ new class extends Component {
     public $subjects = [];
     public $topics = [];
 
-    public function mount()
+    public function mount(Event $event)
     {
+        $this->event = $event;
+        $this->name = $this->event->name;
+        $this->description = $this->event->description;
+        $this->type = $this->event->type;
+        $this->date = Carbon::parse($this->event->date);
+        $this->note = $this->event->note;
+        $this->status = $this->event->status;
+        $this->topic = $this->event->topic_id;
+        $this->subject = $this->event->topic->subject_id;
+
         $this->subjects = Auth::user()->subjects()->latest()->get();
-
-        if ($this->subjects->count() === 1) {
-            $this->subject = $this->subjects->first()->id;
-
-            $this->topics = Topic::where('subject_id', $this->subject)->get();
-
-            if ($this->topics->count() === 1) {
-                $this->topic = $this->topics->first()->id;
-            }
-        }
+        $this->topics = Topic::where('subject_id', $this->subject)->get();
     }
-
+    
     #[On('subjectCreated')]
     public function updatedSubject($subject = null)
     {
@@ -80,11 +83,11 @@ new class extends Component {
         }
     }
 
-    public function createEvent()
+    public function updateEvent()
     {
         $this->validate();
 
-        Event::create([
+        $this->event->update([
             'name' => $this->name,
             'description' => $this->description,
             'type' => $this->type,
@@ -94,22 +97,21 @@ new class extends Component {
             'topic_id' => $this->topic,
         ]);
 
-        $this->reset('name', 'description', 'type', 'date', 'note', 'status');
+        $this->dispatch('eventUpdated');
 
-        $this->dispatch('eventCreated');
+        Flux::toast(heading: 'Event updated', text: 'Your event was updated successfully', variant: 'success');
 
-        Flux::toast(heading: 'Event created', text: 'Your event was created successfully', variant: 'success');
-
-        $this->modal('create-event')->close();
+        Flux::modals()->close();
     }
-}; ?>
+};
+?>
 
-<form wire:submit.prevent="createEvent">
-    <flux:modal variant="flyout" name="create-event" class="space-y-6 w-96" x-data="{ createTopic: false }"
-        x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
+<form wire:submit.prevent="updateEvent">
+    <flux:modal variant="flyout" name="edit-event-{{ $event->id }}" class="space-y-6 w-96" x-data="{ editTopic: false }"
+        x-init="window.addEventListener('topicCreated', () => { editTopic = false })">
         <div>
-            <flux:heading size="lg">New event</flux:heading>
-            <flux:subheading>Create a new event.</flux:subheading>
+            <flux:heading size="lg">Edit event</flux:heading>
+            <flux:subheading>Edit {{ $event->name }} event.</flux:subheading>
         </div>
 
         <!-- Name -->
@@ -135,7 +137,7 @@ new class extends Component {
             <div class="flex items-center justify-between mb-2">
                 <flux:label>Event topic</flux:label>
                 <flux:button as="link" size="xs" variant="subtle" icon-trailing="plus"
-                    x-on:click="createTopic = true">New topic</flux:button>
+                    x-on:click="editTopic = true">New topic</flux:button>
             </div>
 
             <flux:select required searchable variant="listbox" wire:model="topic" placeholder="Select topic">
@@ -182,7 +184,7 @@ new class extends Component {
 
         <div class="flex justify-between">
             <flux:spacer />
-            <flux:button type="submit" variant="primary">Create event</flux:button>
+            <flux:button type="submit" variant="primary">Edit event</flux:button>
         </div>
     </flux:modal>
 </form>

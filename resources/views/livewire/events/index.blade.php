@@ -3,33 +3,19 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
 use Illuminate\Support\Facades\Auth;
-use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Carbon\Carbon;
 use App\Models\Event;
 
 new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class extends Component {
     use WithPagination;
-    use WithoutUrlPagination;
 
-    // public $dates = [];
+    public $dates = [];
 
-    // public function mount()
-    // {
-    //     $this->loadDates();
-    // }
-
-    // #[On('eventCreated')]
-    // public function loadDates()
-    // {
-    //     $this->dates = Event::whereHas('topic.subject', function ($query) {
-    //         $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
-    //     })
-    //     ->pluck('date')
-    //     ->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))
-    //     ->unique()
-    //     ->toArray();
-    // }
+    public function mount()
+    {
+        $this->loadDates();
+    }
 
     public function with()
     {
@@ -41,15 +27,24 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                 ->paginate(12),
         ];
     }
-
-    #[On('eventCreated')]
-    public function updatedEvents()
+    
+    public function loadDates()
     {
-        $this->events = Event::whereHas('topic.subject', function ($query) {
+        $this->dates = Event::whereHas('topic.subject', function ($query) {
             $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
         })
-            ->orderBy('date', 'asc')
-            ->paginate(12);
+            ->pluck('date')
+            ->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))
+            ->unique()
+            ->toArray();
+    }
+
+    #[On('eventCreated')]
+    #[On('eventUpdated')]
+    #[On('eventDeleted')]
+    public function updatedEventsAndDates()
+    {
+        $this->dispatch('$refresh');
     }
 }; ?>
 
@@ -121,7 +116,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
         <flux:calendar min="today" static fixed-weeks multiple wire:model='dates' />
     </div>
 
-    <div class="space-y-6 ">
+    <div class="space-y-6">
         <div>
             <flux:heading level="2">Next events</flux:heading>
             <flux:subheading>Check out your upcoming events.</flux:subheading>
@@ -136,32 +131,53 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
 
             <flux:table.rows>
                 @forelse($events as $event)
-                    <flux:table.row>
+                    <flux:table.row wire:key="event-{{ $event->id }}">
                         <flux:table.cell class="flex items-center gap-3 whitespace-nowrap">
                             @if ($event->type === 'test')
-                                <flux:icon.document-text />
+                                <flux:icon.document-text variant="mini" />
                             @elseif($event->type === 'exam')
-                                <flux:icon.book-open />
+                                <flux:icon.book-open variant="mini" />
                             @elseif($event->type === 'evaluation')
-                                <flux:icon.clipboard-document-check />
+                                <flux:icon.clipboard-document-check variant="mini" />
                             @elseif($event->type === 'oral_presentation')
-                                <flux:icon.microphone />
+                                <flux:icon.microphone variant="mini" />
                             @elseif($event->type === 'assignment')
-                                <flux:icon.pencil-square />
+                                <flux:icon.pencil-square variant="mini" />
                             @endif
-                            {{ Str::of($event->type)->ucfirst() }}
+                            <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
+                                href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">
+                                {{ Str::of($event->name)->ucfirst() }}</flux:link>
                         </flux:table.cell>
 
                         <flux:table.cell class="whitespace-nowrap">{{ Carbon::parse($event->date)->format('F j, Y') }}
                         </flux:table.cell>
 
                         <flux:table.cell>
-                            <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
+                            @if ($event->status === 'pending')
+                                <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
+                            @elseif($event->status === 'completed')
+                                <flux:badge size="sm" color="green" inset="top bottom">Completed</flux:badge>
+                            @endif
                         </flux:table.cell>
 
+                        <flux:spacer />
+
                         <flux:table.cell>
-                            <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom">
-                            </flux:button>
+                            <flux:modal.trigger name="edit-event-{{ $event->id }}">
+                                <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">
+                                </flux:button>
+                            </flux:modal.trigger>
+
+                            <flux:modal.trigger name="delete-event-{{ $event->id }}">
+                                <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
+                                </flux:button>
+                            </flux:modal.trigger>
+
+                            <!-- Edit event modal -->
+                            <livewire:events.edit :$event wire:key="edit-event-{{ $event->id }}" />
+
+                            <!-- Delete event modal -->
+                            <livewire:events.delete :$event wire:key="delete-event-{{ $event->id }}" />
                         </flux:table.cell>
                     </flux:table.row>
                 @empty
