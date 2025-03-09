@@ -103,7 +103,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                                 <flux:menu.separator />
 
                                 <flux:modal.trigger name="edit-subject-{{ $subject->id }}">
-                                    <flux:menu.item icon="pencil-square">Edit</flux:menu.item>
+                                    <flux:menu.item icon="pencil-square">Edit subject</flux:menu.item>
                                 </flux:modal.trigger>
 
                                 <flux:modal.trigger name="delete-subject-{{ $subject->id }}">

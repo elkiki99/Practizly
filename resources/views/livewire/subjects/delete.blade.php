@@ -14,6 +14,7 @@ new class extends Component {
     public function deleteSubject()
     {
         $this->subject->delete();
+        
 
         $this->dispatch('subjectDeleted');
 

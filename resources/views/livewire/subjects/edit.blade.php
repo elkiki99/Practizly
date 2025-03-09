@@ -39,14 +39,16 @@ new class extends Component {
     public function editSubject()
     {
         $this->validate();
-        
+
         $baseSlug = Str::slug($this->name);
         $slug = $baseSlug;
         $counter = 1;
 
-        while (Subject::where('slug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $counter;
-            $counter++;
+        if ($this->slug !== $baseSlug) {
+            while (Subject::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
         }
 
         $this->subject->update([
@@ -58,11 +60,17 @@ new class extends Component {
             'user_id' => auth()->user()->id,
         ]);
 
-        $this->dispatch('subjectUpdated');
-
         Flux::toast(heading: 'Subject updated', text: 'Your subject was updated successfully', variant: 'success');
+        
+        // Check slug to redirect to new url
+        if ($this->slug !== $slug) {
+            $this->redirectRoute('subjects.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
+            Flux::modals()->close();
+        } else {
+            $this->dispatch('subjectUpdated');
+            Flux::modals()->close();
+        }
 
-        Flux::modals()->close();
     }
 }; ?>
 
@@ -108,4 +116,16 @@ new class extends Component {
             <flux:button type="submit" variant="primary">Update subject</flux:button>
         </div>
     </flux:modal>
+    {{-- 
+    @if (session('subjectUpdated'))
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Flux.toast({
+                    heading: 'Subject updated',
+                    text: '{{ session('subjectUpdated') }}',
+                    variant: 'success'
+                });
+            });
+        </script>
+    @endif --}}
 </form>

@@ -7,6 +7,8 @@ use App\Models\Subject;
 new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] class extends Component {
     public string $slug;
 
+    public ?Subject $subject;
+
     public function mount($slug)
     {
         $this->slug = Str::slug($slug);
@@ -14,10 +16,19 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
 
     public function with()
     {
+        $this->subject = Subject::where('slug', $this->slug)->first();
+
         return [
-            'subject' => Subject::where('slug', $this->slug)->first(),
+            'subject' => $this->subject,
+            'exams' => $this->subject->exams()->orderBy('created_at', 'desc')->paginate(6),
         ];
     }
+
+    // #[On('examCreated')]
+    // public function updatedExam()
+    // {
+    //     $this->dispatch('$refresh');
+    // }
 }; ?>
 
 <div class="space-y-6">
@@ -28,30 +39,89 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
             </flux:heading>
 
             <flux:breadcrumbs>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
+                </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item>{{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
             </flux:breadcrumbs>
         </div>
 
-        {{-- <flux:button icon="star" variant="{{ $subject->is_favorite ? 'primary' : 'ghost' }}"
-            wire:click="toggleFavorite">
-            {{ $subject->is_favorite ? 'Favorito' : 'Marcar como favorito' }}
-        </flux:button> --}}
+        <div class="flex items-center justify-start gap-2">
+            <flux:modal.trigger name="create-exam">
+                <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New exam
+                </flux:badge>
+            </flux:modal.trigger>
+        </div>
     </div>
 
-    <!-- Tabs -->
-    <flux:navbar class="my-0">
-        <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}" name="overview">Overview</flux:navbar.item>
-        <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/exams" name="exams">Exams</flux:navbar.item>
-        <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/assignments" name="assignments">Assignments</flux:navbar.item>
-        <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/topics" name="topics">Topics</flux:navbar.item>
-        <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/events" name="events">Events</flux:navbar.item>
-    </flux:navbar>
+    <!-- Header & nav bar -->
+    <livewire:subjects.components.nav-bar :subject="$subject" />
 
-    <flux:separator />
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        @forelse($exams as $exam)
+            <flux:card class="space-y-6">
+                <!-- Exam heading -->
+                <div class="flex-1">
+                    <div class="flex items-center">
+                        <flux:heading size="lg">{{ $exam->title }}</flux:heading>
+                        <flux:spacer />
+                        <flux:tooltip content="Options" position="left">
+                            <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
+                        </flux:tooltip>
+                    </div>
+                </div>
 
-    <flux:subheading>{{ $subject->name }} exams</flux:subheading>
+                <!-- Details -->
+                <div class="flex-1 space-y-2">
+                    <flux:heading>Details</flux:heading>
 
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.book-open variant="micro" />
+                        <flux:heading>{{ $exam->subject->name }}</flux:heading>
+                    </div>
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.arrows-up-down variant="micro" />
+                        <flux:heading>{{ Str::of($exam->size)->ucfirst() }}</flux:heading>
+                    </div>
+
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.chart-bar variant="micro" />
+                        <flux:heading>{{ Str::of($exam->difficulty)->ucfirst() }}</flux:heading>
+                    </div>
+
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.adjustments-vertical variant="micro" />
+                        <flux:heading>{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}</flux:heading>
+                    </div>
+                </div>
+
+                <!-- Topics list -->
+                <div class="flex-1">
+                    <flux:heading class="mb-2">Topics</flux:heading>
+                    <div class="flex flex-wrap gap-2">
+                        @forelse($exam->topics as $topic)
+                            <flux:badge size="sm">{{ Str::of($topic->name)->ucfirst() }}</flux:badge>
+                        @empty
+                            <flux:subheading>No topics yet</flux:subheading>
+                        @endforelse
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <flux:spacer />
+                    <flux:button as="link" variant="primary" icon-trailing="chevron-right"
+                        href="{{-- route('exams.show', $exam) --}}">Take exam</flux:button>
+                </div>
+            </flux:card>
+        @empty
+            <flux:subheading>You don't have any exams yet.</flux:subheading>
+        @endforelse
+    </div>
+
+    <!-- Paginator -->
+    <flux:table :paginate="$exams" />
+
+    <!-- Modal actions -->
+    <livewire:exams.create />
 </div>

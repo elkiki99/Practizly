@@ -17,6 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @fluxAppearance
+    @livewireStyles
 </head>
 
 <body class="font-sans antialiased">
@@ -32,11 +33,12 @@
         </div>
     </div>
 
-    @fluxScripts
-
     @persist('toast')
         <flux:toast />
     @endpersist
+
+    @fluxScripts
+    @livewireScripts
 </body>
 
 </html>

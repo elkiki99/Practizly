@@ -23,7 +23,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @fluxAppearance
-    {{-- @livewireScripts --}}
+    @livewireStyles
 </head>
 
 <body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900">
@@ -38,12 +38,12 @@
 
     <livewire:layout.app.footer />
 
-    @fluxScripts
-    {{-- @livewireScripts --}}
-
     @persist('toast')
         <flux:toast />
     @endpersist
+
+    @fluxScripts
+    @livewireScripts
 </body>
 
 </html>

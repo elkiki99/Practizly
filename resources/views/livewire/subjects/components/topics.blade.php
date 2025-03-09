@@ -43,23 +43,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
     </div>
 
     <!-- Tabs -->
-    <div class="lg:sticky lg:top-[0rem] z-50 bg-white dark:bg-zinc-950">
-        <flux:navbar class="my-0">
-            <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}"
-                name="overview">Overview</flux:navbar.item>
-            <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/exams"
-                name="exams">Exams</flux:navbar.item>
-            <flux:navbar.item wire:navigate
-                href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/assignments" name="assignments">
-                Assignments</flux:navbar.item>
-            <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/topics"
-                name="topics">Topics</flux:navbar.item>
-            <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/events"
-                name="events">Events</flux:navbar.item>
-        </flux:navbar>
-        <flux:separator />
-    </div>
-
+    <livewire:subjects.components.nav-bar :subject="$subject" />            
 
     <flux:subheading>{{ $subject->name }} topics</flux:subheading>
     <flux:subheading>{{ $subject->name }} topics</flux:subheading>
