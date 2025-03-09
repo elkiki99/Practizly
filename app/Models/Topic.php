@@ -9,6 +9,7 @@ use App\Models\Assignment;
 use App\Models\Attachment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Topic extends Model
 {
@@ -16,14 +17,14 @@ class Topic extends Model
     use HasFactory;
 
     protected $fillable = [
-        'subject_id', 
-        'name', 
+        'subject_id',
+        'name',
         // 'description',
     ];
 
-    public function events()
+    public function events() : BelongsToMany
     {
-        return $this->hasMany(Event::class);
+        return $this->belongsToMany(Event::class);
     }
 
     public function subject()
@@ -31,10 +32,10 @@ class Topic extends Model
         return $this->belongsTo(Subject::class);
     }
 
-    public function exams()
-    {
-        return $this->belongsToMany(Exam::class);
-    }
+    // public function exams()
+    // {
+    //     return $this->belongsToMany(Exam::class);
+    // }
 
     public function assignments()
     {
@@ -50,13 +51,13 @@ class Topic extends Model
     {
         return $this->morphMany(Attachment::class, 'attachable');
     }
-    
+
     public function assignmentAttachments()
     {
         return $this->hasManyThrough(Attachment::class, Assignment::class, 'topic_id', 'attachable_id')
-                    ->where('attachable_type', Assignment::class);
+            ->where('attachable_type', Assignment::class);
     }
-    
+
     public function getAllAttachmentsAttribute()
     {
         return $this->directAttachments->merge($this->assignmentAttachments);

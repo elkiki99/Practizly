@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('date');
             $table->string('note')->nullable();
             $table->string('status')->default('pending');
-            $table->foreignId('topic_id')->constrained()->onDelete('cascade');
+            $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

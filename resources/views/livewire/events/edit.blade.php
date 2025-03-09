@@ -46,13 +46,13 @@ new class extends Component {
         $this->date = Carbon::parse($this->event->date);
         $this->note = $this->event->note;
         $this->status = $this->event->status;
-        $this->topic = $this->event->topic_id;
-        $this->subject = $this->event->topic->subject_id;
+        $this->topic = $this->event->topics->pluck('id');
+        $this->subject = $this->event->subject->id;
 
         $this->subjects = Auth::user()->subjects()->latest()->get();
         $this->topics = Topic::where('subject_id', $this->subject)->get();
     }
-    
+
     #[On('subjectCreated')]
     public function updatedSubject($subject = null)
     {
@@ -94,9 +94,10 @@ new class extends Component {
             'date' => $this->date,
             'note' => $this->note,
             'status' => $this->status,
-            'topic_id' => $this->topic,
         ]);
 
+        $this->event->topics()->sync($this->topic);
+        
         $this->dispatch('eventUpdated');
 
         Flux::toast(heading: 'Event updated', text: 'Your event was updated successfully', variant: 'success');
@@ -107,8 +108,8 @@ new class extends Component {
 ?>
 
 <form wire:submit.prevent="updateEvent">
-    <flux:modal variant="flyout" name="edit-event-{{ $event->id }}" class="space-y-6 w-96" x-data="{ editTopic: false }"
-        x-init="window.addEventListener('topicCreated', () => { editTopic = false })">
+    <flux:modal variant="flyout" name="edit-event-{{ $event->id }}" class="space-y-6 w-96" x-data="{ createTopic: false }"
+        x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">Edit event</flux:heading>
             <flux:subheading>Edit {{ $event->name }} event.</flux:subheading>
@@ -137,10 +138,10 @@ new class extends Component {
             <div class="flex items-center justify-between mb-2">
                 <flux:label>Event topic</flux:label>
                 <flux:button as="link" size="xs" variant="subtle" icon-trailing="plus"
-                    x-on:click="editTopic = true">New topic</flux:button>
+                    x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select required searchable variant="listbox" wire:model="topic" placeholder="Select topic">
+            <flux:select required multiple searchable variant="listbox" wire:model="topic" placeholder="Select topic" selected-suffix="{{ __('topics selected') }}">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>

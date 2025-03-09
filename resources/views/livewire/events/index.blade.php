@@ -20,17 +20,17 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
     public function with()
     {
         return [
-            'events' => Event::whereHas('topic.subject', function ($query) {
+            'events' => Event::whereHas('topics.subject', function ($query) {
                 $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
             })
                 ->orderBy('date', 'asc')
                 ->paginate(12),
         ];
     }
-    
+
     public function loadDates()
     {
-        $this->dates = Event::whereHas('topic.subject', function ($query) {
+        $this->dates = Event::whereHas('topics.subject', function ($query) {
             $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
         })
             ->pluck('date')
@@ -44,6 +44,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
     #[On('eventDeleted')]
     public function updatedEventsAndDates()
     {
+        $this->loadDates();
         $this->dispatch('$refresh');
     }
 }; ?>
@@ -104,11 +105,6 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                 </flux:modal.trigger>
             </div>
         </div>
-
-        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
-            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
-            <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-        </flux:tabs>
     </div>
 
     <!-- Calendar -->
@@ -124,34 +120,55 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
 
         <flux:table :paginate="$events">
             <flux:table.columns>
-                <flux:table.column sortable>Event</flux:table.column>
+                <flux:table.column>Event</flux:table.column>
                 <flux:table.column sortable>Date</flux:table.column>
+                <flux:table.column>Tags</flux:table.column>
                 <flux:table.column sortable>Status</flux:table.column>
             </flux:table.columns>
 
             <flux:table.rows>
                 @forelse($events as $event)
                     <flux:table.row wire:key="event-{{ $event->id }}">
-                        <flux:table.cell class="flex items-center gap-3 whitespace-nowrap">
+                        <!-- Icon type & name -->
+                        <flux:table.cell class="flex items-center space-x-2 whitespace-nowrap">
                             @if ($event->type === 'test')
-                                <flux:icon.document-text variant="mini" />
+                                <flux:icon.document-text variant="mini" inset="top bottom" />
                             @elseif($event->type === 'exam')
-                                <flux:icon.book-open variant="mini" />
+                                <flux:icon.book-open variant="mini" inset="top bottom" />
                             @elseif($event->type === 'evaluation')
-                                <flux:icon.clipboard-document-check variant="mini" />
+                                <flux:icon.clipboard-document-check variant="mini" inset="top bottom" />
                             @elseif($event->type === 'oral_presentation')
-                                <flux:icon.microphone variant="mini" />
+                                <flux:icon.microphone variant="mini" inset="top bottom" />
                             @elseif($event->type === 'assignment')
-                                <flux:icon.pencil-square variant="mini" />
+                                <flux:icon.pencil-square variant="mini" inset="top bottom" />
                             @endif
                             <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
                                 href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">
                                 {{ Str::of($event->name)->ucfirst() }}</flux:link>
                         </flux:table.cell>
 
+                        <!-- Date -->
                         <flux:table.cell class="whitespace-nowrap">{{ Carbon::parse($event->date)->format('F j, Y') }}
                         </flux:table.cell>
 
+                        <!-- Topics -->
+                        <flux:table.cell>
+                            @php
+                                $topicsToShow = $event->topics->take(2);
+                                $hasMoreTopics = $event->topics->count() > 2;
+                            @endphp
+
+                            @foreach ($topicsToShow as $topic)
+                                <flux:badge size="sm" color="zinc">{{ $topic->name }}
+                                </flux:badge>
+                            @endforeach
+
+                            @if ($hasMoreTopics)
+                                <flux:badge size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more</flux:badge>
+                            @endif
+                        </flux:table.cell>
+
+                        <!-- Status -->
                         <flux:table.cell>
                             @if ($event->status === 'pending')
                                 <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
@@ -160,8 +177,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                             @endif
                         </flux:table.cell>
 
-                        <flux:spacer />
-
+                        <!-- Actions -->
                         <flux:table.cell>
                             <flux:modal.trigger name="edit-event-{{ $event->id }}">
                                 <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">

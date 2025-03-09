@@ -84,15 +84,17 @@ new class extends Component {
     {
         $this->validate();
 
-        Event::create([
+        $event = Event::create([
             'name' => $this->name,
             'description' => $this->description,
             'type' => $this->type,
             'date' => $this->date,
             'note' => $this->note,
             'status' => $this->status,
-            'topic_id' => $this->topic,
+            'subject_id' => $this->subject
         ]);
+
+        $event->topics()->sync($this->topic);
 
         $this->reset('name', 'description', 'type', 'date', 'note', 'status');
 
@@ -138,7 +140,7 @@ new class extends Component {
                     x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select required searchable variant="listbox" wire:model="topic" placeholder="Select topic">
+            <flux:select required multiple searchable variant="listbox" wire:model="topic" placeholder="Select topic" selected-suffix="{{ __('topics selected') }}">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>
