@@ -70,7 +70,6 @@ new class extends Component {
             $this->dispatch('subjectUpdated');
             Flux::modals()->close();
         }
-
     }
 }; ?>
 

@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\Validate;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
 use App\Models\Event;
 use App\Models\Topic;
@@ -10,29 +11,29 @@ use Carbon\Carbon;
 new class extends Component {
     public ?Event $event;
 
-    #[Validate('required|string|max:255')]
     public string $name;
-
-    #[Validate('nullable|string|max:1000')]
     public string $description;
-
-    #[Validate('required|string|in:test,exam,evaluation,oral_presentation,assignment')]
     public string $type;
-
-    #[Validate('required|date')]
     public Carbon $date;
-
-    #[Validate('nullable|string|max:1000')]
     public string $note;
-
-    #[Validate('required|in:pending,completed')]
     public string $status;
-
-    #[Validate('required|exists:topics,id')]
     public $topic;
-
-    #[Validate('required|exists:subjects,id')]
     public $subject;
+
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'type' => 'required|string|in:test,exam,evaluation,oral_presentation,assignment',
+            'date' => 'required|date',
+            'note' => 'nullable|string|max:1000',
+            'status' => 'required|in:pending,completed',
+            'topic' => 'required|exists:topics,id',
+            'subject' => 'required|exists:subjects,id',
+            'slug' => ['required', Rule::unique('events')->ignore($this->event)],
+        ];
+    }
 
     public $subjects = [];
     public $topics = [];
@@ -87,8 +88,20 @@ new class extends Component {
     {
         $this->validate();
 
+        $baseSlug = Str::slug($this->name);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        if ($this->slug !== $baseSlug) {
+            while (Event::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+        }
+
         $this->event->update([
             'name' => $this->name,
+            'slug' => $slug,
             'description' => $this->description,
             'type' => $this->type,
             'date' => $this->date,
@@ -97,12 +110,17 @@ new class extends Component {
         ]);
 
         $this->event->topics()->sync($this->topic);
-        
-        $this->dispatch('eventUpdated');
 
         Flux::toast(heading: 'Event updated', text: 'Your event was updated successfully', variant: 'success');
 
-        Flux::modals()->close();
+        // Check slug to redirect to new url
+        if ($this->slug !== $slug) {
+            Flux::modals()->close();
+            $this->redirectRoute('events.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
+        } else {
+            $this->dispatch('eventUpdated');
+            Flux::modals()->close();
+        }
     }
 };
 ?>
@@ -141,7 +159,8 @@ new class extends Component {
                     x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select required multiple searchable variant="listbox" wire:model="topic" placeholder="Select topic" selected-suffix="{{ __('topics selected') }}">
+            <flux:select required multiple searchable variant="listbox" wire:model="topic" placeholder="Select topic"
+                selected-suffix="{{ __('topics selected') }}">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>

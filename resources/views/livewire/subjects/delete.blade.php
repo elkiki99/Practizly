@@ -14,10 +14,12 @@ new class extends Component {
     public function deleteSubject()
     {
         $this->subject->delete();
-        
-        $this->dispatch('subjectDeleted');
 
         Flux::toast(heading: 'Subject deleted', text: 'Your subject was deleted successfully', variant: 'danger');
+
+        $this->redirectRoute('subjects.index', Auth::user()->username);
+        
+        $this->dispatch('subjectDeleted');
 
         Flux::modals()->close();
     }

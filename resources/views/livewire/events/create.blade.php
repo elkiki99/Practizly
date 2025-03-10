@@ -83,9 +83,19 @@ new class extends Component {
     public function createEvent()
     {
         $this->validate();
+        
+        $baseSlug = Str::slug($this->name);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (Event::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
 
         $event = Event::create([
             'name' => $this->name,
+            'slug' => $slug,
             'description' => $this->description,
             'type' => $this->type,
             'date' => $this->date,

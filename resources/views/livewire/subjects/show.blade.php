@@ -51,17 +51,16 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
 
     <livewire:subjects.components.nav-bar :subject="$subject" />
 
-    <flux:subheading>{{ $subject->description }}</flux:subheading>
-
     <!-- Subject card -->
     <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6 w-1/3"
         wire:key="subject-{{ $subject->id }}">
         <!-- Subject heading -->
         <div>
-            <div class="flex items-center">
+            <div class="flex items-center mb-2">
                 <flux:link size="lg">{{ Str::of($subject->name)->ucfirst() }}</flux:link>
                 <span class="inline-block ml-2 size-2 bg-{{ $subject->color }}-500 rounded-full"></span>
             </div>
+            <flux:subheading>{{ $subject->description }}</flux:subheading>
         </div>
 
         <!-- Last exams -->

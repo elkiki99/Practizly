@@ -125,8 +125,7 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                             </flux:table.cell>
     
                             <!-- Date -->
-                            <flux:table.cell class="whitespace-nowrap">{{ Carbon::parse($event->date)->format('F j, Y') }}
-                            </flux:table.cell>
+                            <flux:table.cell class="whitespace-nowrap">{{ Carbon::parse($event->date)->format('F j, Y') }}</flux:table.cell>
     
                             <!-- Topics -->
                             <flux:table.cell>
