@@ -11,12 +11,14 @@ use Carbon\Carbon;
 new class extends Component {
     public ?Event $event;
 
-    public string $name;
-    public string $description;
-    public string $type;
-    public Carbon $date;
-    public string $note;
-    public string $status;
+    public string $name = '';
+    public string $slug = '';
+    public string $description = '';
+    public string $type = '';
+    public ?Carbon $date = null;
+    public string $note = '';
+    public string $status = '';
+
     public $topic;
     public $subject;
 
@@ -24,7 +26,7 @@ new class extends Component {
     {
         return [
             'name' => 'required|string|max:255',
-            'description' => 'required|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'type' => 'required|string|in:test,exam,evaluation,oral_presentation,assignment',
             'date' => 'required|date',
             'note' => 'nullable|string|max:1000',
@@ -42,13 +44,14 @@ new class extends Component {
     {
         $this->event = $event;
         $this->name = $this->event->name;
-        $this->description = $this->event->description;
+        $this->description = $this->event->description ?? '';
         $this->type = $this->event->type;
         $this->date = Carbon::parse($this->event->date);
-        $this->note = $this->event->note;
+        $this->note = $this->event->note ?? '';
         $this->status = $this->event->status;
         $this->topic = $this->event->topics->pluck('id');
         $this->subject = $this->event->subject->id;
+        $this->slug = $this->event->slug;
 
         $this->subjects = Auth::user()->subjects()->latest()->get();
         $this->topics = Topic::where('subject_id', $this->subject)->get();
@@ -113,13 +116,20 @@ new class extends Component {
 
         Flux::toast(heading: 'Event updated', text: 'Your event was updated successfully', variant: 'success');
 
-        // Check slug to redirect to new url
-        if ($this->slug !== $slug) {
-            Flux::modals()->close();
-            $this->redirectRoute('events.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
-        } else {
+        $url = request()->header('Referer');
+
+        if ($url === url()->route('calendar', [Auth::user()->username])) {
             $this->dispatch('eventUpdated');
             Flux::modals()->close();
+        } else {
+            // Check slug to redirect to new url
+            if ($this->slug !== $slug) {
+                Flux::modals()->close();
+                $this->redirectRoute('events.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
+            } else {
+                $this->dispatch('eventUpdated');
+                Flux::modals()->close();
+            }
         }
     }
 };

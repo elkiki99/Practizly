@@ -17,11 +17,15 @@ new class extends Component {
 
         Flux::toast(heading: 'Subject deleted', text: 'Your subject was deleted successfully', variant: 'danger');
 
-        $this->redirectRoute('subjects.index', Auth::user()->username);
+        $url = request()->header('Referer');
         
-        $this->dispatch('subjectDeleted');
-
-        Flux::modals()->close();
+        if($url  === url()->route('subjects.index', [Auth::user()->username])) {
+            $this->dispatch('subjectDeleted');
+            Flux::modals()->close();
+        } else {
+            Flux::modals()->close();
+            $this->redirectRoute('subjects.index', [Auth::user()->username], navigate: true);
+        }
     }
 }; ?>
 

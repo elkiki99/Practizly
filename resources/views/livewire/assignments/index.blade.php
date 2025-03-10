@@ -16,8 +16,8 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
     {
         return [
             'assignments' => Assignment::whereHas('topic.subject', function ($query) {
-                    $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
-                })
+                $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
+            })
                 ->with(['topic.subject'])
                 ->orderBy('due_date', 'asc')
                 ->paginate(10),
@@ -76,50 +76,69 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
                 </flux:modal.trigger>
             </div>
         </div>
-
-        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
-            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
-            <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-        </flux:tabs>
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         @forelse($assignments as $assignment)
-            <flux:card>
-                <div class="space-y-6">
-                    <div>
-                        <div class="flex items-center">
-                            <flux:subheading>{{ Str::of($assignment->topic->name)->ucfirst() }} -
-                                {{ Str::of($assignment->subject->name)->ucfirst() }}</flux:subheading>
-                            <flux:spacer />
-                            <flux:tooltip content="Options" position="left">
-                                <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
-                            </flux:tooltip>
-                        </div>
+            <flux:card class="space-y-6" wire:key="assignment-{{ $assignment->id }}">
+                <div>
+                    <div class="flex items-center">
+                        <flux:subheading>{{ Str::of($assignment->topic->name)->ucfirst() }} -
+                            {{ Str::of($assignment->subject->name)->ucfirst() }}
+                        </flux:subheading>
 
-                        <flux:heading size="lg">{{ Str::of($assignment->title)->ucfirst() }}</flux:heading>
+                        <flux:spacer />
+
+                        <flux:dropdown>
+                            <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
+
+                            <flux:menu>
+                                <flux:menu.item as="link" wire:navigate
+                                    href="/{{ Auth::user()->username }}/assignments/{{ $assignment->slug }}"
+                                    icon-trailing="chevron-right">Finish assignment</flux:menu.item>
+                                <flux:menu.separator />
+
+                                <flux:modal.trigger name="edit-assignment-{{ $assignment->id }}">
+                                    <flux:menu.item icon="pencil-square">Edit assignment</flux:menu.item>
+                                </flux:modal.trigger>
+
+                                <flux:modal.trigger name="delete-assignment-{{ $assignment->id }}">
+                                    <flux:menu.item variant="danger" icon="trash">Delete assignment
+                                        </flux:menu.button>
+                                </flux:modal.trigger>
+                            </flux:menu>
+                        </flux:dropdown>
+
+                        <!-- Update assignment modal -->
+                        <livewire:assignments.edit :$assignment wire:key="edit-assignment-{{ $assignment->id }}" />
+
+                        <!-- Delete assignment modal -->
+                        <livewire:assignments.delete :$assignment wire:key="delete-assignment-{{ $assignment->id }}" />
                     </div>
-                    <div class="space-y-3">
-                        <div class="gap-3 items-center flex">
-                            <flux:icon.clipboard-document variant="micro" />
-                            <flux:heading>{{ Str::of($assignment->description)->ucfirst() }}</flux:heading>
-                        </div>
 
-                        <div class="gap-3 items-center flex">
-                            <flux:icon.command-line variant="micro" />
-                            <flux:heading>{{ $assignment->guidelines }}</flux:heading>
-                        </div>
+                    <flux:heading size="lg">{{ Str::of($assignment->title)->ucfirst() }}</flux:heading>
+                </div>
 
-                        <div class="gap-3 items-center flex">
-                            <flux:icon.paper-clip variant="micro" />
-                            <flux:heading x-data="{ count: {{ $assignment->attachments->count() }} }"
-                                x-text="count === 1 ? count + ' attachment' : count + ' attachments'"></flux:heading>
-                        </div>
-                        
-                        <div class="gap-3 items-center flex">
-                            <flux:icon.clock variant="micro" />
-                            <flux:heading>{{ Carbon::parse($assignment->due_date)->format('F j, Y') }}</flux:heading>
-                        </div>
+                <div class="space-y-3">
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.clipboard-document variant="micro" />
+                        <flux:heading>{{ Str::of($assignment->description)->ucfirst() }}</flux:heading>
+                    </div>
+
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.command-line variant="micro" />
+                        <flux:heading>{{ $assignment->guidelines }}</flux:heading>
+                    </div>
+
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.paper-clip variant="micro" />
+                        <flux:heading x-data="{ count: {{ $assignment->attachments->count() }} }"
+                            x-text="count === 1 ? count + ' attachment' : count + ' attachments'"></flux:heading>
+                    </div>
+
+                    <div class="gap-3 items-center flex">
+                        <flux:icon.clock variant="micro" />
+                        <flux:heading>{{ Carbon::parse($assignment->due_date)->format('F j, Y') }}</flux:heading>
                     </div>
                 </div>
             </flux:card>

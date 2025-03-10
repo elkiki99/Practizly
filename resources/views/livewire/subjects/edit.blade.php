@@ -61,14 +61,21 @@ new class extends Component {
         ]);
 
         Flux::toast(heading: 'Subject updated', text: 'Your subject was updated successfully', variant: 'success');
-    
-        // Check slug to redirect to new url
-        if ($this->slug !== $slug) {
-            Flux::modals()->close();
-            $this->redirectRoute('subjects.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
-        } else {
+
+        $url = request()->header('Referer');
+
+        if ($url === url()->route('subjects.index', [Auth::user()->username])) {
             $this->dispatch('subjectUpdated');
             Flux::modals()->close();
+        } else {
+            // Check slug to redirect to new url
+            if ($this->slug !== $slug) {
+                Flux::modals()->close();
+                $this->redirectRoute('subjects.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
+            } else {
+                $this->dispatch('subjectUpdated');
+                Flux::modals()->close();
+            }
         }
     }
 }; ?>
@@ -115,16 +122,4 @@ new class extends Component {
             <flux:button type="submit" variant="primary">Update subject</flux:button>
         </div>
     </flux:modal>
-    {{-- 
-    @if (session('subjectUpdated'))
-        <script>
-            document.addEventListener('alpine:init', () => {
-                Flux.toast({
-                    heading: 'Subject updated',
-                    text: '{{ session('subjectUpdated') }}',
-                    variant: 'success'
-                });
-            });
-        </script>
-    @endif --}}
 </form>

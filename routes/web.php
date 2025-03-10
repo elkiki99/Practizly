@@ -25,13 +25,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('{user:username}/subjects/{slug}/events', 'subjects.components.events')->name('subjects.components.events');
 
     Volt::route('{user:username}/calendar', 'events.index')->name('calendar');
+    
     Volt::route('{user:username}/events/{slug}', 'events.show')->name('events.show');
+
+    Volt::route('{user:username}/assignments', 'assignments.index')->name('assignments.index');
+    Volt::route('{user:username}/assignments/{slug}', 'assignments.show')->name('assignments.show');
 
     Volt::route('{user:username}/profile', 'user.profile')->name('profile');
     Volt::route('{user:username}/settings', 'user.settings')->name('settings');
     Volt::route('{user:username}/summaries', 'summaries.index')->name('summaries');
     Volt::route('{user:username}/library', 'attachments.index')->name('library');
-    Volt::route('{user:username}/assignments', 'assignments.index')->name('assignments');
     Volt::route('{user:username}/exams', 'exams.index')->name('exams');
 });
 

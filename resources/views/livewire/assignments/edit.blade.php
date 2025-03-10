@@ -40,7 +40,6 @@ new class extends Component {
     #[Validate('required|exists:subjects,id')]
     public $subject;
 
-    public $makeEvent = true;
     public $subjects = [];
     public $topics = [];
 
@@ -50,7 +49,7 @@ new class extends Component {
         $this->title = $assignment->title;
         $this->description = $assignment->description;
         $this->guidelines = $assignment->guidelines;
-        $this->due_date = $assignment->due_date;
+        $this->due_date = $assignment->due_date ? Carbon::parse($assignment->due_date) : null;
         $this->status = $assignment->status;
         $this->topic = $assignment->topic_id;
         $this->subject = $assignment->topic->subject_id;
@@ -58,7 +57,7 @@ new class extends Component {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
     }
 
-    public function updateAssignment()
+    public function editAssignment()
     {
         $this->validate();
 
@@ -85,27 +84,23 @@ new class extends Component {
             $this->dispatch('attachmentUpdated');
         }
 
-        if ($this->makeEvent) {
-            $event = Event::where('topic_id', $this->assignment->topic_id)->first();
-            if ($event) {
-                $event->update([
-                    'name' => $this->title,
-                    'date' => $this->due_date,
-                    'status' => $this->status,
-                ]);
-            }
-        }
-
-        $this->dispatch('assignmentUpdated');
+        $this->event->topics()->sync($this->topic);
 
         Flux::toast(heading: 'Assignment updated', text: 'Your assignment was updated successfully', variant: 'success');
 
-        $this->modal('edit-assignment')->close();
+        // Check slug to redirect to new url
+        if ($this->slug !== $slug) {
+            Flux::modals()->close();
+            $this->redirectRoute('assignments.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
+        } else {
+            $this->dispatch('assignmentUpdated');
+            Flux::modals()->close();
+        }
     }
 }; ?>
 
-<form wire:submit.prevent="createAssignment">
-    <flux:modal variant="flyout" name="create-assignment" class="space-y-6 w-96" x-data="{ createTopic: false }"
+<form wire:submit.prevent="editAssignment">
+    <flux:modal variant="flyout" name="edit-assignment-{{ $assignment->id }}" class="space-y-6 w-96" x-data="{ createTopic: false }"
         x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New assignment</flux:heading>
@@ -151,7 +146,8 @@ new class extends Component {
                     x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select wire:key="{{ $subject }}" required searchable variant="listbox" wire:model="topic" placeholder="Select topic">
+            <flux:select wire:key="{{ $subject }}" required searchable variant="listbox" wire:model="topic"
+                placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>
@@ -178,15 +174,12 @@ new class extends Component {
             <flux:radio value="completed" icon="document-check" label="Completed" />
         </flux:radio.group>
 
-        <flux:switch label="Make calendar event" wire:model.live="makeEvent" />
-
-
         <flux:input type="file" wire:model="attachments" label="Assignment attachments" multiple />
 
         <div class="flex">
             <flux:spacer />
 
-            <flux:button type="submit" variant="primary">Create assignment</flux:button>
+            <flux:button type="submit" variant="primary">Update assignment</flux:button>
         </div>
     </flux:modal>
 </form>

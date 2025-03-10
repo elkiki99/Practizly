@@ -14,6 +14,7 @@ class Assignment extends Model
 
     protected $fillable = [
         'topic_id',
+        'slug',
         'title',
         'description',
         'guidelines',

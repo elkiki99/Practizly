@@ -92,8 +92,18 @@ new class extends Component {
     {
         $this->validate();
 
+        $baseSlug = Str::slug($this->title);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (Event::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
         $assignment = Assignment::create([
             'title' => $this->title,
+            'slug' => $slug,
             'description' => $this->description,
             'guidelines' => $this->guidelines,
             'due_date' => $this->due_date,
@@ -117,13 +127,25 @@ new class extends Component {
 
         // Create assignment event
         if ($this->makeEvent) {
-            Event::create([
+            $baseSlug = Str::slug($this->title);
+            $slug = $baseSlug;
+            $counter = 1;
+
+            while (Event::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+
+            $event = Event::create([
                 'name' => $this->title,
+                'slug' => $slug,
                 'type' => 'assignment',
                 'date' => $this->due_date,
                 'status' => $this->status,
-                'topic_id' => $this->topic
+                'subject_id' => $this->subject,
             ]);
+
+            $event->topics()->sync($this->topic);
 
             $this->dispatch('eventCreated');
         }
@@ -185,7 +207,8 @@ new class extends Component {
                     x-on:click="createTopic = true">New topic</flux:button>
             </div>
 
-            <flux:select wire:key="{{ $subject }}" required searchable variant="listbox" wire:model="topic" placeholder="Select topic">
+            <flux:select wire:key="{{ $subject }}" required searchable variant="listbox" wire:model="topic"
+                placeholder="Select topic">
                 @forelse($topics as $topic)
                     <flux:select.option value="{{ $topic->id }}">{{ $topic->name }}
                     </flux:select.option>
@@ -213,7 +236,6 @@ new class extends Component {
         </flux:radio.group>
 
         <flux:switch label="Make calendar event" wire:model.live="makeEvent" />
-
 
         <flux:input type="file" wire:model="attachments" label="Assignment attachments" multiple />
 

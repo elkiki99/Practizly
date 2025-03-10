@@ -3,13 +3,12 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
 use Illuminate\Support\Facades\Auth;
-use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use App\Models\Exam;
 
 new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends Component {
-    use WithPagination, WithoutUrlPagination;
+    use WithPagination;
 
     public function with()
     {
@@ -80,16 +79,11 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                 </flux:modal.trigger>
             </div>
         </div>
-
-        {{-- <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
-            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
-            <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-        </flux:tabs> --}}
     </div>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         @forelse($exams as $exam)
-            <flux:card class="space-y-6">
+            <flux:card class="space-y-6" wire:key="exam-{{ $exam->id }}">
                 <!-- Exam heading -->
                 <div class="flex-1">
                     <div class="flex items-center">
