@@ -102,12 +102,12 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                     <flux:table.column>Tags</flux:table.column>
                     <flux:table.column sortable>Status</flux:table.column>
                 </flux:table.columns>
-    
+
                 <flux:table.rows>
                     @forelse($events as $event)
                         <flux:table.row wire:key="event-{{ $event->id }}">
                             <!-- Icon type & name -->
-                            <flux:table.cell class="flex items-center space-x-2 whitespace-nowrap">
+                            <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">
                                 @if ($event->type === 'test')
                                     <flux:icon.document-text variant="mini" inset="top bottom" />
                                 @elseif($event->type === 'exam')
@@ -119,31 +119,33 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                                 @elseif($event->type === 'assignment')
                                     <flux:icon.pencil-square variant="mini" inset="top bottom" />
                                 @endif
-                                <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
-                                    href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">
+                                <flux:link class="text-sm font-medium text-zinc-800 dark:text-white whitespace-nowrap"
+                                    wire:navigate href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">
                                     {{ Str::of($event->name)->ucfirst() }}</flux:link>
                             </flux:table.cell>
-    
+
                             <!-- Date -->
-                            <flux:table.cell class="whitespace-nowrap">{{ Carbon::parse($event->date)->format('F j, Y') }}</flux:table.cell>
-    
+                            <flux:table.cell class="whitespace-nowrap">
+                                {{ Carbon::parse($event->date)->format('F j, Y') }}</flux:table.cell>
+
                             <!-- Topics -->
                             <flux:table.cell>
                                 @php
                                     $topicsToShow = $event->topics->take(2);
                                     $hasMoreTopics = $event->topics->count() > 2;
                                 @endphp
-    
+
                                 @foreach ($topicsToShow as $topic)
                                     <flux:badge size="sm" color="zinc">{{ $topic->name }}
                                     </flux:badge>
                                 @endforeach
-    
+
                                 @if ($hasMoreTopics)
-                                    <flux:badge size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more</flux:badge>
+                                    <flux:badge size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more
+                                    </flux:badge>
                                 @endif
                             </flux:table.cell>
-    
+
                             <!-- Status -->
                             <flux:table.cell>
                                 @if ($event->status === 'pending')
@@ -152,22 +154,22 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                                     <flux:badge size="sm" color="green" inset="top bottom">Completed</flux:badge>
                                 @endif
                             </flux:table.cell>
-    
+
                             <!-- Actions -->
                             <flux:table.cell>
                                 <flux:modal.trigger name="edit-event-{{ $event->id }}">
                                     <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">
                                     </flux:button>
                                 </flux:modal.trigger>
-    
+
                                 <flux:modal.trigger name="delete-event-{{ $event->id }}">
                                     <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
                                     </flux:button>
                                 </flux:modal.trigger>
-    
+
                                 <!-- Edit event modal -->
                                 <livewire:events.edit :$event wire:key="edit-event-{{ $event->id }}" />
-    
+
                                 <!-- Delete event modal -->
                                 <livewire:events.delete :$event wire:key="delete-event-{{ $event->id }}" />
                             </flux:table.cell>

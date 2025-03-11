@@ -98,7 +98,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
-            <div class="flex items-center justify-start gap-2 max-lg:hidden">
+            <div class="flex items-center justify-start gap-2">
                 <flux:modal.trigger name="create-event">
                     <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New event
                     </flux:badge>
@@ -121,8 +121,9 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
         <flux:table :paginate="$events">
             <flux:table.columns>
                 <flux:table.column>Event</flux:table.column>
+                <flux:table.column>Subject</flux:table.column>
                 <flux:table.column sortable>Date</flux:table.column>
-                <flux:table.column>Tags</flux:table.column>
+                <flux:table.column>Topics</flux:table.column>
                 <flux:table.column sortable>Status</flux:table.column>
             </flux:table.columns>
 
@@ -130,7 +131,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                 @forelse($events as $event)
                     <flux:table.row wire:key="event-{{ $event->id }}">
                         <!-- Icon type & name -->
-                        <flux:table.cell class="flex items-center space-x-2 whitespace-nowrap">
+                        <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">
                             @if ($event->type === 'test')
                                 <flux:icon.document-text variant="mini" inset="top bottom" />
                             @elseif($event->type === 'exam')
@@ -142,9 +143,16 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                             @elseif($event->type === 'assignment')
                                 <flux:icon.pencil-square variant="mini" inset="top bottom" />
                             @endif
-                            <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
+                            <flux:link class="text-sm font-medium text-zinc-800 dark:text-white whitespace-nowrap" wire:navigate
                                 href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">
                                 {{ Str::of($event->name)->ucfirst() }}</flux:link>
+                        </flux:table.cell>
+
+                        <!-- Subject -->
+                        <flux:table.cell>
+                            <flux:link class="text-sm  text-zinc-500 dark:text-zinc-300 whitespace-nowrap"
+                                wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
+                                {{ $event->subject->name }}</flux:link>
                         </flux:table.cell>
 
                         <!-- Date -->
@@ -164,7 +172,8 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more</flux:badge>
+                                <flux:badge size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more
+                                </flux:badge>
                             @endif
                         </flux:table.cell>
 
@@ -179,15 +188,17 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
 
                         <!-- Actions -->
                         <flux:table.cell>
-                            <flux:modal.trigger name="edit-event-{{ $event->id }}">
-                                <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">
-                                </flux:button>
-                            </flux:modal.trigger>
+                            <div class="flex justify-end items-end space-x-2">
+                                <flux:modal.trigger name="edit-event-{{ $event->id }}">
+                                    <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">
+                                    </flux:button>
+                                </flux:modal.trigger>
 
-                            <flux:modal.trigger name="delete-event-{{ $event->id }}">
-                                <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
-                                </flux:button>
-                            </flux:modal.trigger>
+                                <flux:modal.trigger name="delete-event-{{ $event->id }}">
+                                    <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
+                                    </flux:button>
+                                </flux:modal.trigger>
+                            </div>
 
                             <!-- Edit event modal -->
                             <livewire:events.edit :$event wire:key="edit-event-{{ $event->id }}" />

@@ -32,18 +32,15 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
                 </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item>{{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}">
+                    {{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item>Topics</flux:breadcrumbs.item>
             </flux:breadcrumbs>
         </div>
-
-        {{-- <flux:button icon="star" variant="{{ $subject->is_favorite ? 'primary' : 'ghost' }}"
-            wire:click="toggleFavorite">
-            {{ $subject->is_favorite ? 'Favorito' : 'Marcar como favorito' }}
-        </flux:button> --}}
     </div>
 
     <!-- Tabs -->
-    <livewire:subjects.components.nav-bar :subject="$subject" />            
+    <livewire:subjects.components.nav-bar :subject="$subject" />
 
     <flux:subheading>{{ $subject->name }} topics</flux:subheading>
     <flux:subheading>{{ $subject->name }} topics</flux:subheading>

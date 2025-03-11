@@ -72,7 +72,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
-            <div class="flex items-center justify-start gap-2 max-lg:hidden">
+            <div class="flex items-center justify-start gap-2">
                 <flux:modal.trigger name="create-exam">
                     <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New exam
                     </flux:badge>
@@ -81,15 +81,44 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
         </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        @forelse($exams as $exam)
-            <flux:card class="space-y-6" wire:key="exam-{{ $exam->id }}">
-                <!-- Exam heading -->
-                <div class="flex-1">
-                    <div class="flex items-center">
-                        <flux:heading size="lg">{{ $exam->title }}</flux:heading>
-                        <flux:spacer />
-                        
+    {{-- <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"> --}}
+    <flux:table :paginate="$exams">
+        <flux:table.columns>
+            <flux:table.column>Title</flux:table.column>
+            <flux:table.column>Subject</flux:table.column>
+            <flux:table.column>Type</flux:table.column>
+            <flux:table.column>Difficulty</flux:table.column>
+            <flux:table.column>Size</flux:table.column>
+        </flux:table.columns>
+
+        <flux:table.rows>
+            @forelse($exams as $exam)
+                <flux:table.row wire:key="exam-{{ $exam->id }}">
+                    <!-- Name -->
+                    <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">
+                        <flux:icon.academic-cap variant="mini" inset="top bottom" />
+                        <flux:link class="text-sm  font-medium text-zinc-800 dark:text-white whitespace-nowrap" wire:navigate
+                            href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}">
+                            {{ Str::of($exam->title)->ucfirst() }}</flux:link>
+                    </flux:table.cell>
+
+                    <!-- Subject -->
+                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->subject->name)->ucfirst() }}
+                    </flux:table.cell>
+
+                    <!-- Type -->
+                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}
+                    </flux:table.cell>
+
+                    <!-- Difficulty -->
+                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->difficulty)->ucfirst() }}
+                    </flux:table.cell>
+
+                    <!-- Size -->
+                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->size)->ucfirst() }}</flux:table.cell>
+
+                    <!-- Actions -->
+                    <flux:table.cell align="end">
                         <flux:dropdown>
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
 
@@ -107,61 +136,17 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                                 </flux:modal.trigger>
                             </flux:menu>
                         </flux:dropdown>
+                    </flux:table.cell>
 
-                        <!-- Delete exam modal -->
-                        <livewire:exams.delete :$exam wire:key="delete-exam-{{ $exam->id }}" />
-                    </div>
-                </div>
-
-                <!-- Details -->
-                <div class="flex-1 space-y-2">
-                    <flux:heading>Details</flux:heading>
-
-                    <div class="gap-3 items-center flex">
-                        <flux:icon.book-open variant="micro" />
-                        <flux:heading>{{ $exam->subject->name }}</flux:heading>
-                    </div>
-                    <div class="gap-3 items-center flex">
-                        <flux:icon.arrows-up-down variant="micro" />
-                        <flux:heading>{{ Str::of($exam->size)->ucfirst() }}</flux:heading>
-                    </div>
-
-                    <div class="gap-3 items-center flex">
-                        <flux:icon.chart-bar variant="micro" />
-                        <flux:heading>{{ Str::of($exam->difficulty)->ucfirst() }}</flux:heading>
-                    </div>
-
-                    <div class="gap-3 items-center flex">
-                        <flux:icon.adjustments-vertical variant="micro" />
-                        <flux:heading>{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}</flux:heading>
-                    </div>
-                </div>
-
-                <!-- Topics list -->
-                <div class="flex-1">
-                    <flux:heading class="mb-2">Topics</flux:heading>
-                    <div class="flex flex-wrap gap-2">
-                        @forelse($exam->topics as $topic)
-                            <flux:badge size="sm">{{ Str::of($topic->name)->ucfirst() }}</flux:badge>
-                        @empty
-                            <flux:subheading>No topics yet</flux:subheading>
-                        @endforelse
-                    </div>
-                </div>
-
-                <div class="flex">
-                    <flux:spacer />
-                    <flux:button as="link" variant="primary" icon-trailing="chevron-right"
-                        href="{{-- route('exams.show', $exam) --}}">Take exam</flux:button>
-                </div>
-            </flux:card>
-        @empty
-            <flux:subheading>You don't have any exams yet.</flux:subheading>
-        @endforelse
-    </div>
-
-    <!-- Paginator -->
-    <flux:table :paginate="$exams" />
+                    <livewire:exams.delete :$exam wire:key="delete-exam-{{ $exam->id }}" />
+                </flux:table.row>
+            @empty
+                <flux:table.row>
+                    <flux:table.cell colspan="6">No exams available.</flux:table.cell>
+                </flux:table.row>
+            @endforelse
+        </flux:table.rows>
+    </flux:table>
 
     <!-- Modal actions -->
     <livewire:exams.create />

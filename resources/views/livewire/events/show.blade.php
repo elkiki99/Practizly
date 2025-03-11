@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
 use App\Models\Event;
+use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] class extends Component {
     public ?Event $event;
@@ -19,7 +20,6 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
     }
 }; ?>
 
-
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div class="space-y-3">
@@ -30,7 +30,12 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
             <flux:breadcrumbs>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
                 </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/calendar">Events
+                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
+                </flux:breadcrumbs.item>
+                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
+                    {{ Str::of($event->subject->name)->ucfirst() }}
+                </flux:breadcrumbs.item>
+                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}/events">Events
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item>{{ Str::of($event->name)->ucfirst() }}</flux:breadcrumbs.item>
             </flux:breadcrumbs>
@@ -53,57 +58,25 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
     <livewire:subjects.components.nav-bar :subject="$event->subject" />
 
     <!-- Subject card -->
-    <flux:card
-        class="flex flex-col items-stretch flex-grow h-full space-y-6 w-1/3 p-4 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md bg-white dark:bg-gray-900">
-        <!-- Event Header -->
-        <div>
-            <div class="flex items-center justify-between">
-                {{-- <flux:link href="{{ route('events.show', $event->slug) }}" size="lg">
-                    {{ Str::ucfirst($event->name) }}
-                </flux:link> --}}
-                <span class="inline-block ml-2 size-2 bg-{{ $event->color }}-500 rounded-full"></span>
-            </div>
-            <flux:subheading class="text-sm text-gray-500 dark:text-gray-400">
-                {{ $event->description }}
-            </flux:subheading>
-        </div>
+    <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6 w-1/3"
+        wire:key="event-{{ $event->id }}">
+        <!-- Description -->
+        <flux:heading>
+            {{ $event->subject->name }}
+        </flux:heading>
+
+        <flux:subheading class="text-sm text-gray-500 dark:text-gray-400">
+            {{ $event->description }}
+        </flux:subheading>
 
         <!-- Event Meta (Date & Type) -->
-        <div class="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+        <div class="flex items-center space-x-2">
             <flux:badge variant="subtle">
-                {{ \Carbon\Carbon::parse($event->date)->format('M d, Y') }}
+                {{ Carbon::parse($event->date)->format('M d, Y') }}
             </flux:badge>
-            <flux:badge variant="outline" class="capitalize">
-                {{ $event->type }}
+            <flux:badge variant="outline">
+                {{ Str::of($event->type)->ucfirst() }}
             </flux:badge>
-        </div>
-
-        <!-- Subject & Topics -->
-        <div>
-            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Subject:
-                {{-- <flux:link href="{{ route('subjects.show', $event->subject->slug ?? '#') }}">
-                    {{ $event->subject->name ?? 'No subject' }}
-                </flux:link> --}}
-            </p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Topics:
-                @foreach ($event->topics as $topic)
-                    <flux:badge variant="soft" class="mr-1">
-                        {{ $topic->name }}
-                    </flux:badge>
-                @endforeach
-            </p>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex justify-between mt-auto">
-            {{-- <flux:button variant="outline" size="sm" href="{{ route('events.edit', $event->slug) }}">
-                Edit
-            </flux:button>
-            <flux:button variant="primary" size="sm" href="{{ route('events.show', $event->slug) }}">
-                View Details
-            </flux:button> --}}
         </div>
     </flux:card>
 

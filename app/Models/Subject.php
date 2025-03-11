@@ -20,8 +20,9 @@ class Subject extends Model
         'name',
         'slug',
         'description',
+        'status',
         'color',
-        'is_favorite'
+        // 'is_favorite'
     ];
 
     public function topics()

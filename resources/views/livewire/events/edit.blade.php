@@ -110,6 +110,7 @@ new class extends Component {
             'date' => $this->date,
             'note' => $this->note,
             'status' => $this->status,
+            'subject_id' => $this->subject
         ]);
 
         $this->event->topics()->sync($this->topic);
@@ -118,7 +119,7 @@ new class extends Component {
 
         $url = request()->header('Referer');
 
-        if ($url === url()->route('calendar', [Auth::user()->username])) {
+        if ($url === url()->route('calendar', [Auth::user()->username]) || $url === url()->route('subjects.components.events', [Auth::user()->username, $this->event->subject->slug])) {
             $this->dispatch('eventUpdated');
             Flux::modals()->close();
         } else {

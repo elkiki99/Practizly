@@ -16,8 +16,11 @@ new class extends Component {
     #[Validate('required|string|max:50')]
     public string $color = '';
 
-    #[Validate('boolean')]
-    public bool $is_favorite = false;
+    #[Validate('required|boolean')]
+    public bool $status = true;
+
+    // #[Validate('boolean')]
+    // public bool $is_favorite = false;
 
     public function createSubject()
     {
@@ -37,7 +40,8 @@ new class extends Component {
             'slug' => $slug,
             'description' => $this->description,
             'color' => $this->color,
-            'is_favorite' => $this->is_favorite,
+            'status' => $this->status,
+            // 'is_favorite' => $this->is_favorite,
             'user_id' => auth()->user()->id,
         ]);
 
@@ -86,7 +90,10 @@ new class extends Component {
         </flux:select>
 
         <!-- Favourites -->
-        <flux:switch required wire:model.live="is_favorite" label="Mark subject as favorite" />
+        {{-- <flux:switch required wire:model.live="is_favorite" label="Mark subject as favorite" /> --}}
+
+        <!-- Status -->
+        <flux:switch required wire:model.live="status" label="Subject status" description="Ongoing is marked by default" />
 
         <div class="flex">
             <flux:spacer />

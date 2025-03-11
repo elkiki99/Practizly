@@ -44,7 +44,9 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
                 </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item>{{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}">
+                    {{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item>Exams</flux:breadcrumbs.item>
             </flux:breadcrumbs>
         </div>
 
@@ -67,7 +69,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                     <div class="flex items-center">
                         <flux:heading size="lg">{{ $exam->title }}</flux:heading>
                         <flux:spacer />
-                        
+
                         <flux:dropdown>
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
 

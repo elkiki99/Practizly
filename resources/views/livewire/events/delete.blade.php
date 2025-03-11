@@ -19,7 +19,7 @@ new class extends Component {
 
         $url = request()->header('Referer');
 
-        if ($url === url()->route('calendar', [Auth::user()->username])) {
+        if ($url === url()->route('calendar', [Auth::user()->username]) || $url === url()->route('subjects.components.events', [Auth::user()->username, $this->event->subject->slug])) {
             $this->dispatch('eventDeleted');
             Flux::modals()->close();
         } else {
