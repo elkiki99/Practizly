@@ -2,32 +2,27 @@
 
 use Livewire\Volt\Component;
 
-use Livewire\Attributes\{Layout, Title};
+use Livewire\Attributes\{Layout, Title, On};
 use Illuminate\Support\Facades\Auth;
-use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
-use Livewire\Attributes\On;
-use App\Models\Summary;
 use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class extends Component {
-    public $summaries = [];
-    public $subject_id;
+    use WithPagination;
 
-    public function mount()
+    public function with()
     {
-        $this->summaries = Summary::whereHas('topic.subject', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->get();
+        return [
+            'summaries' => Auth::user()->summaries()->latest()->paginate(12),
+        ];
     }
 
     #[On('summaryCreated')]
+    #[On('summaryDeleted')]
     public function updatedSummaries()
     {
-        $this->summaries = Summary::whereHas('topic.subject', function ($query) {
-            $query->where('user_id', Auth::id());
-        })->get();
+        $this->dispatch('$refresh');
     }
 }; ?>
 
@@ -77,7 +72,7 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
-            <div class="flex items-center justify-start gap-2 max-lg:hidden">
+            <div class="flex items-center justify-start gap-2">
                 <flux:modal.trigger name="create-summary">
                     <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New
                         summary
@@ -85,49 +80,88 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
                 </flux:modal.trigger>
             </div>
         </div>
-
-        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
-            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
-            <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-        </flux:tabs>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        @forelse($summaries as $summary)
-            <flux:card>
-                <div class="space-y-6">
-                    <div>
-                        <div class="flex items-center">
-                            <flux:subheading>{{ Str::of($summary->topic->name)->ucfirst() }} -
-                                {{ Str::of($summary->subject->name)->ucfirst() }}</flux:subheading>
-                            <flux:spacer />
-                            <flux:tooltip content="Options" position="left">
-                                <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
-                            </flux:tooltip>
-                        </div>
+    <flux:table :paginate="$summaries">
+        <flux:table.columns>
+            <flux:table.column>Title</flux:table.column>
+            <flux:table.column>Subject</flux:table.column>
+            <flux:table.column>Topics</flux:table.column>
+            <flux:table.column>Size</flux:table.column>
+        </flux:table.columns>
 
-                        <flux:heading size="lg">{{ Str::of($summary->title)->ucfirst() }}</flux:heading>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="gap-3 items-center flex">
-                            <flux:icon.arrows-up-down variant="micro" />
-                            <flux:heading>{{ Str::of($summary->size)->ucfirst() }}</flux:heading>
-                        </div>
+        <flux:table.rows>
+            @forelse($summaries as $summary)
+                <flux:table.row wire:key="summary-{{ $summary->id }}">
+                    <flux:table.cell variant="strong">
+                        <flux:link class="text-sm font-medium text-zinc-800 dark:text-white" wire:navigate
+                            href="/{{ Auth::user()->username }}/summaries/{{ $summary->slug }}">
+                            {{ Str::of($summary->title)->ucfirst() }}
+                        </flux:link>
+                    </flux:table.cell>
 
-                        <div class="gap-3 items-center flex">
-                            <flux:icon.paper-clip variant="micro" />
-                            <flux:heading x-data="{ count: {{ $summary->attachments->count() }} }"
-                                x-text="count === 1 ? count + ' attachment' : count + ' attachments'"></flux:heading>
-                        </div>
-                    </div>
-                </div>
-            </flux:card>
-        @empty
-            <flux:subheading>You don't have any summaries yet.</flux:subheading>
-        @endforelse
-    </div>
+                    <!-- Subject -->
+                    <flux:table.cell>
+                        <flux:link class="text-sm  text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
+                            href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}">
+                            {{ $summary->subject->name }}</flux:link>
+                    </flux:table.cell>
+
+                    <!-- Topics -->
+                    <flux:table.cell>
+                        @php
+                            $topicsToShow = $summary->topics->take(2);
+                            $hasMoreTopics = $summary->topics->count() > 2;
+                        @endphp
+
+                        @if ($topicsToShow->isEmpty())
+                            <flux:badge size="sm" color="zinc">No topics yet</flux:badge>
+                        @else
+                            @foreach ($topicsToShow as $topic)
+                                <flux:badge size="sm" color="zinc">{{ $topic->name }}</flux:badge>
+                            @endforeach
+
+                            @if ($hasMoreTopics)
+                                <flux:badge size="sm" color="zinc">+ {{ $summary->topics->count() - 2 }} more
+                                </flux:badge>
+                            @endif
+                        @endif
+                    </flux:table.cell>
+
+                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($summary->size)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
+
+                    <!-- Actions -->
+                    <flux:table.cell>
+                        <flux:dropdown class="flex justify-end items-end space-x-2">
+                            <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
+
+                            <flux:menu>
+                                <flux:menu.item as="link" wire:navigate
+                                    href="/{{ Auth::user()->username }}/summaries/{{ $summary->slug }}"
+                                    icon-trailing="chevron-right">Show summary</flux:menu.item>
+                                <flux:menu.separator />
+
+                                <flux:modal.trigger name="download-summary-{{ $summary->id }}">
+                                    <flux:menu.item icon="arrow-down-tray">Download summary</flux:menu.button>
+                                </flux:modal.trigger>
+                                <flux:modal.trigger name="delete-summary-{{ $summary->id }}">
+                                    <flux:menu.item variant="danger" icon="trash">Delete summary
+                                        </flux:menu.button>
+                                </flux:modal.trigger>
+                            </flux:menu>
+                        </flux:dropdown>
+
+                        <livewire:summaries.delete :$summary wire:key="delete-summary-{{ $summary->id }}" />
+                    </flux:table.cell>
+                </flux:table.row>
+            @empty
+                <flux:table.row>
+                    <flux:table.cell colspan="4">You don't have any summaries yet.</flux:table.cell>
+                </flux:table.row>
+            @endforelse
+        </flux:table.rows>
+    </flux:table>
 
     <!-- Modal actions -->
     <livewire:summaries.create />
-</div>
 </div>

@@ -54,11 +54,6 @@ class User extends Authenticatable // implements MustVerifyEmail
         ];
     }
 
-    public function isAdmin() : bool
-    {
-        return $this->is_admin;
-    }
-
     public function subjects()
     {
         return $this->hasMany(Subject::class);
@@ -77,5 +72,10 @@ class User extends Authenticatable // implements MustVerifyEmail
     public function assignments()
     {
         return $this->hasManyThrough(Assignment::class, Topic::class);
+    }
+
+    public function summaries()
+    {   
+        return $this->hasManyThrough(Summary::class, Subject::class);
     }
 }

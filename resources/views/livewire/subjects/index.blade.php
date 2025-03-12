@@ -13,7 +13,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
     public function with()
     {
         return [
-            'subjects' => Auth::user()->subjects()->latest()->paginate(6),
+            'subjects' => Auth::user()->subjects()->latest()->paginate(12),
         ];
     }
 
@@ -94,7 +94,6 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                 <flux:table.column>Subject</flux:table.column>
                 <flux:table.column sortable>Upcoming event</flux:table.column>
                 <flux:table.column>My tests</flux:table.column>
-                <flux:table.column>Topics</flux:table.column>
                 <flux:table.column sortable>Status</flux:table.column>
             </flux:table.columns>
 
@@ -125,27 +124,6 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                         <!-- My tests -->
                         <flux:table.cell class="whitespace-nowrap">
                             {{ $subject->exams()->latest()->first()->title ?? 'No tests yet' }}
-                        </flux:table.cell>
-
-                        <!-- Tags -->
-                        <flux:table.cell>
-                            @php
-                                $topicsToShow = $subject->topics->take(2);
-                                $hasMoreTopics = $subject->topics->count() > 2;
-                            @endphp
-
-                            @if ($topicsToShow->isEmpty())
-                                <flux:badge size="sm" color="zinc">No topics yet</flux:badge>
-                            @else
-                                @foreach ($topicsToShow as $topic)
-                                    <flux:badge size="sm" color="zinc">{{ $topic->name }}</flux:badge>
-                                @endforeach
-
-                                @if ($hasMoreTopics)
-                                    <flux:badge size="sm" color="zinc">+ {{ $subject->topics->count() - 2 }} more
-                                    </flux:badge>
-                                @endif
-                            @endif
                         </flux:table.cell>
 
                         <!-- Status -->
@@ -180,7 +158,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                     </flux:table.row>
                 @empty
                     <flux:table.row>
-                        <flux:table.cell colspan="4">No subjects available.</flux:table.cell>
+                        <flux:table.cell colspan="4">You don't have any subjects yet.</flux:table.cell>
                     </flux:table.row>
                 @endforelse
             </flux:table.rows>

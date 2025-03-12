@@ -13,7 +13,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
     public function with()
     {
         return [
-            'exams' => Auth::user()->exams()->latest()->paginate(6),
+            'exams' => Auth::user()->exams()->latest()->paginate(12),
         ];
     }
 
@@ -81,13 +81,12 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
         </div>
     </div>
 
-    {{-- <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"> --}}
     <flux:table :paginate="$exams">
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
             <flux:table.column>Subject</flux:table.column>
-            <flux:table.column>Type</flux:table.column>
-            <flux:table.column>Difficulty</flux:table.column>
+            <flux:table.column>Topics</flux:table.column>
+            <flux:table.column sortable>Difficulty</flux:table.column>
             <flux:table.column>Size</flux:table.column>
         </flux:table.columns>
 
@@ -97,29 +96,48 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                     <!-- Name -->
                     <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">
                         <flux:icon.academic-cap variant="mini" inset="top bottom" />
-                        <flux:link class="text-sm  font-medium text-zinc-800 dark:text-white whitespace-nowrap" wire:navigate
-                            href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}">
+                        <flux:link class="text-sm  font-medium text-zinc-800 dark:text-white whitespace-nowrap"
+                            wire:navigate href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}">
                             {{ Str::of($exam->title)->ucfirst() }}</flux:link>
                     </flux:table.cell>
 
                     <!-- Subject -->
-                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->subject->name)->ucfirst() }}
+                    <flux:table.cell>
+                        <flux:link class="text-sm  text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
+                            href="/{{ Auth::user()->username }}/subjects/{{ $exam->subject->slug }}">
+                            {{ $exam->subject->name }}</flux:link>
                     </flux:table.cell>
 
-                    <!-- Type -->
-                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}
+                    <!-- Topics -->
+                    <flux:table.cell>
+                        @php
+                            $topicsToShow = $exam->topics->take(2);
+                            $hasMoreTopics = $exam->topics->count() > 2;
+                        @endphp
+
+                        @if ($topicsToShow->isEmpty())
+                            <flux:badge size="sm" color="zinc">No topics yet</flux:badge>
+                        @else
+                            @foreach ($topicsToShow as $topic)
+                                <flux:badge size="sm" color="zinc">{{ $topic->name }}</flux:badge>
+                            @endforeach
+
+                            @if ($hasMoreTopics)
+                                <flux:badge size="sm" color="zinc">+ {{ $exam->topics->count() - 2 }} more
+                                </flux:badge>
+                            @endif
+                        @endif
                     </flux:table.cell>
 
                     <!-- Difficulty -->
-                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->difficulty)->ucfirst() }}
-                    </flux:table.cell>
+                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->difficulty)->ucfirst() }}</flux:table.cell>
 
                     <!-- Size -->
                     <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->size)->ucfirst() }}</flux:table.cell>
 
                     <!-- Actions -->
-                    <flux:table.cell align="end">
-                        <flux:dropdown>
+                    <flux:table.cell>
+                        <flux:dropdown class="flex justify-end items-end space-x-2">
                             <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
 
                             <flux:menu>
@@ -136,13 +154,14 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                                 </flux:modal.trigger>
                             </flux:menu>
                         </flux:dropdown>
+
+                        <livewire:exams.delete :$exam wire:key="delete-exam-{{ $exam->id }}" />
                     </flux:table.cell>
 
-                    <livewire:exams.delete :$exam wire:key="delete-exam-{{ $exam->id }}" />
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="6">No exams available.</flux:table.cell>
+                    <flux:table.cell colspan="6">You don't have any exams yet.</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>

@@ -41,46 +41,4 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
 
     <!-- Tabs -->
     <livewire:subjects.components.nav-bar :subject="$subject" />
-
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-    <flux:subheading>{{ $subject->name }} topics</flux:subheading>
-
 </div>

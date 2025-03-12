@@ -26,4 +26,9 @@ class Attachment extends Model
     {
         return $this->belongsToMany(Exam::class, 'exam_attachment')->withTimestamps();
     }
+
+    public function summaries()
+    {
+        return $this->belongsToMany(Exam::class, 'summary_attachment')->withTimestamps();
+    }
 }

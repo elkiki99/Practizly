@@ -20,6 +20,7 @@ new class extends Component {
         <flux:navbar.item icon="document-text" wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/assignments">Assignments</flux:navbar.item>
         <flux:navbar.item icon="tag" wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/topics">Topics</flux:navbar.item>
         <flux:navbar.item icon="calendar" wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/events">Events</flux:navbar.item>
+        <flux:navbar.item icon="light-bulb" wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/summaries">Summaries</flux:navbar.item>
     </flux:navbar>
 
     <!-- Mobile -->
@@ -29,6 +30,7 @@ new class extends Component {
         <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/assignments">Assignments</flux:navbar.item>
         <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/topics">Topics</flux:navbar.item>
         <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/events">Events</flux:navbar.item>
+        <flux:navbar.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}/summaries">Summaries</flux:navbar.item>
     </flux:navbar>
 
     <flux:separator />

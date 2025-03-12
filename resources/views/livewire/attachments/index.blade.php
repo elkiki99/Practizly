@@ -22,7 +22,7 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
                 });
             })
                 ->latest()
-                ->paginate(24)),
+                ->paginate(12)),
 
             $attachments->getCollection()->transform(function ($attachment) {
                 $filePath = $attachment->file_path;

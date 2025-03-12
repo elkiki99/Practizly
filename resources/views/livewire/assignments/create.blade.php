@@ -96,7 +96,7 @@ new class extends Component {
         $slug = $baseSlug;
         $counter = 1;
 
-        while (Event::where('slug', $slug)->exists()) {
+        while (Assignment::where('slug', $slug)->exists()) {
             $slug = $baseSlug . '-' . $counter;
             $counter++;
         }
@@ -179,7 +179,7 @@ new class extends Component {
                     </flux:tooltip.content>
                 </flux:tooltip>
             </div>
-            <flux:input required wire:model="title" placeholder="Calculate quarterly revenue" autofocus
+            <flux:input type="text" required wire:model="title" placeholder="Calculate quarterly revenue" autofocus
                 autocomplete="name" />
         </flux:field>
 

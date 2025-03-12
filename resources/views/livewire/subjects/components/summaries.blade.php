@@ -2,9 +2,11 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
+use Illuminate\Support\Str;
 use App\Models\Subject;
+use Carbon\Carbon;
 
-new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] class extends Component {
+new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] class extends Component {
     public string $slug;
 
     public ?Subject $subject;
@@ -20,13 +22,13 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
 
         return [
             'subject' => $this->subject,
-            'exams' => $this->subject->exams()->orderBy('created_at', 'desc')->paginate(12),
+            'summaries' => $this->subject->summaries()->latest()->paginate(12),
         ];
     }
 
-    #[On('examCreated')]
-    #[On('examDeleted')]
-    public function updatedExams()
+    #[On('summaryCreated')]
+    #[On('summaryDeleted')]
+    public function updatedSummary()
     {
         $this->dispatch('$refresh');
     }
@@ -46,13 +48,13 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}">
                     {{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
-                <flux:breadcrumbs.item>Exams</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item>Summaries</flux:breadcrumbs.item>
             </flux:breadcrumbs>
         </div>
 
         <div class="flex items-center justify-start gap-2">
-            <flux:modal.trigger name="create-exam">
-                <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New exam
+            <flux:modal.trigger name="create-summary">
+                <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New summary
                 </flux:badge>
             </flux:modal.trigger>
         </div>
@@ -61,31 +63,36 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
     <!-- Header & nav bar -->
     <livewire:subjects.components.nav-bar :subject="$subject" />
 
-    <flux:table :paginate="$exams">
+    <flux:table :paginate="$summaries">
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
+            {{-- <flux:table.column>Subject</flux:table.column> --}}
             <flux:table.column>Topics</flux:table.column>
-            {{-- <flux:table.column>Type</flux:table.column> --}}
-            <flux:table.column sortable>Difficulty</flux:table.column>
             <flux:table.column>Size</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
-            @forelse($exams as $exam)
-                <flux:table.row wire:key="exam-{{ $exam->id }}">
-                    <!-- Name -->
-                    <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">
-                        <flux:icon.academic-cap variant="mini" inset="top bottom" />
-                        <flux:link class="text-sm  font-medium text-zinc-800 dark:text-white whitespace-nowrap"
-                            wire:navigate href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}">
-                            {{ Str::of($exam->title)->ucfirst() }}</flux:link>
+            @forelse($summaries as $summary)
+                <flux:table.row wire:key="summary-{{ $summary->id }}">
+                    <flux:table.cell variant="strong">
+                        <flux:link class="text-sm font-medium text-zinc-800 dark:text-white" wire:navigate
+                            href="/{{ Auth::user()->username }}/summaries/{{ $summary->slug }}">
+                            {{ Str::of($summary->title)->ucfirst() }}
+                        </flux:link>
                     </flux:table.cell>
-                    
+
+                    {{-- <!-- Subject -->
+                    <flux:table.cell>
+                        <flux:link class="text-sm  text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
+                            href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}">
+                            {{ $summary->subject->name }}</flux:link>
+                    </flux:table.cell> --}}
+
                     <!-- Topics -->
                     <flux:table.cell>
                         @php
-                            $topicsToShow = $exam->topics->take(2);
-                            $hasMoreTopics = $exam->topics->count() > 2;
+                            $topicsToShow = $summary->topics->take(2);
+                            $hasMoreTopics = $summary->topics->count() > 2;
                         @endphp
 
                         @if ($topicsToShow->isEmpty())
@@ -96,49 +103,45 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge size="sm" color="zinc">+ {{ $exam->topics->count() - 2 }} more
+                                <flux:badge size="sm" color="zinc">+ {{ $summary->topics->count() - 2 }} more
                                 </flux:badge>
                             @endif
                         @endif
                     </flux:table.cell>
 
-                    <!-- Difficulty -->
-                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->difficulty)->ucfirst() }}</flux:table.cell>
-
-                    <!-- Size -->
-                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->size)->ucfirst() }}</flux:table.cell>
+                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($summary->size)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
 
                     <!-- Actions -->
                     <flux:table.cell>
-                        <flux:dropdown class="flex justify-end items-end space-x-2" >
-                            <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal"/>
+                        <flux:dropdown class="flex justify-end items-end space-x-2">
+                            <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
 
                             <flux:menu>
                                 <flux:menu.item as="link" wire:navigate
-                                    href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}"
-                                    icon-trailing="chevron-right">Take exam</flux:menu.item>
+                                    href="/{{ Auth::user()->username }}/summaries/{{ $summary->slug }}"
+                                    icon-trailing="chevron-right">Show summary</flux:menu.item>
                                 <flux:menu.separator />
 
-                                <flux:modal.trigger name="download-exam-{{ $exam->id }}">
-                                    <flux:menu.item icon="arrow-down-tray">Download exam</flux:menu.button>
+                                <flux:modal.trigger name="download-summary-{{ $summary->id }}">
+                                    <flux:menu.item icon="arrow-down-tray">Download summary</flux:menu.button>
                                 </flux:modal.trigger>
-                                <flux:modal.trigger name="delete-exam-{{ $exam->id }}">
-                                    <flux:menu.item variant="danger" icon="trash">Delete exam</flux:menu.button>
+                                <flux:modal.trigger name="delete-summary-{{ $summary->id }}">
+                                    <flux:menu.item variant="danger" icon="trash">Delete summary
+                                        </flux:menu.button>
                                 </flux:modal.trigger>
                             </flux:menu>
                         </flux:dropdown>
 
-                        <livewire:exams.delete :$exam wire:key="delete-exam-{{ $exam->id }}" />
+                        <livewire:summaries.delete :$summary wire:key="delete-summary-{{ $summary->id }}" />
                     </flux:table.cell>
                 </flux:table.row>
             @empty
                 <flux:table.row>
-                    <flux:table.cell colspan="6">You don't have any exams yet.</flux:table.cell>
+                    <flux:table.cell colspan="4">No summaries available.</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>
     </flux:table>
 
-    <!-- Modal actions -->
-    <livewire:exams.create />
+    <livewire:summaries.create />
 </div>

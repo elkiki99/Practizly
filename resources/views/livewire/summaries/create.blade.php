@@ -8,6 +8,9 @@ use App\Models\Summary;
 use App\Models\Topic;
 
 new class extends Component {
+    #[Validate('required|string|max:255')]
+    public string $title = '';
+
     #[Validate('required|exists:subjects,id')]
     public $subject = '';
 
@@ -15,7 +18,7 @@ new class extends Component {
     public $topic = '';
 
     #[Validate('required|exists:attachments,id')]
-    public $attachment;
+    public $attachment = null;
 
     #[Validate('required|in:short,medium,long')]
     public string $size = 'short';
@@ -95,7 +98,7 @@ new class extends Component {
     }
 
     #[On('attachmentCreated')]
-    public function updateAttachment($attachment = null)
+    public function updatedAttachment($attachment = null)
     {
         $this->topics = Topic::whereIn('id', (array) $this->topic)->get();
 
@@ -111,21 +114,33 @@ new class extends Component {
 
     public function createSummary()
     {
-        $this->validate();
+        $baseSlug = Str::slug($this->title);
+        $slug = $baseSlug;
+        $counter = 1;
 
-        $topic = Topic::find($this->topic);
+        while (Summary::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
 
         $summary = Summary::create([
-            'topic_id' => $this->topic,
-            'title' => $topic->name . ' Summary',
-            'content' => '',
+            'subject_id' => $this->subject,
+            'slug' => $slug,
+            'title' => $this->title,
             'size' => $this->size,
-            'attachment_id' => $this->attachment,
         ]);
 
-        $summary->update([
-            'title' => $topic->name . ' Summary #' . $summary->id,
-        ]);
+        if (!is_array($this->attachment)) {
+            $this->attachment = is_null($this->attachment) ? [] : [$this->attachment];
+        }
+
+        foreach ($this->attachment as $attachment) {
+            $summary->attachments()->attach($attachment);
+        }
+
+        $summary->topics()->sync($this->topic);
+
+        $this->reset(['title', 'size']);
 
         $this->dispatch('summaryCreated');
 
@@ -144,7 +159,22 @@ new class extends Component {
             <flux:subheading>Create a new summary.</flux:subheading>
         </div>
 
-        <flux:select required autofocus label="Summary subject" searchable variant="listbox" wire:model.live="subject"
+        <flux:field>
+            <div class="flex items-center gap-2 mb-2">
+                <flux:label>Summary title</flux:label>
+                <flux:tooltip toggleable position="left">
+                    <flux:button icon="information-circle" size="sm" variant="ghost" />
+
+                    <flux:tooltip.content class="max-w-[20rem] space-y-2">
+                        <p>We recommend giving your summary a descriptive name for better organization.</p>
+                    </flux:tooltip.content>
+                </flux:tooltip>
+            </div>
+            <flux:input required type="text" wire:model="title" placeholder="Summary on quantitative analysis" autofocus
+                autocomplete="name" />
+        </flux:field>
+
+        <flux:select required label="Summary subject" searchable variant="listbox" wire:model.live="subject"
             placeholder="Select subject">
             @forelse($subjects as $item)
                 <flux:select.option value="{{ $item->id }}">
@@ -189,7 +219,7 @@ new class extends Component {
                     New attachment</flux:button>
             </div>
 
-            <flux:select multiple required searchable selected-suffix="{{ __('attachments selected') }}"
+            <flux:select required multiple searchable selected-suffix="{{ __('attachments selected') }}"
                 variant="listbox" wire:model="attachment" placeholder="Select attachment">
                 @forelse($attachments as $attachment)
                     <flux:select.option value="{{ $attachment->id }}">{{ $attachment->file_name }}

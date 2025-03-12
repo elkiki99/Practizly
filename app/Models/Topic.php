@@ -19,7 +19,6 @@ class Topic extends Model
     protected $fillable = [
         'subject_id',
         'name',
-        // 'description',
     ];
 
     public function events() : BelongsToMany
@@ -31,12 +30,7 @@ class Topic extends Model
     {
         return $this->belongsTo(Subject::class);
     }
-
-    // public function exams()
-    // {
-    //     return $this->belongsToMany(Exam::class);
-    // }
-
+    
     public function assignments()
     {
         return $this->hasMany(Assignment::class);

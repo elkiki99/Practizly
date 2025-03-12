@@ -84,6 +84,7 @@ new class extends Component {
     public function updatedTopic($topic = null)
     {
         $this->topics = Topic::where('subject_id', $this->subject)->get();
+
         if ($this->topics->count() === 1) {
             $this->topic = $this->topics->first()->id;
             $this->topics = collect([$this->topics->first()]);
@@ -132,6 +133,10 @@ new class extends Component {
             'size' => $this->size,
         ]);
 
+        $exam->update([
+            'title' => $subject->name . ' Test #' . $exam->id . ' (' . ucwords(str_replace('_', ' ', $exam->type)) . ')',
+        ]);
+
         if (!is_array($this->attachment)) {
             $this->attachment = is_null($this->attachment) ? [] : [$this->attachment];
         }
@@ -139,10 +144,6 @@ new class extends Component {
         foreach ($this->attachment as $attachment) {
             $exam->attachments()->attach($attachment);
         }
-
-        $exam->update([
-            'title' => $subject->name . ' Test #' . $exam->id . ' (' . ucwords(str_replace('_', ' ', $exam->type)) . ')',
-        ]);
 
         $exam->topics()->sync($this->topic);
 

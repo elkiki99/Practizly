@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Validate;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Carbon;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\On;
@@ -14,34 +15,35 @@ use App\Models\Event;
 new class extends Component {
     use WithFileUploads;
 
-    public Assignment $assignment;
+    public ?Assignment $assignment;
 
-    #[Validate('required|string|max:255')]
-    public string $title;
-
-    #[Validate('nullable|string|max:1000')]
-    public string $description;
-
-    #[Validate('required|string|max:1000')]
-    public string $guidelines;
-
-    #[Validate(['attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,doc,docx,pdf|max:10240'])]
+    public string $title = '';
+    public string $description = '';
+    public string $guidelines = '';
     public $attachments = [];
+    public ?Carbon $due_date = null;
+    public string $status = '';
+    public string $slug = '';
 
-    #[Validate('required|date')]
-    public ?Carbon $due_date;
-
-    #[Validate('required|in:pending,completed')]
-    public string $status;
-
-    #[Validate('required|exists:topics,id')]
     public $topic;
-
-    #[Validate('required|exists:subjects,id')]
     public $subject;
-
     public $subjects = [];
     public $topics = [];
+
+    protected function rules()
+    {
+        return [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'guidelines' => 'required|string|max:1000',
+            'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,doc,docx,pdf|max:10240',
+            'due_date' => 'required|date',
+            'status' => 'required|in:pending,completed',
+            'topic' => 'required|exists:topics,id',
+            'subject' => 'required|exists:subjects,id',
+            'slug' => ['required', Rule::unique('assignments')->ignore($this->assignment)],
+        ];
+    }
 
     public function mount(Assignment $assignment)
     {
@@ -53,6 +55,7 @@ new class extends Component {
         $this->status = $assignment->status;
         $this->topic = $assignment->topic_id;
         $this->subject = $assignment->topic->subject_id;
+        $this->slug = $assignment->slug;
         $this->subjects = Auth::user()->subjects()->latest()->get();
         $this->topics = Topic::where('subject_id', $this->subject)->get();
     }
@@ -61,8 +64,20 @@ new class extends Component {
     {
         $this->validate();
 
+        $baseSlug = Str::slug($this->title);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        if ($this->slug !== $baseSlug) {
+            while (Event::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+        }
+
         $this->assignment->update([
             'title' => $this->title,
+            'slug' => $slug,
             'description' => $this->description,
             'guidelines' => $this->guidelines,
             'due_date' => $this->due_date,
@@ -84,17 +99,22 @@ new class extends Component {
             $this->dispatch('attachmentUpdated');
         }
 
-        $this->event->topics()->sync($this->topic);
-
         Flux::toast(heading: 'Assignment updated', text: 'Your assignment was updated successfully', variant: 'success');
 
-        // Check slug to redirect to new url
-        if ($this->slug !== $slug) {
-            Flux::modals()->close();
-            $this->redirectRoute('assignments.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
-        } else {
+        $url = request()->header('Referer');
+
+        if ($url === url()->route('assignments.index', [Auth::user()->username]) || $url === url()->route('subjects.components.assignments', [Auth::user()->username, $this->assignment->subject->slug])) {
             $this->dispatch('assignmentUpdated');
             Flux::modals()->close();
+        } else {
+            // Check slug to redirect to new url
+            if ($this->slug !== $slug) {
+                Flux::modals()->close();
+                $this->redirectRoute('assignments.show', ['slug' => $slug, 'user' => Auth::user()->username], navigate: true);
+            } else {
+                $this->dispatch('assignmentUpdated');
+                Flux::modals()->close();
+            }
         }
     }
 }; ?>
@@ -118,7 +138,7 @@ new class extends Component {
                     </flux:tooltip.content>
                 </flux:tooltip>
             </div>
-            <flux:input required wire:model="title" placeholder="Calculate quarterly revenue" autofocus
+            <flux:input type="text" required wire:model="title" placeholder="Calculate quarterly revenue" autofocus
                 autocomplete="name" />
         </flux:field>
 

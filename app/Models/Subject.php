@@ -22,7 +22,6 @@ class Subject extends Model
         'description',
         'status',
         'color',
-        // 'is_favorite'
     ];
 
     public function topics()
@@ -33,6 +32,11 @@ class Subject extends Model
     public function exams()
     {
         return $this->hasMany(Exam::class, 'subject_id');
+    }
+
+    public function summaries()
+    {
+        return $this->hasMany(Summary::class, 'subject_id');
     }
 
     public function user()

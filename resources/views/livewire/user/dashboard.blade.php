@@ -157,15 +157,18 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
 
                             <!-- Actions -->
                             <flux:table.cell>
-                                <flux:modal.trigger name="edit-event-{{ $event->id }}">
-                                    <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">
-                                    </flux:button>
-                                </flux:modal.trigger>
+                                <div class="flex justify-end items-end space-x-2">
+                                    <flux:modal.trigger name="edit-event-{{ $event->id }}">
+                                        <flux:button variant="ghost" size="sm" icon="pencil-square"
+                                            inset="top bottom">
+                                        </flux:button>
+                                    </flux:modal.trigger>
 
-                                <flux:modal.trigger name="delete-event-{{ $event->id }}">
-                                    <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
-                                    </flux:button>
-                                </flux:modal.trigger>
+                                    <flux:modal.trigger name="delete-event-{{ $event->id }}">
+                                        <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
+                                        </flux:button>
+                                    </flux:modal.trigger>
+                                </div>
 
                                 <!-- Edit event modal -->
                                 <livewire:events.edit :$event wire:key="edit-event-{{ $event->id }}" />

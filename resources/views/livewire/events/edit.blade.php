@@ -119,7 +119,7 @@ new class extends Component {
 
         $url = request()->header('Referer');
 
-        if ($url === url()->route('calendar', [Auth::user()->username]) || $url === url()->route('subjects.components.events', [Auth::user()->username, $this->event->subject->slug])) {
+        if ($url === url()->route('calendar', [Auth::user()->username]) || $url === url()->route('subjects.components.events', [Auth::user()->username, $this->event->subject->slug]) || $url === url()->route('dashboard', [Auth::user()->username])) {
             $this->dispatch('eventUpdated');
             Flux::modals()->close();
         } else {

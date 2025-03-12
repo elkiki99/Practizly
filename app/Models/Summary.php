@@ -14,25 +14,24 @@ class Summary extends Model
     use HasFactory;
 
     protected $fillable = [
-        'topic_id', 
         'title',
+        'slug',
         'size',
-        // 'content',
-        'attachment_id',
+        'subject_id',
     ];
 
-    public function topic()
+    public function topics()
     {
-        return $this->belongsTo(Topic::class);
+        return $this->belongsToMany(Topic::class);
     }
 
     public function attachments()
     {
-        return $this->morphMany(Attachment::class, 'attachable');
+        return $this->belongsToMany(Attachment::class, 'summary_attachment')->withTimestamps();
     }
 
     public function subject()
     {
-        return $this->hasOneThrough(Subject::class, Topic::class, 'id', 'id', 'topic_id', 'subject_id');
+        return $this->belongsTo(Subject::class);
     }
 }
