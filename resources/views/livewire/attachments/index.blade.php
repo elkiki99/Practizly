@@ -3,14 +3,10 @@
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
 use Illuminate\Support\Facades\Auth;
-use Livewire\WithoutUrlPagination;
-use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use App\Models\Attachment;
 
 new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class extends Component {
-    use WithPagination, WithoutUrlPagination;
-
     public function with()
     {
         $subjectIds = Auth::user()->subjects()->pluck('id')->toArray();
@@ -37,6 +33,7 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
     }
 
     #[On('attachmentCreated')]
+    #[On('attachmentDeleted')]
     public function updatedAttachments()
     {
         $this->dispatch('$refresh');
@@ -44,22 +41,53 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
 }; ?>
 
 <div class="space-y-6">
-    <flux:heading level="1" size="xl">Library</flux:heading>
+    <div class="space-y-3">
+        <flux:heading level="1" size="xl">Library</flux:heading>
+
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>Library
+            </flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+    </div>
+
     <flux:separator variant="subtle" />
 
     <!-- Panel navbar -->
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2">
-            <flux:subheading class="whitespace-nowrap">Filter by:</flux:subheading>
+            <div class="flex items-center gap-2">
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.funnel variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
 
-            <flux:select size="sm" class="">
-                <option selected>Subject</option>
-                <option>Topic</option>
-            </flux:select>
+                    <flux:select.option value="all" selected>All</flux:select.option>
+                    <flux:select.option value="unapproved">Unapproved</flux:select.option>
+                    <flux:select.option value="approved">Approved</flux:select.option>
+                </flux:select>
+
+                <flux:select variant="listbox" class="sm:max-w-fit">
+                    <x-slot name="trigger">
+                        <flux:select.button size="sm">
+                            <flux:icon.arrows-up-down variant="micro" class="mr-2 text-zinc-400" />
+                            <flux:select.selected />
+                        </flux:select.button>
+                    </x-slot>
+
+                    <flux:select.option value="popular" selected>Most popular</flux:select.option>
+                    <flux:select.option value="newest">Newest</flux:select.option>
+                    <flux:select.option value="oldest">Oldest</flux:select.option>
+                </flux:select>
+            </div>
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
-            <div class="flex items-center justify-start gap-2 max-lg:hidden">
+            <div class="flex items-center justify-start gap-2">
                 <flux:modal.trigger name="create-attachment">
                     <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New
                         attachment
@@ -67,39 +95,60 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
                 </flux:modal.trigger>
             </div>
         </div>
-
-        <flux:tabs variant="segmented" class="w-auto! ml-2" size="sm">
-            <flux:tab selected value="grid" icon="squares-2x2" icon-variant="outline" />
-            <flux:tab value="table" icon="list-bullet" icon-variant="outline" />
-        </flux:tabs>
     </div>
 
-    <div class="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8">
-        @forelse($attachments as $attachment)
-            <div
-                class="relative group w-[100px] h-[130px] md:w-[110px] md:h-[140px] overflow-hidden bg-gray-900/10 rounded-lg flex items-center justify-center">
-                @if ($attachment->isImage)
-                    <img src="{{ asset('storage/' . $attachment->file_path) }}" class="w-full h-full object-cover">
-                @elseif ($attachment->isPDF)
-                    <iframe src="{{ asset('storage/' . $attachment->file_path) }}" scrolling="no"
-                        class="w-full h-full"></iframe>
-                @elseif ($attachment->isDOCX)
-                    <a href="{{ asset('storage/' . $attachment->file_path) }}" download
-                        class="flex flex-col items-center justify-center gap-2">
-                        <flux:icon.document-arrow-down class="size-12" />
-                        <flux:subheading class="text-xs text-center">{{ $attachment->file_name }}</flux:subheading>
-                    </a>
-                @else
-                    <p class="text-center text-xs text-gray-500">Archivo no soportado</p>
-                @endif
-            </div>
-        @empty
-            <flux:subheading>You don't have any attachments yet.</flux:subheading>
-        @endforelse
-    </div>
+    <div class="space-y-6">
+        <div>
+            <flux:heading level="2">Available attachments</flux:heading>
+            <flux:subheading>A listing of all your attachments.</flux:subheading>
+        </div>
 
-    <!-- Paginator -->
-    <flux:table :paginate="$attachments" />
+        <flux:table :paginate="$attachments">
+            <flux:table.columns>
+                <flux:table.column>Name</flux:table.column>
+            </flux:table.columns>
+
+            @forelse($attachments as $attachment)
+                <flux:table.row>
+                    <flux:table.cell>
+                        @if ($attachment->isPDF)
+                            {{ $attachment->file_name }}.pdf
+                        @elseif ($attachment->isDOCX)
+                            {{ $attachment->file_name }}.pdf
+                        @elseif ($attachment->isImage)
+                            {{ $attachment->file_name }}.img
+                        @endif
+                    </flux:table.cell>
+
+                    <!-- Actions -->
+                    <flux:table.cell>
+                        <div class="flex justify-end items-end space-x-2">
+                            <flux:modal.trigger name="download-attachment-{{ $attachment->id }}">
+                                <flux:button inset="top bottom" download as="link"
+                                    href="{{ asset('storage/' . $attachment->file_path) }}" icon="arrow-down-tray"
+                                    size="sm" variant="ghost" />
+                            </flux:modal.trigger>
+
+                            <flux:modal.trigger name="delete-attachment-{{ $attachment->id }}">
+                                <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
+                                </flux:button>
+                            </flux:modal.trigger>
+                        </div>
+
+                        <!-- Delete attachment modal -->
+                        <livewire:attachments.delete :$attachment wire:key="delete-attachment-{{ $attachment->id }}" />
+                    </flux:table.cell>
+                </flux:table.row>
+            @empty
+                <flux:table.row>
+                    <flux:table.cell colspan="2" class="text-center">
+                        You don't have any attachments yet.
+                    </flux:table.cell>
+                </flux:table.row>
+            @endforelse
+        </flux:table>
+
+    </div>
 
     <!-- Modal actions -->
     <livewire:attachments.create />

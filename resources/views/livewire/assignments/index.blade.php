@@ -90,70 +90,78 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
         </div>
     </div>
 
-    <flux:table :paginate="$assignments">
-        <flux:table.columns>
-            <flux:table.column>Title</flux:table.column>
-            <flux:table.column>Subject</flux:table.column>
-            <flux:table.column sortable>Due date</flux:table.column>
-            <flux:table.column>Status</flux:table.column>
-        </flux:table.columns>
+    <div class="space-y-6">
+        <div>
+            <flux:heading level="2">Your assignments</flux:heading>
+            <flux:subheading>Check out your assignments.</flux:subheading>
+        </div>
 
-        <flux:table.rows>
-            @forelse($assignments as $assignment)
-                <flux:table.row wire:key="assignment-{{ $assignment->id }}">
-                    <flux:table.cell variant="strong">
-                        <flux:link class="text-sm font-medium text-zinc-800 dark:text-white" wire:navigate
-                            href="/{{ Auth::user()->username }}/assignments/{{ $assignment->slug }}">
-                            {{ Str::of($assignment->title)->ucfirst() }}
-                        </flux:link>
-                    </flux:table.cell>
+        <flux:table :paginate="$assignments">
+            <flux:table.columns>
+                <flux:table.column>Title</flux:table.column>
+                <flux:table.column>Subject</flux:table.column>
+                <flux:table.column sortable>Due date</flux:table.column>
+                <flux:table.column>Status</flux:table.column>
+            </flux:table.columns>
 
-                    <!-- Subject -->
-                    <flux:table.cell>
-                        <flux:link class="text-sm  text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
-                            href="/{{ Auth::user()->username }}/subjects/{{ $assignment->subject->slug }}">
-                            {{ $assignment->subject->name }}</flux:link>
-                    </flux:table.cell>
+            <flux:table.rows>
+                @forelse($assignments as $assignment)
+                    <flux:table.row wire:key="assignment-{{ $assignment->id }}">
+                        <flux:table.cell variant="strong">
+                            <flux:link class="text-sm font-medium text-zinc-800 dark:text-white" wire:navigate
+                                href="/{{ Auth::user()->username }}/assignments/{{ $assignment->slug }}">
+                                {{ Str::of($assignment->title)->ucfirst() }}
+                            </flux:link>
+                        </flux:table.cell>
 
-                    <flux:table.cell class="whitespace-nowrap">
-                        {{ Carbon::parse($assignment->due_date)->format('F j, Y') }}</flux:table.cell>
+                        <!-- Subject -->
+                        <flux:table.cell>
+                            <flux:link class="text-sm  text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
+                                href="/{{ Auth::user()->username }}/subjects/{{ $assignment->subject->slug }}">
+                                {{ $assignment->subject->name }}</flux:link>
+                        </flux:table.cell>
 
-                    <flux:table.cell>
-                        @if ($assignment->status === 'pending')
-                            <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
-                        @elseif($assignment->status === 'completed')
-                            <flux:badge size="sm" color="green" inset="top bottom">Completed</flux:badge>
-                        @endif
-                    </flux:table.cell>
+                        <flux:table.cell class="whitespace-nowrap">
+                            {{ Carbon::parse($assignment->due_date)->format('F j, Y') }}</flux:table.cell>
 
-                    <!-- Actions -->
-                    <flux:table.cell>
-                        <div class="flex justify-end items-end space-x-2">
-                            <flux:modal.trigger name="edit-assignment-{{ $assignment->id }}">
-                                <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">
-                                </flux:button>
-                            </flux:modal.trigger>
+                        <flux:table.cell>
+                            @if ($assignment->status === 'pending')
+                                <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
+                            @elseif($assignment->status === 'completed')
+                                <flux:badge size="sm" color="green" inset="top bottom">Completed</flux:badge>
+                            @endif
+                        </flux:table.cell>
 
-                            <flux:modal.trigger name="delete-assignment-{{ $assignment->id }}">
-                                <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
-                                </flux:button>
-                            </flux:modal.trigger>
-                        </div>
+                        <!-- Actions -->
+                        <flux:table.cell>
+                            <div class="flex justify-end items-end space-x-2">
+                                <flux:modal.trigger name="edit-assignment-{{ $assignment->id }}">
+                                    <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">
+                                    </flux:button>
+                                </flux:modal.trigger>
 
-                        <!-- Edit assignment modal -->
-                        <livewire:assignments.edit :$assignment wire:key="edit-assignment-{{ $assignment->id }}" />
+                                <flux:modal.trigger name="delete-assignment-{{ $assignment->id }}">
+                                    <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
+                                    </flux:button>
+                                </flux:modal.trigger>
+                            </div>
 
-                        <!-- Delete assignment modal -->
-                        <livewire:assignments.delete :$assignment wire:key="delete-assignment-{{ $assignment->id }}" />
-                    </flux:table.cell>
-                </flux:table.row>
-            @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="4">No assignments available.</flux:table.cell>
-                </flux:table.row>
-            @endforelse
-        </flux:table.rows>
-    </flux:table>
+                            <!-- Edit assignment modal -->
+                            <livewire:assignments.edit :$assignment wire:key="edit-assignment-{{ $assignment->id }}" />
+
+                            <!-- Delete assignment modal -->
+                            <livewire:assignments.delete :$assignment
+                                wire:key="delete-assignment-{{ $assignment->id }}" />
+                        </flux:table.cell>
+                    </flux:table.row>
+                @empty
+                    <flux:table.row class="text-center">
+                        <flux:table.cell colspan="4">You don't have any assignments yet.</flux:table.cell>
+                    </flux:table.row>
+                @endforelse
+            </flux:table.rows>
+        </flux:table>
+    </div>
 
     <!-- Modal actions -->
     <livewire:assignments.create />

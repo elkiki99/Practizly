@@ -14,7 +14,6 @@ new class extends Component {
     public string $color = '';
     public string $slug = '';
     public bool $status = true;
-    // public bool $is_favorite = true;
 
     protected function rules()
     {
@@ -24,7 +23,6 @@ new class extends Component {
             'color' => 'required|string|max:50',
             'slug' => ['required', Rule::unique('subjects')->ignore($this->subject)],
             'status' => 'required|boolean',
-            // 'is_favorite' => 'boolean',
         ];
     }
 
@@ -34,7 +32,6 @@ new class extends Component {
         $this->name = $this->subject->name;
         $this->description = $this->subject->description;
         $this->color = $this->subject->color;
-        // $this->is_favorite = $this->subject->is_favorite;
         $this->status = $this->subject->status;
         $this->slug = $this->subject->slug;
     }
@@ -59,7 +56,6 @@ new class extends Component {
             'slug' => $slug,
             'description' => $this->description,
             'color' => $this->color,
-            // 'is_favorite' => $this->is_favorite,
             'status' => $this->status,
             'user_id' => auth()->user()->id,
         ]);
@@ -117,9 +113,6 @@ new class extends Component {
             <flux:select.option value="gray"><span
                     class="inline-block mr-2 bg-gray-500 rounded-full size-2"></span>Gray</flux:select.option>
         </flux:select>
-
-        <!-- Favourites -->
-        {{-- <flux:switch required wire:model.live="is_favorite" label="Mark subject as favorite" /> --}}
 
         <!-- Status -->
         <flux:switch required wire:model.live="status" label="Subject status" description="Ongoing is marked by default" />

@@ -65,7 +65,6 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
             <flux:table.column>Topics</flux:table.column>
-            {{-- <flux:table.column>Type</flux:table.column> --}}
             <flux:table.column sortable>Difficulty</flux:table.column>
             <flux:table.column>Size</flux:table.column>
         </flux:table.columns>
@@ -89,14 +88,14 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                         @endphp
 
                         @if ($topicsToShow->isEmpty())
-                            <flux:badge size="sm" color="zinc">No topics yet</flux:badge>
+                            <flux:badge inset="top bottom" size="sm" color="zinc">No topics yet</flux:badge>
                         @else
                             @foreach ($topicsToShow as $topic)
-                                <flux:badge size="sm" color="zinc">{{ $topic->name }}</flux:badge>
+                                <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}</flux:badge>
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge size="sm" color="zinc">+ {{ $exam->topics->count() - 2 }} more
+                                <flux:badge inset="top bottom" size="sm" color="zinc">+ {{ $exam->topics->count() - 2 }} more
                                 </flux:badge>
                             @endif
                         @endif
@@ -111,7 +110,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                     <!-- Actions -->
                     <flux:table.cell>
                         <flux:dropdown class="flex justify-end items-end space-x-2" >
-                            <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal"/>
+                            <flux:button inset="top bottom" size="sm" variant="ghost" icon="ellipsis-horizontal"/>
 
                             <flux:menu>
                                 <flux:menu.item as="link" wire:navigate
@@ -132,8 +131,8 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                     </flux:table.cell>
                 </flux:table.row>
             @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="6">You don't have any exams yet.</flux:table.cell>
+                <flux:table.row class="text-center">
+                    <flux:table.cell colspan="4">You don't have any exams yet.</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>

@@ -157,7 +157,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                         </flux:table.cell>
                     </flux:table.row>
                 @empty
-                    <flux:table.row>
+                    <flux:table.row class="text-center">
                         <flux:table.cell colspan="4">You don't have any subjects yet.</flux:table.cell>
                     </flux:table.row>
                 @endforelse

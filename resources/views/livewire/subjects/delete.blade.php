@@ -37,7 +37,7 @@ new class extends Component {
     
                 <flux:subheading>
                     <p>You're about to delete the subject {{ $subject->name }}.</p>
-                    <p>All exams and assignments associated with this subject will be deleted.</p>
+                    <p>All exams, summaries, events, assignments and files associated with this subject will be deleted.</p>
                 </flux:subheading>
             </div>
     

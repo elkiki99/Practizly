@@ -114,8 +114,8 @@ new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly'
                     </flux:table.cell>
                 </flux:table.row>
             @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="4">No assignments available.</flux:table.cell>
+                <flux:table.row class="text-center">
+                    <flux:table.cell colspan="3">You don't have any assignments yet.</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>

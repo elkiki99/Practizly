@@ -66,7 +66,6 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
     <flux:table :paginate="$summaries">
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
-            {{-- <flux:table.column>Subject</flux:table.column> --}}
             <flux:table.column>Topics</flux:table.column>
             <flux:table.column>Size</flux:table.column>
         </flux:table.columns>
@@ -81,13 +80,6 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
                         </flux:link>
                     </flux:table.cell>
 
-                    {{-- <!-- Subject -->
-                    <flux:table.cell>
-                        <flux:link class="text-sm  text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
-                            href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}">
-                            {{ $summary->subject->name }}</flux:link>
-                    </flux:table.cell> --}}
-
                     <!-- Topics -->
                     <flux:table.cell>
                         @php
@@ -96,14 +88,14 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
                         @endphp
 
                         @if ($topicsToShow->isEmpty())
-                            <flux:badge size="sm" color="zinc">No topics yet</flux:badge>
+                            <flux:badge inset="top bottom" size="sm" color="zinc">No topics yet</flux:badge>
                         @else
                             @foreach ($topicsToShow as $topic)
-                                <flux:badge size="sm" color="zinc">{{ $topic->name }}</flux:badge>
+                                <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}</flux:badge>
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge size="sm" color="zinc">+ {{ $summary->topics->count() - 2 }} more
+                                <flux:badge inset="top bottom" size="sm" color="zinc">+ {{ $summary->topics->count() - 2 }} more
                                 </flux:badge>
                             @endif
                         @endif
@@ -114,7 +106,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
                     <!-- Actions -->
                     <flux:table.cell>
                         <flux:dropdown class="flex justify-end items-end space-x-2">
-                            <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
+                            <flux:button inset="top bottom" size="sm" variant="ghost" icon="ellipsis-horizontal" />
 
                             <flux:menu>
                                 <flux:menu.item as="link" wire:navigate
@@ -136,8 +128,8 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
                     </flux:table.cell>
                 </flux:table.row>
             @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="4">No summaries available.</flux:table.cell>
+                <flux:table.row class="text-center">
+                    <flux:table.cell colspan="4">You don't have any summaries yet.</flux:table.cell>
                 </flux:table.row>
             @endforelse
         </flux:table.rows>

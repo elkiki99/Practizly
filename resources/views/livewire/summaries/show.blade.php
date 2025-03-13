@@ -5,7 +5,7 @@ use Livewire\Attributes\{Layout, Title, On};
 use App\Models\Summary;
 use Carbon\Carbon;
 
-new #[Layout('layouts.dashboard-component')] #[Title('Summarys • Practizly')] class extends Component {
+new #[Layout('layouts.dashboard-component')] #[Title('Summaries • Practizly')] class extends Component {
     public ?Summary $summary;
 
     public function mount($slug, Summary $summary)
@@ -37,7 +37,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summarys • Practizly')] 
                     {{ Str::of($summary->subject->name)->ucfirst() }}
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate
-                    href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}/summarys">Summarys
+                    href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}/summaries">Summaries
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item>{{ Str::of($summary->title)->ucfirst() }}</flux:breadcrumbs.item>
             </flux:breadcrumbs>

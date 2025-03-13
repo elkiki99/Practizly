@@ -143,14 +143,14 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                             @elseif($event->type === 'assignment')
                                 <flux:icon.pencil-square variant="mini" inset="top bottom" />
                             @endif
-                            <flux:link class="text-sm font-medium text-zinc-800 dark:text-white whitespace-nowrap" wire:navigate
-                                href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">
+                            <flux:link class="text-sm font-medium text-zinc-800 dark:text-white whitespace-nowrap"
+                                wire:navigate href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">
                                 {{ Str::of($event->name)->ucfirst() }}</flux:link>
                         </flux:table.cell>
 
                         <!-- Subject -->
                         <flux:table.cell>
-                            <flux:link class="text-sm  text-zinc-500 dark:text-zinc-300 whitespace-nowrap"
+                            <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap"
                                 wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
                                 {{ $event->subject->name }}</flux:link>
                         </flux:table.cell>
@@ -167,12 +167,13 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                             @endphp
 
                             @foreach ($topicsToShow as $topic)
-                                <flux:badge size="sm" color="zinc">{{ $topic->name }}
+                                <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}
                                 </flux:badge>
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more
+                                <flux:badge inset="top bottom" size="sm" color="zinc">+
+                                    {{ $event->topics->count() - 2 }} more
                                 </flux:badge>
                             @endif
                         </flux:table.cell>
@@ -190,12 +191,14 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                         <flux:table.cell>
                             <div class="flex justify-end items-end space-x-2">
                                 <flux:modal.trigger name="edit-event-{{ $event->id }}">
-                                    <flux:button variant="ghost" size="sm" icon="pencil-square" inset="top bottom">
+                                    <flux:button inset="top bottom" variant="ghost" size="sm" icon="pencil-square"
+                                        inset="top bottom">
                                     </flux:button>
                                 </flux:modal.trigger>
 
                                 <flux:modal.trigger name="delete-event-{{ $event->id }}">
-                                    <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
+                                    <flux:button inset="top bottom" variant="ghost" size="sm" icon="trash"
+                                        inset="top bottom">
                                     </flux:button>
                                 </flux:modal.trigger>
                             </div>
@@ -208,8 +211,8 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                         </flux:table.cell>
                     </flux:table.row>
                 @empty
-                    <flux:table.row>
-                        <flux:table.cell colspan="4">You don't have any events yet.</flux:table.cell>
+                    <flux:table.row class="text-center">
+                        <flux:table.cell colspan="5">You don't have any events yet.</flux:table.cell>
                     </flux:table.row>
                 @endforelse
             </flux:table.rows>

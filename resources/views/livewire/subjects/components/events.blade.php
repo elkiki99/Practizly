@@ -104,12 +104,12 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
                             @endphp
 
                             @foreach ($topicsToShow as $topic)
-                                <flux:badge size="sm" color="zinc">{{ $topic->name }}
+                                <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}
                                 </flux:badge>
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more
+                                <flux:badge inset="top bottom" size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more
                                 </flux:badge>
                             @endif
                         </flux:table.cell>
@@ -145,7 +145,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
                         </flux:table.cell>
                     </flux:table.row>
                 @empty
-                    <flux:table.row>
+                    <flux:table.row class="text-center">
                         <flux:table.cell colspan="4">You don't have any events yet.</flux:table.cell>
                     </flux:table.row>
                 @endforelse

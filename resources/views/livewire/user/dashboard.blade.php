@@ -98,6 +98,7 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
             <flux:table>
                 <flux:table.columns>
                     <flux:table.column>Event</flux:table.column>
+                    <flux:table.column>Subject</flux:table.column>
                     <flux:table.column sortable>Date</flux:table.column>
                     <flux:table.column>Tags</flux:table.column>
                     <flux:table.column sortable>Status</flux:table.column>
@@ -124,6 +125,13 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                                     {{ Str::of($event->name)->ucfirst() }}</flux:link>
                             </flux:table.cell>
 
+                            <!-- Subject -->
+                            <flux:table.cell>
+                                <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap"
+                                    wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
+                                    {{ $event->subject->name }}</flux:link>
+                            </flux:table.cell>
+
                             <!-- Date -->
                             <flux:table.cell class="whitespace-nowrap">
                                 {{ Carbon::parse($event->date)->format('F j, Y') }}</flux:table.cell>
@@ -136,12 +144,13 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                                 @endphp
 
                                 @foreach ($topicsToShow as $topic)
-                                    <flux:badge size="sm" color="zinc">{{ $topic->name }}
+                                    <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}
                                     </flux:badge>
                                 @endforeach
 
                                 @if ($hasMoreTopics)
-                                    <flux:badge size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more
+                                    <flux:badge inset="top bottom" size="sm" color="zinc">+
+                                        {{ $event->topics->count() - 2 }} more
                                     </flux:badge>
                                 @endif
                             </flux:table.cell>
@@ -178,8 +187,8 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                             </flux:table.cell>
                         </flux:table.row>
                     @empty
-                        <flux:table.row>
-                            <flux:table.cell colspan="4">You don't have any events yet.</flux:table.cell>
+                        <flux:table.row class="text-center">
+                            <flux:table.cell colspan="5">You don't have any events yet.</flux:table.cell>
                         </flux:table.row>
                     @endforelse
                 </flux:table.rows>
