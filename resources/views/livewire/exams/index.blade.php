@@ -79,10 +79,10 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
         <flux:table :paginate="$exams">
             <flux:table.columns>
                 <flux:table.column>Title</flux:table.column>
-                <flux:table.column>Subject</flux:table.column>
-                <flux:table.column>Topics</flux:table.column>
+                <flux:table.column class="hidden sm:table-cell">Subject</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Topics</flux:table.column>
                 <flux:table.column sortable>Difficulty</flux:table.column>
-                <flux:table.column>Size</flux:table.column>
+                <flux:table.column class="hidden lg:table-cell">Size</flux:table.column>
             </flux:table.columns>
 
             <flux:table.rows>
@@ -97,14 +97,14 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                         </flux:table.cell>
 
                         <!-- Subject -->
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden sm:table-cell">
                             <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
                                 href="/{{ Auth::user()->username }}/subjects/{{ $exam->subject->slug }}">
                                 {{ $exam->subject->name }}</flux:link>
                         </flux:table.cell>
 
                         <!-- Topics -->
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden md:table-cell">
                             @php
                                 $topicsToShow = $exam->topics->take(2);
                                 $hasMoreTopics = $exam->topics->count() > 2;
@@ -131,7 +131,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
                         </flux:table.cell>
 
                         <!-- Size -->
-                        <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->size)->ucfirst() }}
+                        <flux:table.cell class="whitespace-nowrap" class="hidden lg:table-cell">{{ Str::of($exam->size)->ucfirst() }}
                         </flux:table.cell>
 
                         <!-- Actions -->

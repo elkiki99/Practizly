@@ -82,7 +82,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
             <flux:table.columns>
                 <flux:table.column>Subject</flux:table.column>
                 <flux:table.column sortable>Upcoming event</flux:table.column>
-                <flux:table.column>My tests</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">My tests</flux:table.column>
                 <flux:table.column sortable>Status</flux:table.column>
             </flux:table.columns>
 
@@ -111,7 +111,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
                         </flux:table.cell>
 
                         <!-- My tests -->
-                        <flux:table.cell class="whitespace-nowrap">
+                        <flux:table.cell class="whitespace-nowrap hidden md:table-cell">
                             {{ $subject->exams()->latest()->first()->title ?? 'No tests yet' }}
                         </flux:table.cell>
 

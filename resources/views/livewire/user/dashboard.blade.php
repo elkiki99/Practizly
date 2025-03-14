@@ -93,9 +93,9 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
             <flux:table>
                 <flux:table.columns>
                     <flux:table.column>Event</flux:table.column>
-                    <flux:table.column>Subject</flux:table.column>
+                    <flux:table.column class="hidden sm:table-cell">Subject</flux:table.column>
                     <flux:table.column sortable>Date</flux:table.column>
-                    <flux:table.column>Tags</flux:table.column>
+                    <flux:table.column class="hidden md:table-cell">Tags</flux:table.column>
                     <flux:table.column sortable>Status</flux:table.column>
                 </flux:table.columns>
 
@@ -121,7 +121,7 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                             </flux:table.cell>
 
                             <!-- Subject -->
-                            <flux:table.cell>
+                            <flux:table.cell class="hidden sm:table-cell">
                                 <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap"
                                     wire:navigate
                                     href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
@@ -129,11 +129,12 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                             </flux:table.cell>
 
                             <!-- Date -->
-                            <flux:table.cell class="whitespace-nowrap">
-                                {{ Carbon::parse($event->date)->format('F j, Y') }}</flux:table.cell>
+                            <flux:table.cell class="whitespace-nowrap hidden sm:table-cell">{{ Carbon::parse($event->date)->format('F j, Y') }}</flux:table.cell>
+
+                            <flux:table.cell class="whitespace-nowrap table-cell sm:hidden">{{ Carbon::parse($event->date)->format('d/m') }}</flux:table.cell>
 
                             <!-- Topics -->
-                            <flux:table.cell>
+                            <flux:table.cell class="hidden md:table-cell">
                                 @php
                                     $topicsToShow = $event->topics->take(2);
                                     $hasMoreTopics = $event->topics->count() > 2;
