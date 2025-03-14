@@ -29,13 +29,7 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
 <div class="space-y-6">
     <div class="space-y-3">
         <flux:heading level="1" size="xl">Summaries</flux:heading>
-
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-            </flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Summaries
-            </flux:breadcrumbs.item>
-        </flux:breadcrumbs>
+        <flux:subheading>Explore and study with your AI generated summaries.</flux:subheading>
     </div>
 
     <flux:separator variant="subtle" />
@@ -83,11 +77,6 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
     </div>
 
     <div class="space-y-6">
-        <div>
-            <flux:heading level="2">Available summaries</flux:heading>
-            <flux:subheading>Explore and study with your AI generated summaries.</flux:subheading>
-        </div>
-
         <flux:table :paginate="$summaries">
             <flux:table.columns>
                 <flux:table.column>Title</flux:table.column>
@@ -162,7 +151,7 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
                             </flux:dropdown>
 
                             <livewire:summaries.delete :$summary wire:key="delete-summary-{{ $summary->id }}" />
-                        </flux:table.cell>
+                        </flux:table.cell>  
                     </flux:table.row>
                 @empty
                     <flux:table.cell colspan="4" class="text-center">

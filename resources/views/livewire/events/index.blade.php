@@ -52,13 +52,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
 <div class="space-y-6">
     <div class="space-y-3">
         <flux:heading level="1" size="xl">Events</flux:heading>
-
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-            </flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Events
-            </flux:breadcrumbs.item>
-        </flux:breadcrumbs>
+        <flux:subheading>Check out your upcoming events.</flux:subheading>
     </div>
 
     <flux:separator variant="subtle" />
@@ -113,11 +107,6 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
     </div>
 
     <div class="space-y-6">
-        <div>
-            <flux:heading level="2">Next events</flux:heading>
-            <flux:subheading>Check out your upcoming events.</flux:subheading>
-        </div>
-
         <flux:table :paginate="$events">
             <flux:table.columns>
                 <flux:table.column>Event</flux:table.column>
@@ -141,7 +130,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                             @elseif($event->type === 'oral_presentation')
                                 <flux:icon.microphone variant="mini" inset="top bottom" />
                             @elseif($event->type === 'assignment')
-                                <flux:icon.pencil-square variant="mini" inset="top bottom" />
+                                <flux:icon.clipboard-document-list variant="mini" inset="top bottom" />
                             @endif
                             <flux:link class="text-sm font-medium text-zinc-800 dark:text-white whitespace-nowrap"
                                 wire:navigate href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">

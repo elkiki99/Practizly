@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 
 class Attachment extends Model
@@ -15,6 +16,7 @@ class Attachment extends Model
         'file_path',
         'attachable_id',
         'attachable_type',
+        'size'
     ];
 
     public function attachable()
@@ -30,5 +32,16 @@ class Attachment extends Model
     public function summaries()
     {
         return $this->belongsToMany(Exam::class, 'summary_attachment')->withTimestamps();
+    }
+
+    public function getFormattedSizeAttribute()
+    {
+        $size = $this->size;
+        
+        if ($size >= 1048576) {
+            return round($size / 1048576, 2) . ' MB';
+        }
+    
+        return round($size / 1024, 2) . ' KB';
     }
 }

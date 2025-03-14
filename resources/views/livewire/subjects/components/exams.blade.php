@@ -40,8 +40,6 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
             </flux:heading>
 
             <flux:breadcrumbs>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-                </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}">

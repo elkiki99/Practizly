@@ -13,7 +13,9 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
         $this->event = Event::where('slug', $slug)->first();
     }
 
+    #[On('eventCreated')]
     #[On('eventUpdated')]
+    #[On('eventDeleted')]
     public function updatedEvent()
     {
         $this->dispatch('$refresh');
@@ -28,14 +30,14 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
             </flux:heading>
 
             <flux:breadcrumbs>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-                </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
                 </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
+                <flux:breadcrumbs.item wire:navigate
+                    href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
                     {{ Str::of($event->subject->name)->ucfirst() }}
                 </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}/events">Events
+                <flux:breadcrumbs.item wire:navigate
+                    href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}/events">Events
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item>{{ Str::of($event->name)->ucfirst() }}</flux:breadcrumbs.item>
             </flux:breadcrumbs>
@@ -61,15 +63,10 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
     <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6 w-1/3"
         wire:key="event-{{ $event->id }}">
         <!-- Description -->
-        <flux:heading>
-            {{ $event->subject->name }}
-        </flux:heading>
+        <flux:heading>{{ $event->name }}</flux:heading>
 
-        <flux:subheading class="text-sm text-gray-500 dark:text-gray-400">
-            {{ $event->description }}
-        </flux:subheading>
+        <flux:subheading>{{ $event->subject->name }}</flux:subheading>
 
-        <!-- Event Meta (Date & Type) -->
         <div class="flex items-center space-x-2">
             <flux:badge variant="subtle">
                 {{ Carbon::parse($event->date)->format('M d, Y') }}

@@ -17,9 +17,6 @@ new class extends Component {
     #[Validate('required|string|max:255')]
     public string $title = '';
 
-    #[Validate('nullable|string|max:1000')]
-    public string $description = '';
-
     #[Validate('required|string|max:1000')]
     public string $guidelines = '';
 
@@ -104,7 +101,6 @@ new class extends Component {
         $assignment = Assignment::create([
             'title' => $this->title,
             'slug' => $slug,
-            'description' => $this->description,
             'guidelines' => $this->guidelines,
             'due_date' => $this->due_date,
             'status' => $this->status,
@@ -119,10 +115,9 @@ new class extends Component {
                 $assignment->attachments()->create([
                     'file_name' => $fileName,
                     'file_path' => $filePath,
+                    'size' => $attachmentFile->getSize(),
                 ]);
             }
-
-            $this->dispatch('attachmentCreated');
         }
 
         // Create assignment event
@@ -146,11 +141,9 @@ new class extends Component {
             ]);
 
             $event->topics()->sync($this->topic);
-
-            $this->dispatch('eventCreated');
         }
 
-        $this->reset(['title', 'description', 'guidelines', 'attachments', 'due_date']);
+        $this->reset(['title', 'guidelines', 'attachments', 'due_date']);
 
         $this->dispatch('assignmentCreated');
 
@@ -182,9 +175,6 @@ new class extends Component {
             <flux:input type="text" required wire:model="title" placeholder="Calculate quarterly revenue" autofocus
                 autocomplete="name" />
         </flux:field>
-
-        <flux:input required wire:model="description" label="Assignment description"
-            placeholder="Analyze case study to determine performance." />
 
         <flux:textarea required wire:model="guidelines" label="Assignment guidelines"
             placeholder="Use financial statements to support your analysis, include charts, and ensure all calculations are accurate." />

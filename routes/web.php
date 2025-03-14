@@ -19,14 +19,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('{user:username}/subjects', 'subjects.index')->name('subjects.index');
     Volt::route('{user:username}/subjects/{slug}', 'subjects.show')->name('subjects.show');
 
-    Volt::route('{user:username}/subjects/{slug}/exams', 'subjects.components.exams')->name('subjects.components.exams');
-    Volt::route('{user:username}/subjects/{slug}/assignments', 'subjects.components.assignments')->name('subjects.components.assignments');
-    Volt::route('{user:username}/subjects/{slug}/topics', 'subjects.components.topics')->name('subjects.components.topics');
-    Volt::route('{user:username}/subjects/{slug}/events', 'subjects.components.events')->name('subjects.components.events');
-    Volt::route('{user:username}/subjects/{slug}/summaries', 'subjects.components.summaries')->name('subjects.components.summaries');
+    Volt::route('{user:username}/library', 'attachments.index')->name('library');
+    Volt::route('{user:username}/exams', 'exams.index')->name('exams');
 
     Volt::route('{user:username}/calendar', 'events.index')->name('calendar');
-    
     Volt::route('{user:username}/events/{slug}', 'events.show')->name('events.show');
 
     Volt::route('{user:username}/assignments', 'assignments.index')->name('assignments.index');
@@ -37,8 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Volt::route('{user:username}/profile', 'user.profile')->name('profile');
     Volt::route('{user:username}/settings', 'user.settings')->name('settings');
-    Volt::route('{user:username}/library', 'attachments.index')->name('library');
-    Volt::route('{user:username}/exams', 'exams.index')->name('exams');
+
+    Volt::route('{user:username}/subjects/{slug}/exams', 'subjects.components.exams')->name('subjects.components.exams');
+    Volt::route('{user:username}/subjects/{slug}/assignments', 'subjects.components.assignments')->name('subjects.components.assignments');
+    Volt::route('{user:username}/subjects/{slug}/topics', 'subjects.components.topics')->name('subjects.components.topics');
+    Volt::route('{user:username}/subjects/{slug}/events', 'subjects.components.events')->name('subjects.components.events');
+    Volt::route('{user:username}/subjects/{slug}/summaries', 'subjects.components.summaries')->name('subjects.components.summaries');
 });
 
 require __DIR__ . '/auth.php';

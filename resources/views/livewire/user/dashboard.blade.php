@@ -24,12 +24,7 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
     #[On('eventDeleted')]
     public function updatedEvents()
     {
-        $this->events = Event::whereHas('topics.subject', function ($query) {
-            $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
-        })
-            ->orderBy('date', 'asc')
-            ->take(3)
-            ->get();
+        $this->dispatch('$refresh');
     }
 }; ?>
 
@@ -118,7 +113,7 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                                 @elseif($event->type === 'oral_presentation')
                                     <flux:icon.microphone variant="mini" inset="top bottom" />
                                 @elseif($event->type === 'assignment')
-                                    <flux:icon.pencil-square variant="mini" inset="top bottom" />
+                                    <flux:icon.clipboard-document-list variant="mini" inset="top bottom" />
                                 @endif
                                 <flux:link class="text-sm font-medium text-zinc-800 dark:text-white whitespace-nowrap"
                                     wire:navigate href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">
@@ -128,7 +123,8 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                             <!-- Subject -->
                             <flux:table.cell>
                                 <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap"
-                                    wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
+                                    wire:navigate
+                                    href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
                                     {{ $event->subject->name }}</flux:link>
                             </flux:table.cell>
 

@@ -43,13 +43,7 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
 <div class="space-y-6">
     <div class="space-y-3">
         <flux:heading level="1" size="xl">Library</flux:heading>
-
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-            </flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Library
-            </flux:breadcrumbs.item>
-        </flux:breadcrumbs>
+        <flux:heading level="2">Available attachments</flux:heading>
     </div>
 
     <flux:separator variant="subtle" />
@@ -98,19 +92,15 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
     </div>
 
     <div class="space-y-6">
-        <div>
-            <flux:heading level="2">Available attachments</flux:heading>
-            <flux:subheading>A listing of all your attachments.</flux:subheading>
-        </div>
-
         <flux:table :paginate="$attachments">
             <flux:table.columns>
                 <flux:table.column>Name</flux:table.column>
+                <flux:table.column>Size</flux:table.column>
             </flux:table.columns>
 
             @forelse($attachments as $attachment)
                 <flux:table.row>
-                    <flux:table.cell>
+                    <flux:table.cell variant="strong">
                         @if ($attachment->isPDF)
                             {{ $attachment->file_name }}.pdf
                         @elseif ($attachment->isDOCX)
@@ -118,6 +108,10 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
                         @elseif ($attachment->isImage)
                             {{ $attachment->file_name }}.img
                         @endif
+                    </flux:table.cell>
+                    
+                    <flux:table.cell>
+                        {{ $attachment->formatted_size }}
                     </flux:table.cell>
 
                     <!-- Actions -->
@@ -147,7 +141,6 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
                 </flux:table.row>
             @endforelse
         </flux:table>
-
     </div>
 
     <!-- Modal actions -->

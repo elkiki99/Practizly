@@ -36,13 +36,7 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
 <div class="space-y-6">
     <div class="space-y-3">
         <flux:heading level="1" size="xl">Assignments</flux:heading>
-
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-            </flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Assignments
-            </flux:breadcrumbs.item>
-        </flux:breadcrumbs>
+        <flux:subheading>Check out your assignments.</flux:subheading>
     </div>
 
     <flux:separator variant="subtle" />
@@ -91,11 +85,6 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
     </div>
 
     <div class="space-y-6">
-        <div>
-            <flux:heading level="2">Your assignments</flux:heading>
-            <flux:subheading>Check out your assignments.</flux:subheading>
-        </div>
-
         <flux:table :paginate="$assignments">
             <flux:table.columns>
                 <flux:table.column>Title</flux:table.column>

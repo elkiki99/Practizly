@@ -38,6 +38,7 @@ new class extends Component {
             'file_path' => $filePath,
             'attachable_type' => Topic::class,
             'attachable_id' => $topic->id,
+            'size' => $this->file->getSize(),
         ]);
 
         if ($this->file) {

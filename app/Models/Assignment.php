@@ -16,7 +16,7 @@ class Assignment extends Model
         'topic_id',
         'slug',
         'title',
-        'description',
+        // 'description',
         'guidelines',
         'due_date', 
         'status',

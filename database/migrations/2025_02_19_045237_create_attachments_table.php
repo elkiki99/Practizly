@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('file_path');
             $table->morphs('attachable');
+            $table->string('size');
             $table->timestamps();
         });
     }

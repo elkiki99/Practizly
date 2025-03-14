@@ -18,7 +18,6 @@ new class extends Component {
     public ?Assignment $assignment;
 
     public string $title = '';
-    public string $description = '';
     public string $guidelines = '';
     public $attachments = [];
     public ?Carbon $due_date = null;
@@ -34,7 +33,6 @@ new class extends Component {
     {
         return [
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
             'guidelines' => 'required|string|max:1000',
             'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,doc,docx,pdf|max:10240',
             'due_date' => 'required|date',
@@ -49,7 +47,6 @@ new class extends Component {
     {
         $this->assignment = $assignment;
         $this->title = $assignment->title;
-        $this->description = $assignment->description;
         $this->guidelines = $assignment->guidelines;
         $this->due_date = $assignment->due_date ? Carbon::parse($assignment->due_date) : null;
         $this->status = $assignment->status;
@@ -78,7 +75,6 @@ new class extends Component {
         $this->assignment->update([
             'title' => $this->title,
             'slug' => $slug,
-            'description' => $this->description,
             'guidelines' => $this->guidelines,
             'due_date' => $this->due_date,
             'status' => $this->status,
@@ -93,10 +89,9 @@ new class extends Component {
                 $this->assignment->attachments()->create([
                     'file_name' => $fileName,
                     'file_path' => $filePath,
+                    'size' => $attachmentFile->getSize(),
                 ]);
             }
-
-            $this->dispatch('attachmentUpdated');
         }
 
         Flux::toast(heading: 'Assignment updated', text: 'Your assignment was updated successfully', variant: 'success');
@@ -141,9 +136,6 @@ new class extends Component {
             <flux:input type="text" required wire:model="title" placeholder="Calculate quarterly revenue" autofocus
                 autocomplete="name" />
         </flux:field>
-
-        <flux:input required wire:model="description" label="Assignment description"
-            placeholder="Analyze case study to determine performance." />
 
         <flux:textarea required wire:model="guidelines" label="Assignment guidelines"
             placeholder="Use financial statements to support your analysis, include charts, and ensure all calculations are accurate." />

@@ -2,14 +2,11 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
-use Livewire\WithPagination;
 use App\Models\Subject;
 use App\Models\Event;
 use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] class extends Component {
-    use WithPagination;
-
     public ?Subject $subject;
 
     public function mount($slug, Subject $subject)
@@ -41,8 +38,6 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
             </flux:heading>
 
             <flux:breadcrumbs>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-                </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}">
@@ -85,7 +80,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
                             @elseif($event->type === 'oral_presentation')
                                 <flux:icon.microphone variant="mini" inset="top bottom" />
                             @elseif($event->type === 'assignment')
-                                <flux:icon.pencil-square variant="mini" inset="top bottom" />
+                                <flux:icon.clipboard-document-list variant="mini" inset="top bottom" />
                             @endif
                             <flux:link class="text-sm font-medium text-zinc-800 dark:text-white whitespace-nowrap"
                                 wire:navigate href="/{{ Auth::user()->username }}/events/{{ $event->slug }}">

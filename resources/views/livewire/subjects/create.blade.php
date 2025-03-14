@@ -19,9 +19,6 @@ new class extends Component {
     #[Validate('required|boolean')]
     public bool $status = true;
 
-    // #[Validate('boolean')]
-    // public bool $is_favorite = false;
-
     public function createSubject()
     {
         $this->validate();
@@ -41,7 +38,6 @@ new class extends Component {
             'description' => $this->description,
             'color' => $this->color,
             'status' => $this->status,
-            // 'is_favorite' => $this->is_favorite,
             'user_id' => auth()->user()->id,
         ]);
 
@@ -89,11 +85,8 @@ new class extends Component {
                     class="inline-block mr-2 bg-gray-500 rounded-full size-2"></span>Gray</flux:select.option>
         </flux:select>
 
-        <!-- Favourites -->
-        {{-- <flux:switch required wire:model.live="is_favorite" label="Mark subject as favorite" /> --}}
-
         <!-- Status -->
-        <flux:switch required wire:model.live="status" label="Subject status" description="Ongoing is marked by default" />
+        <flux:switch disabled required wire:model.live="status" label="Subject status" description="Ongoing is marked by default" />
 
         <div class="flex">
             <flux:spacer />

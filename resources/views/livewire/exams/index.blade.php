@@ -28,13 +28,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
 <div class="space-y-6">
     <div class="space-y-3">
         <flux:heading level="1" size="xl">Exams</flux:heading>
-
-        <flux:breadcrumbs>
-            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/dashboard">Dashboard
-            </flux:breadcrumbs.item>
-            <flux:breadcrumbs.item>Exams
-            </flux:breadcrumbs.item>
-        </flux:breadcrumbs>
+        <flux:subheading>Explore and practice with your AI generated exams.</flux:subheading>
     </div>
 
     <flux:separator variant="subtle" />
@@ -82,11 +76,6 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
     </div>
 
     <div class="space-y-6">
-        <div>
-            <flux:heading level="2">Available exams</flux:heading>
-            <flux:subheading>Explore and practice with your AI generated exams.</flux:subheading>
-        </div>
-
         <flux:table :paginate="$exams">
             <flux:table.columns>
                 <flux:table.column>Title</flux:table.column>
