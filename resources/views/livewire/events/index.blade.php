@@ -110,10 +110,10 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
         <flux:table :paginate="$events">
             <flux:table.columns>
                 <flux:table.column>Event</flux:table.column>
-                <flux:table.column>Subject</flux:table.column>
+                <flux:table.column class="hidden sm:table-cell">Subject</flux:table.column>
                 <flux:table.column sortable>Date</flux:table.column>
-                <flux:table.column>Topics</flux:table.column>
-                <flux:table.column sortable>Status</flux:table.column>
+                <flux:table.column class="hidden lg:table-cell">Topics</flux:table.column>
+                <flux:table.column class="hidden md:table-cell" sortable>Status</flux:table.column>
             </flux:table.columns>
 
             <flux:table.rows>
@@ -138,7 +138,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                         </flux:table.cell>
 
                         <!-- Subject -->
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden sm:table-cell">
                             <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap"
                                 wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
                                 {{ $event->subject->name }}</flux:link>
@@ -149,7 +149,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                         </flux:table.cell>
 
                         <!-- Topics -->
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden lg:table-cell">
                             @php
                                 $topicsToShow = $event->topics->take(2);
                                 $hasMoreTopics = $event->topics->count() > 2;
@@ -168,7 +168,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
                         </flux:table.cell>
 
                         <!-- Status -->
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden md:table-cell">
                             @if ($event->status === 'pending')
                                 <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
                             @elseif($event->status === 'completed')

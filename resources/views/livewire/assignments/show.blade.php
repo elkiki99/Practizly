@@ -21,7 +21,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly'
 }; ?>
 
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-start justify-between gap-2">
         <div class="space-y-3">
             <flux:heading level="1" size="xl">
                 {{ Str::of($assignment->title)->ucfirst() }}
@@ -44,13 +44,14 @@ new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly'
 
         <div class="flex items-center justify-start gap-2">
             <flux:modal.trigger name="edit-assignment-{{ $assignment->id }}">
-                <flux:badge as="button" variant="pill" color="zinc" icon="pencil-square" size="lg">Edit
-                    assignment
+                <flux:badge as="button" variant="pill" color="zinc" icon="pencil-square" size="lg">
+                    Edit&nbsp;<span class="hidden sm:inline">assignment</span>
                 </flux:badge>
             </flux:modal.trigger>
 
             <flux:modal.trigger name="delete-assignment-{{ $assignment->id }}">
-                <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">Delete assignment
+                <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">
+                    Delete&nbsp;<span class="hidden sm:inline">assignment</span>
                 </flux:badge>
             </flux:modal.trigger>
         </div>
@@ -59,7 +60,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly'
     <livewire:subjects.components.nav-bar :subject="$assignment->subject" />
 
     <!-- Subject card -->
-    <flux:card class="space-y-6 w-1/3" wire:key="assignment-{{ $assignment->id }}">
+    <flux:card class="space-y-6 w-96" wire:key="assignment-{{ $assignment->id }}">
         <div>
             <flux:heading size="lg">{{ Str::of($assignment->title)->ucfirst() }}</flux:heading>
             <flux:subheading>{{ Str::of($assignment->topic->name)->ucfirst() }}</flux:subheading>

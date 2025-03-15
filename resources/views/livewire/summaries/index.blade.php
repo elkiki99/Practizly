@@ -81,8 +81,8 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
             <flux:table.columns>
                 <flux:table.column>Title</flux:table.column>
                 <flux:table.column>Subject</flux:table.column>
-                <flux:table.column>Topics</flux:table.column>
-                <flux:table.column>Size</flux:table.column>
+                <flux:table.column class="hidden sm:table-cell">Topics</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Size</flux:table.column>
             </flux:table.columns>
 
             <flux:table.rows>
@@ -103,7 +103,7 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
                         </flux:table.cell>
 
                         <!-- Topics -->
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden sm:table-cell">
                             @php
                                 $topicsToShow = $summary->topics->take(2);
                                 $hasMoreTopics = $summary->topics->count() > 2;
@@ -125,7 +125,8 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
                             @endif
                         </flux:table.cell>
 
-                        <flux:table.cell class="whitespace-nowrap">
+                        <!-- Size -->
+                        <flux:table.cell class="whitespace-nowrap" class="hidden md:table-cell">
                             {{ Str::of($summary->size)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
 
                         <!-- Actions -->

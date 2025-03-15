@@ -36,13 +36,13 @@ new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly'
 }; ?>
 
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <div class="space-y-3">
+    <div class="flex items-start justify-between">
+        <div class="space-y-3"> 
             <flux:heading level="1" size="xl" class="text-{{ $subject->color }}">
                 {{ Str::of($subject->name)->ucfirst() }}
             </flux:heading>
 
-            <flux:breadcrumbs>
+            <flux:breadcrumbs>  
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}">

@@ -34,7 +34,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
 }; ?>
 
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-start justify-between">
         <div class="space-y-3">
             <flux:heading level="1" size="xl" class="text-{{ $subject->color }}">
                 {{ Str::of($subject->name)->ucfirst() }}

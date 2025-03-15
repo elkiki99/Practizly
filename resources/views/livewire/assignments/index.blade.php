@@ -74,7 +74,7 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
 
             <flux:separator vertical class="mx-2 my-2 max-lg:hidden" />
 
-            <div class="flex items-center justify-start gap-2 max-lg:hidden">
+            <div class="flex items-center justify-start gap-2">
                 <flux:modal.trigger name="create-assignment">
                     <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New
                         assignment
@@ -90,7 +90,7 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
                 <flux:table.column>Title</flux:table.column>
                 <flux:table.column>Subject</flux:table.column>
                 <flux:table.column sortable>Due date</flux:table.column>
-                <flux:table.column>Status</flux:table.column>
+                <flux:table.column class="hidden sm:table-cell">Status</flux:table.column>
             </flux:table.columns>
 
             <flux:table.rows>
@@ -113,7 +113,7 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
                         <flux:table.cell class="whitespace-nowrap">
                             {{ Carbon::parse($assignment->due_date)->format('F j, Y') }}</flux:table.cell>
 
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden sm:table-cell">
                             @if ($assignment->status === 'pending')
                                 <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
                             @elseif($assignment->status === 'completed')

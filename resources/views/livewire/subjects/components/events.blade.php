@@ -31,7 +31,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
 }; ?>
 
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-start justify-between">
         <div class="space-y-3">
             <flux:heading level="1" size="xl">
                 {{ Str::of($subject->name)->ucfirst() }}
@@ -62,8 +62,8 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
             <flux:table.columns>
                 <flux:table.column>Event</flux:table.column>
                 <flux:table.column sortable>Date</flux:table.column>
-                <flux:table.column>Topics</flux:table.column>
-                <flux:table.column sortable>Status</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Topics</flux:table.column>
+                <flux:table.column class="hidden sm:table-cell" sortable>Status</flux:table.column>
             </flux:table.columns>
 
             <flux:table.rows>
@@ -92,7 +92,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
                         </flux:table.cell>
 
                         <!-- Topics -->
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden md:table-cell">
                             @php
                                 $topicsToShow = $event->topics->take(2);
                                 $hasMoreTopics = $event->topics->count() > 2;
@@ -110,7 +110,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
                         </flux:table.cell>
 
                         <!-- Status -->
-                        <flux:table.cell>
+                        <flux:table.cell class="hidden sm:table-cell">
                             @if ($event->status === 'pending')
                                 <flux:badge size="sm" color="yellow" inset="top bottom">Pending</flux:badge>
                             @elseif($event->status === 'completed')

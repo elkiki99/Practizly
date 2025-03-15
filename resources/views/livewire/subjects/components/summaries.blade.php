@@ -35,7 +35,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
 }; ?>
 
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-start justify-between">
         <div class="space-y-3">
             <flux:heading level="1" size="xl" class="text-{{ $subject->color }}">
                 {{ Str::of($subject->name)->ucfirst() }}
@@ -65,7 +65,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
             <flux:table.column>Topics</flux:table.column>
-            <flux:table.column>Size</flux:table.column>
+            <flux:table.column class="hidden sm:table-cell">Size</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
@@ -99,7 +99,8 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
                         @endif
                     </flux:table.cell>
 
-                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($summary->size)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
+                    <!-- Size -->
+                    <flux:table.cell class="whitespace-nowrap hidden sm:table-cell">{{ Str::of($summary->size)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
 
                     <!-- Actions -->
                     <flux:table.cell>

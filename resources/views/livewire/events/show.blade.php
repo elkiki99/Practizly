@@ -23,7 +23,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
 }; ?>
 
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-start justify-between gap-2">
         <div class="space-y-3">
             <flux:heading level="1" size="xl">
                 {{ Str::of($event->name)->ucfirst() }}
@@ -45,13 +45,14 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
 
         <div class="flex items-center justify-start gap-2">
             <flux:modal.trigger name="edit-event-{{ $event->id }}">
-                <flux:badge as="button" variant="pill" color="zinc" icon="pencil-square" size="lg">Edit
-                    event
+                <flux:badge as="button" variant="pill" color="zinc" icon="pencil-square" size="lg">
+                    Edit&nbsp;<span class="hidden sm:inline">event</span>
                 </flux:badge>
             </flux:modal.trigger>
 
             <flux:modal.trigger name="delete-event-{{ $event->id }}">
-                <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">Delete event
+                <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">
+                    Delete&nbsp;<span class="hidden sm:inline">event</span>
                 </flux:badge>
             </flux:modal.trigger>
         </div>
@@ -60,7 +61,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
     <livewire:subjects.components.nav-bar :subject="$event->subject" />
 
     <!-- Subject card -->
-    <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6 w-1/3"
+    <flux:card class="flex flex-col items-stretch flex-grow h-full space-y-6 w-96"
         wire:key="event-{{ $event->id }}">
         <!-- Description -->
         <flux:heading>{{ $event->name }}</flux:heading>
