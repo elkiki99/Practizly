@@ -84,9 +84,10 @@ new class extends Component {
         }
 
         if (!empty($topic)) {
-            $topics = Topic::whereIn('id', (array) $topic)->get();
+            $selectedTopics = Topic::whereIn('id', (array) $topic)->get();
+            $this->attachments = collect($this->attachments);
 
-            $this->attachments = $topics->flatMap->all_attachments->unique();
+            $this->attachments = $this->attachments->merge($selectedTopics->flatMap->all_attachments)->unique();
 
             if ($this->attachments->count() === 1) {
                 $this->attachment = $this->attachments->first()->id;
@@ -100,9 +101,10 @@ new class extends Component {
     #[On('attachmentCreated')]
     public function updatedAttachment($attachment = null)
     {
-        $this->topics = Topic::whereIn('id', (array) $this->topic)->get();
+        $selectedTopics = Topic::whereIn('id', (array) $this->topic)->get();
+        $this->attachments = collect($this->attachments);
 
-        $this->attachments = $this->topics->flatMap->all_attachments->unique();
+        $this->attachments = $this->attachments->merge($selectedTopics->flatMap->all_attachments)->unique();
 
         if ($this->attachments->count() === 1) {
             $this->attachment = $this->attachments->first()->id;
@@ -170,8 +172,8 @@ new class extends Component {
                     </flux:tooltip.content>
                 </flux:tooltip>
             </div>
-            <flux:input required type="text" wire:model="title" placeholder="Summary on quantitative analysis" autofocus
-                autocomplete="name" />
+            <flux:input required type="text" wire:model="title" placeholder="Summary on quantitative analysis"
+                autofocus autocomplete="name" />
         </flux:field>
 
         <flux:select required label="Summary subject" searchable variant="listbox" wire:model.live="subject"

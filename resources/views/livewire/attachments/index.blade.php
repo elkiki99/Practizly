@@ -43,7 +43,7 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
 <div class="space-y-6">
     <div class="space-y-3">
         <flux:heading level="1" size="xl">Library</flux:heading>
-        <flux:heading level="2">Available attachments</flux:heading>
+        <flux:subheading level="2">Available attachments</flux:subheading>
     </div>
 
     <flux:separator variant="subtle" />
@@ -98,48 +98,51 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
                 <flux:table.column>Size</flux:table.column>
             </flux:table.columns>
 
-            @forelse($attachments as $attachment)
-                <flux:table.row>
-                    <flux:table.cell variant="strong">
-                        @if ($attachment->isPDF)
-                            {{ $attachment->file_name }}.pdf
-                        @elseif ($attachment->isDOCX)
-                            {{ $attachment->file_name }}.pdf
-                        @elseif ($attachment->isImage)
-                            {{ $attachment->file_name }}.img
-                        @endif
-                    </flux:table.cell>
-                    
-                    <flux:table.cell>
-                        {{ $attachment->formatted_size }}
-                    </flux:table.cell>
+            <flux.table.rows>
+                @forelse($attachments as $attachment)
+                    <flux:table.row wire:key="{{ $attachment->id }}">
+                        <flux:table.cell variant="strong">
+                            @if ($attachment->isPDF)
+                                {{ $attachment->file_name }}.pdf
+                            @elseif ($attachment->isDOCX)
+                                {{ $attachment->file_name }}.pdf
+                            @elseif ($attachment->isImage)
+                                {{ $attachment->file_name }}.img
+                            @endif
+                        </flux:table.cell>
 
-                    <!-- Actions -->
-                    <flux:table.cell>
-                        <div class="flex justify-end items-end space-x-2">
-                            <flux:modal.trigger name="download-attachment-{{ $attachment->id }}">
-                                <flux:button inset="top bottom" download as="link"
-                                    href="{{ asset('storage/' . $attachment->file_path) }}" icon="arrow-down-tray"
-                                    size="sm" variant="ghost" />
-                            </flux:modal.trigger>
+                        <flux:table.cell>
+                            {{ $attachment->formatted_size }}
+                        </flux:table.cell>
 
-                            <flux:modal.trigger name="delete-attachment-{{ $attachment->id }}">
-                                <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
-                                </flux:button>
-                            </flux:modal.trigger>
-                        </div>
+                        <!-- Actions -->
+                        <flux:table.cell>
+                            <div class="flex justify-end items-end space-x-2">
+                                <flux:modal.trigger name="download-attachment-{{ $attachment->id }}">
+                                    <flux:button inset="top bottom" download as="link"
+                                        href="{{ asset('storage/' . $attachment->file_path) }}" icon="arrow-down-tray"
+                                        size="sm" variant="ghost" />
+                                </flux:modal.trigger>
 
-                        <!-- Delete attachment modal -->
-                        <livewire:attachments.delete :$attachment wire:key="delete-attachment-{{ $attachment->id }}" />
-                    </flux:table.cell>
-                </flux:table.row>
-            @empty
-                <flux:table.row>
-                    <flux:table.cell colspan="2" class="text-center">
-                        You don't have any attachments yet.
-                    </flux:table.cell>
-                </flux:table.row>
-            @endforelse
+                                <flux:modal.trigger name="delete-attachment-{{ $attachment->id }}">
+                                    <flux:button variant="ghost" size="sm" icon="trash" inset="top bottom">
+                                    </flux:button>
+                                </flux:modal.trigger>
+                            </div>
+
+                            <!-- Delete attachment modal -->
+                            <livewire:attachments.delete :$attachment
+                                wire:key="delete-attachment-{{ $attachment->id }}" />
+                        </flux:table.cell>
+                    </flux:table.row>
+                @empty
+                    <flux:table.row>
+                        <flux:table.cell colspan="2" class="text-center">
+                            You don't have any attachments yet.
+                        </flux:table.cell>
+                    </flux:table.row>
+                @endforelse
+            </flux.table.rows>
         </flux:table>
     </div>
 

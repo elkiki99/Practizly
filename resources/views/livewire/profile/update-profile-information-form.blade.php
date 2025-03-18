@@ -78,13 +78,13 @@ new class extends Component {
 
 <form wire:submit="updateProfileInformation" class="space-y-6">
     <flux:field>
-        <flux:label class="mb-2">Name</flux:label>
+        <flux:label>Name</flux:label>
         <flux:input placeholder="Your name" wire:model='name' autofocus required autocomplete="name" />
         <flux:error name="name" />
     </flux:field>
 
     <flux:field>
-        <flux:label class="mb-2">Email</flux:label>
+        <flux:label>Email</flux:label>
         <flux:input type="email" wire:model='email' placeholder="Your email" required autocomplete="username">
         </flux:input>
         <flux:error name="email" />
@@ -100,13 +100,13 @@ new class extends Component {
     </flux:field>
 
     <flux:field>
-        <flux:label class="mb-2">Username</flux:label>
+        <flux:label>Username</flux:label>
         <flux:input placeholder="Your username" disabled wire:model='username' required autocomplete="username" />
         <flux:error name="username" />
     </flux:field>
 
     <flux:field>
-        <flux:label class="mb-2">Profile picture</flux:label>
+        <flux:label>Profile picture</flux:label>
         <flux:input type="file" wire:model='profile_picture' />
         <flux:error name="profile_picture" />
     </flux:field>

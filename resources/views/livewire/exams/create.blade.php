@@ -91,9 +91,10 @@ new class extends Component {
         }
 
         if (!empty($topic)) {
-            $topics = Topic::whereIn('id', (array) $topic)->get();
+            $selectedTopics = Topic::whereIn('id', (array) $topic)->get();
+            $this->attachments = collect($this->attachments);
 
-            $this->attachments = $topics->flatMap->all_attachments->unique();
+            $this->attachments = $this->attachments->merge($selectedTopics->flatMap->all_attachments)->unique();
 
             if ($this->attachments->count() === 1) {
                 $this->attachment = $this->attachments->first()->id;
@@ -105,11 +106,12 @@ new class extends Component {
     }
 
     #[On('attachmentCreated')]
-    public function updateAttachment($attachment = null)
+    public function updatedAttachments($attachment = null)
     {
-        $this->topics = Topic::whereIn('id', (array) $this->topic)->get();
+        $selectedTopics = Topic::whereIn('id', (array) $this->topic)->get();
+        $this->attachments = collect($this->attachments);
 
-        $this->attachments = $this->topics->flatMap->all_attachments->unique();
+        $this->attachments = $this->attachments->merge($selectedTopics->flatMap->all_attachments)->unique();
 
         if ($this->attachments->count() === 1) {
             $this->attachment = $this->attachments->first()->id;
@@ -140,7 +142,7 @@ new class extends Component {
         if (!is_array($this->attachment)) {
             $this->attachment = is_null($this->attachment) ? [] : [$this->attachment];
         }
-        
+
         foreach ($this->attachment as $attachment) {
             $exam->attachments()->attach($attachment);
         }
