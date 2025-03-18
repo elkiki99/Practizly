@@ -1,11 +1,11 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
-use Carbon\Carbon;
 use App\Models\Event;
+use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class extends Component {
     use WithPagination;
@@ -17,15 +17,13 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
         $this->loadDates();
     }
 
-    public function with()
+    #[Computed]
+    public function events()
     {
-        return [
-            'events' => Event::whereHas('topics.subject', function ($query) {
+        return Event::whereHas('topics.subject', function ($query) {
                 $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
-            })
-                ->orderBy('date', 'asc')
-                ->paginate(12),
-        ];
+            })->orderBy('date', 'asc')
+            ->paginate(12);
     }
 
     public function loadDates()
@@ -107,7 +105,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
     </div>
 
     <div class="space-y-6">
-        <flux:table :paginate="$events">
+        <flux:table :paginate="$this->events">
             <flux:table.columns>
                 <flux:table.column>Event</flux:table.column>
                 <flux:table.column class="hidden sm:table-cell">Subject</flux:table.column>
@@ -117,7 +115,7 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
             </flux:table.columns>
 
             <flux:table.rows>
-                @forelse($events as $event)
+                @forelse($this->events as $event)
                     <flux:table.row wire:key="event-{{ $event->id }}">
                         <!-- Icon type & name -->
                         <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">
@@ -139,8 +137,8 @@ new #[Layout('layouts.dashboard')] #[Title('Calendar • Practizly')] class exte
 
                         <!-- Subject -->
                         <flux:table.cell class="hidden sm:table-cell">
-                            <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap"
-                                wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
+                            <flux:link class="text-sm text-zinc-500 dark:text-zinc-300 whitespace-nowrap" wire:navigate
+                                href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
                                 {{ $event->subject->name }}</flux:link>
                         </flux:table.cell>
 

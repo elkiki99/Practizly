@@ -23,7 +23,6 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     @fluxAppearance
-    @livewireStyles
 </head>
 
 <body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-900">
@@ -43,7 +42,6 @@
     @endpersist
 
     @fluxScripts
-    @livewireScripts
 </body>
 
 </html>

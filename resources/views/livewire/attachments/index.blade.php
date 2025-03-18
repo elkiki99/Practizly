@@ -1,35 +1,25 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\Attachment;
 
 new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class extends Component {
-    public function with()
+
+    #[Computed]
+    public function attachments()
     {
         $subjectIds = Auth::user()->subjects()->pluck('id')->toArray();
 
-        return [
-            'attachments' => ($attachments = Attachment::whereHas('attachable', function ($query) use ($subjectIds) {
+        return  ($attachments = Attachment::whereHas('attachable', function ($query) use ($subjectIds) {
                 $query->whereHas('subject', function ($subjectQuery) use ($subjectIds) {
                     $subjectQuery->whereIn('subjects.id', $subjectIds);
                 });
             })
                 ->latest()
-                ->paginate(12)),
-
-            $attachments->getCollection()->transform(function ($attachment) {
-                $filePath = $attachment->file_path;
-                $extension = Str::lower(pathinfo($filePath, PATHINFO_EXTENSION));
-                $attachment->isImage = in_array($extension, ['jpg', 'jpeg', 'png', 'webp']);
-                $attachment->isPDF = in_array($extension, ['pdf']);
-                $attachment->isDOCX = in_array($extension, ['docs', 'docx']);
-
-                return $attachment;
-            }),
-        ];
+                ->paginate(12));
     }
 
     #[On('attachmentCreated')]
@@ -92,25 +82,35 @@ new #[Layout('layouts.dashboard')] #[Title('Library • Practizly')] class exten
     </div>
 
     <div class="space-y-6">
-        <flux:table :paginate="$attachments">
+        <flux:table :paginate="$this->attachments">
             <flux:table.columns>
                 <flux:table.column>Name</flux:table.column>
+                <flux:table.column>Type</flux:table.column>
                 <flux:table.column>Size</flux:table.column>
             </flux:table.columns>
 
             <flux.table.rows>
-                @forelse($attachments as $attachment)
+                @forelse($this->attachments as $attachment)
                     <flux:table.row wire:key="{{ $attachment->id }}">
-                        <flux:table.cell variant="strong">
-                            @if ($attachment->isPDF)
-                                {{ $attachment->file_name }}.pdf
-                            @elseif ($attachment->isDOCX)
-                                {{ $attachment->file_name }}.pdf
-                            @elseif ($attachment->isImage)
-                                {{ $attachment->file_name }}.img
-                            @endif
+                        <!-- Name -->
+                        <flux:table.cell variant="strong" class="table-cell sm:hidden">
+                            {{ Str::limit(Str::after($attachment->file_path, 'attachments/'), 20, '...') }}
+                        </flux:table.cell>
+                        <flux:table.cell variant="strong" class="hidden sm:table-cell lg:hidden">
+                            {{ Str::limit(Str::after($attachment->file_path, 'attachments/'), 40, '...') }}
+                        </flux:table.cell>
+                        <flux:table.cell variant="strong" class="hidden lg:table-cell">
+                            {{ Str::limit(Str::after($attachment->file_path, 'attachments/'), 60, '...') }}
                         </flux:table.cell>
 
+                        <!-- Type -->
+                        <flux:table.cell>
+                            <flux:badge size="sm" color="zinc" variant="pill">
+                                {{ Str::after($attachment->file_path, '.') }}
+                            </flux:badge>
+                        </flux:table.cell>
+
+                        <!-- Size -->
                         <flux:table.cell>
                             {{ $attachment->formatted_size }}
                         </flux:table.cell>

@@ -1,12 +1,15 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
+use Livewire\WithPagination;
 use App\Models\Subject;
 use App\Models\Event;
 use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] class extends Component {
+    use WithPagination;
+
     public ?Subject $subject;
 
     public function mount($slug, Subject $subject)
@@ -14,11 +17,10 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
         $this->subject = Subject::where('slug', $slug)->first();
     }
 
-    public function with()
+    #[Computed]
+    public function events()
     {
-        return [
-            'events' => $this->subject->events()->orderBy('created_at', 'desc')->paginate(12),
-        ];
+        return $this->subject->events()->orderBy('created_at', 'desc')->paginate(12);
     }
 
     #[On('eventCreated')]
@@ -58,7 +60,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
     <livewire:subjects.components.nav-bar :subject="$subject" />
 
     <div class="space-y-6">
-        <flux:table :paginate="$events">
+        <flux:table :paginate="$this->events">
             <flux:table.columns>
                 <flux:table.column>Event</flux:table.column>
                 <flux:table.column sortable>Date</flux:table.column>
@@ -67,7 +69,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
             </flux:table.columns>
 
             <flux:table.rows>
-                @forelse($events as $event)
+                @forelse($this->events as $event)
                     <flux:table.row wire:key="event-{{ $event->id }}">
                         <!-- Icon type & name -->
                         <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">
@@ -104,7 +106,8 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge inset="top bottom" size="sm" color="zinc">+ {{ $event->topics->count() - 2 }} more
+                                <flux:badge inset="top bottom" size="sm" color="zinc">+
+                                    {{ $event->topics->count() - 2 }} more
                                 </flux:badge>
                             @endif
                         </flux:table.cell>

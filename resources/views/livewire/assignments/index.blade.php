@@ -1,27 +1,23 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
 use Illuminate\Support\Facades\Auth;
-use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use App\Models\Assignment;
 use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class extends Component {
     use WithPagination;
-    use WithoutUrlPagination;
 
-    public function with()
+    #[Computed]
+    public function assignments()
     {
-        return [
-            'assignments' => Assignment::whereHas('topic.subject', function ($query) {
+        return Assignment::whereHas('topic.subject', function ($query) {
                 $query->whereIn('id', Auth::user()->subjects()->pluck('id'));
-            })
-                ->with(['topic.subject'])
-                ->orderBy('due_date', 'asc')
-                ->paginate(12),
-        ];
+            })->with(['topic.subject'])
+            ->orderBy('due_date', 'asc')
+            ->paginate(12);
     }
 
     #[On('assignmentCreated')]
@@ -85,7 +81,7 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
     </div>
 
     <div class="space-y-6">
-        <flux:table :paginate="$assignments">
+        <flux:table :paginate="$this->assignments">
             <flux:table.columns>
                 <flux:table.column>Title</flux:table.column>
                 <flux:table.column>Subject</flux:table.column>
@@ -94,7 +90,7 @@ new #[Layout('layouts.dashboard')] #[Title('Assignments • Practizly')] class e
             </flux:table.columns>
 
             <flux:table.rows>
-                @forelse($assignments as $assignment)
+                @forelse($this->assignments as $assignment)
                     <flux:table.row wire:key="assignment-{{ $assignment->id }}">
                         <flux:table.cell variant="strong">
                             <flux:link class="text-sm font-medium text-zinc-800 dark:text-white" wire:navigate

@@ -1,27 +1,24 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
+use Livewire\WithPagination;
 use App\Models\Subject;
 
 new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] class extends Component {
-    public string $slug;
+    use WithPagination;
 
     public ?Subject $subject;
 
-    public function mount($slug)
+    public function mount(Subject $subject, $slug)
     {
-        $this->slug = Str::slug($slug);
+        $this->subject = Subject::where('slug', $slug)->first();
     }
 
-    public function with()
+    #[Computed]
+    public function exams()
     {
-        $this->subject = Subject::where('slug', $this->slug)->first();
-
-        return [
-            'subject' => $this->subject,
-            'exams' => $this->subject->exams()->orderBy('created_at', 'desc')->paginate(12),
-        ];
+        return $this->subject->exams()->orderBy('created_at', 'desc')->paginate(12);
     }
 
     #[On('examCreated')]
@@ -59,7 +56,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
     <!-- Header & nav bar -->
     <livewire:subjects.components.nav-bar :subject="$subject" />
 
-    <flux:table :paginate="$exams">
+    <flux:table :paginate="$this->exams">
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
             <flux:table.column class="hidden sm:table-cell">Topics</flux:table.column>
@@ -68,7 +65,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
         </flux:table.columns>
 
         <flux:table.rows>
-            @forelse($exams as $exam)
+            @forelse($this->exams as $exam)
                 <flux:table.row wire:key="exam-{{ $exam->id }}">
                     <!-- Name -->
                     <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">
@@ -77,7 +74,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                             wire:navigate href="/{{ Auth::user()->username }}/exams/{{ $exam->slug }}">
                             {{ Str::of($exam->title)->ucfirst() }}</flux:link>
                     </flux:table.cell>
-                    
+
                     <!-- Topics -->
                     <flux:table.cell class="hidden sm:table-cell">
                         @php
@@ -89,26 +86,30 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                             <flux:badge inset="top bottom" size="sm" color="zinc">No topics yet</flux:badge>
                         @else
                             @foreach ($topicsToShow as $topic)
-                                <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}</flux:badge>
+                                <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}
+                                </flux:badge>
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge inset="top bottom" size="sm" color="zinc">+ {{ $exam->topics->count() - 2 }} more
+                                <flux:badge inset="top bottom" size="sm" color="zinc">+
+                                    {{ $exam->topics->count() - 2 }} more
                                 </flux:badge>
                             @endif
                         @endif
                     </flux:table.cell>
 
                     <!-- Difficulty -->
-                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->difficulty)->ucfirst() }}</flux:table.cell>
+                    <flux:table.cell class="whitespace-nowrap">{{ Str::of($exam->difficulty)->ucfirst() }}
+                    </flux:table.cell>
 
                     <!-- Size -->
-                    <flux:table.cell class="whitespace-nowrap hidden md:table-cell">{{ Str::of($exam->size)->ucfirst() }}</flux:table.cell>
+                    <flux:table.cell class="whitespace-nowrap hidden md:table-cell">
+                        {{ Str::of($exam->size)->ucfirst() }}</flux:table.cell>
 
                     <!-- Actions -->
                     <flux:table.cell>
-                        <flux:dropdown class="flex justify-end items-end space-x-2" >
-                            <flux:button inset="top bottom" size="sm" variant="ghost" icon="ellipsis-horizontal"/>
+                        <flux:dropdown class="flex justify-end items-end space-x-2">
+                            <flux:button inset="top bottom" size="sm" variant="ghost" icon="ellipsis-horizontal" />
 
                             <flux:menu>
                                 <flux:menu.item as="link" wire:navigate

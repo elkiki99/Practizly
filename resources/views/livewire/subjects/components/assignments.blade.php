@@ -1,29 +1,26 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
+use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use App\Models\Subject;
 use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly')] class extends Component {
-    public string $slug;
+    use WithPagination;
 
     public ?Subject $subject;
 
-    public function mount($slug)
+    public function mount(Subject $subject, $slug)
     {
-        $this->slug = Str::slug($slug);
+        $this->subject = Subject::where('slug', $slug)->first();
     }
 
-    public function with()
+    #[Computed]
+    public function assignments()
     {
-        $this->subject = Subject::where('slug', $this->slug)->first();
-
-        return [
-            'subject' => $this->subject,
-            'assignments' => $this->subject->assignments()->orderBy('due_date', 'asc')->paginate(12),
-        ];
+        return $this->subject->assignments()->orderBy('due_date', 'asc')->paginate(12);
     }
 
     #[On('assignmentCreated')]
@@ -62,7 +59,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly'
     <!-- Header & nav bar -->
     <livewire:subjects.components.nav-bar :subject="$subject" />
 
-    <flux:table :paginate="$assignments">
+    <flux:table :paginate="$this->assignments">
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
             <flux:table.column sortable>Due date</flux:table.column>
@@ -70,7 +67,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly'
         </flux:table.columns>
 
         <flux:table.rows>
-            @forelse($assignments as $assignment)
+            @forelse($this->assignments as $assignment)
                 <flux:table.row wire:key="assignment-{{ $assignment->id }}">
                     <flux:table.cell variant="strong">
                         <flux:link class="text-sm font-medium text-zinc-800 dark:text-white" wire:navigate

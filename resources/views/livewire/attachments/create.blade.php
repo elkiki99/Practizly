@@ -20,7 +20,7 @@ new class extends Component {
     #[Validate('required|exists:topics,id')]
     public $topic;
 
-    #[Validate(['attachments.*' => 'required|file|mimes:jpg,jpeg,png,webp,doc,docx,pdf|max:10240'])]
+    #[Validate(['attachments.*' => 'required|file|mimes:c,cpp,cs,css,doc,docx,go,html,java,js,json,md,pdf,php,pptx,py,rb,sh,tex,ts,txt|max:10240'])]
     public $attachments = [];
 
     public $topics = [];
@@ -92,24 +92,25 @@ new class extends Component {
 
         if ($this->attachments) {
             $this->reset(['name', 'attachments']);
-            
+
             $this->dispatch('attachmentCreated');
-            
+
             Flux::toast(heading: 'Attachment created', text: 'Your attachment was created successfully', variant: 'success');
-            
+
             $this->modal('create-attachment')->close();
         } else {
             $this->reset(['name', 'attachments']);
 
             Flux::toast(heading: 'Attachment error', text: 'There was an error creating your attachment', variant: 'warning');
-            
+
             $this->modal('create-attachment')->close();
         }
     }
 }; ?>
 
 <form wire:submit.prevent='createAttachment'>
-    <flux:modal variant="flyout" name="create-attachment" class="space-y-6 md:w-96" x-data="{ createTopic: false }" x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
+    <flux:modal variant="flyout" name="create-attachment" class="space-y-6 md:w-96" x-data="{ createTopic: false }"
+        x-init="window.addEventListener('topicCreated', () => { createTopic = false })">
         <div>
             <flux:heading size="lg">New attachment</flux:heading>
             <flux:subheading>Create a new attachment.</flux:subheading>
@@ -165,8 +166,12 @@ new class extends Component {
             <livewire:components.topics.create :subject_id="$subject" />
         @endif
 
-        <flux:input label="Attachment file" type="file" wire:model="attachments" multiple required />
-
+        <flux:field>
+            <flux:label>Attachment file</flux:label>
+            <flux:input accept=".pdf,.xls,.xlsx" type="file" wire:model="attachments" multiple required />
+            <flux:error name="attachments" />
+        </flux:field>
+        
         <div class="flex">
             <flux:spacer />
 

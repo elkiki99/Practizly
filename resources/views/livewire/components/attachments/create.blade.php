@@ -12,7 +12,7 @@ use App\Models\Topic;
 new class extends Component {
     use WithFileUploads;
 
-    #[Validate('required|file|mimes:jpg,jpeg,png,webp,doc,docx,pdf|max:10240')]
+    #[Validate('required|file|mimes:c,cpp,cs,css,doc,docx,go,html,java,js,json,md,pdf,php,pptx,py,rb,sh,tex,ts,txt|max:10240')]
     public $file;
 
     #[Validate('required|exists:topics,id')]
@@ -61,8 +61,9 @@ new class extends Component {
 
 <flux:field x-show="createAttachment">
     <flux:label class="mb-2">New attachment</flux:label>
+    
     <div class="flex items-center gap-2 mb-3">
-        <flux:input type="file" wire:model="file"></flux:input>
+        <flux:input accept=".pdf,.xls,.xlsx" type="file" wire:model="file"></flux:input>
 
         <flux:button class="px-2" variant="ghost" wire:click.prevent='createAttachment' icon="plus">
         </flux:button>

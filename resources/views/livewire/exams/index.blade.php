@@ -1,7 +1,7 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
@@ -10,11 +10,10 @@ use App\Models\Exam;
 new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends Component {
     use WithPagination;
 
-    public function with()
+    #[Computed]
+    public function exams()
     {
-        return [
-            'exams' => Auth::user()->exams()->latest()->paginate(12),
-        ];
+        return Auth::user()->exams()->with('topic')->latest()->paginate(12);
     }
 
     #[On('examCreated')]
@@ -76,7 +75,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
     </div>
 
     <div class="space-y-6">
-        <flux:table :paginate="$exams">
+        <flux:table :paginate="$this->exams">
             <flux:table.columns>
                 <flux:table.column>Title</flux:table.column>
                 <flux:table.column class="hidden sm:table-cell">Subject</flux:table.column>
@@ -86,7 +85,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
             </flux:table.columns>
 
             <flux:table.rows>
-                @forelse($exams as $exam)
+                @forelse($this->exams as $exam)
                     <flux:table.row wire:key="exam-{{ $exam->id }}">
                         <!-- Name -->
                         <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">

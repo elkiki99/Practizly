@@ -1,8 +1,7 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\Validate;
-use Livewire\Attributes\On;
+use Livewire\Attributes\{Validate, On};
 use App\Models\Attachment;
 use Livewire\WithFileUploads;
 use App\Models\Subject;
@@ -34,7 +33,7 @@ new class extends Component {
     public $topics = [];
     public $subjects = [];
 
-    public function mount()
+    public function mount() 
     {
         $this->subjects = Auth::user()->subjects()->latest()->get();
 
@@ -164,6 +163,8 @@ new class extends Component {
         Flux::toast(heading: 'Exam created', text: 'Your exam was created successfully', variant: 'success');
 
         $this->modal('create-exam')->close();
+
+        $this->dispatch("create-new-ai-exam", examId: $exam->id);
     }
 }; ?>
 
@@ -267,4 +268,6 @@ new class extends Component {
             <flux:button type="submit" variant="primary">Generate exam</flux:button>
         </div>
     </flux:modal>
+
+    <livewire:open-ai-test />
 </form>

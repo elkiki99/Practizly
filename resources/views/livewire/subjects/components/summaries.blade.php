@@ -1,29 +1,26 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
+use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use App\Models\Subject;
 use Carbon\Carbon;
 
 new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] class extends Component {
-    public string $slug;
+    use WithPagination;
 
     public ?Subject $subject;
 
-    public function mount($slug)
+    public function mount(Subject $subject, $slug)
     {
-        $this->slug = Str::slug($slug);
+        $this->subject = Subject::where('slug', $slug)->first();
     }
 
-    public function with()
+    #[Computed]
+    public function summaries()
     {
-        $this->subject = Subject::where('slug', $this->slug)->first();
-
-        return [
-            'subject' => $this->subject,
-            'summaries' => $this->subject->summaries()->latest()->paginate(12),
-        ];
+        return $this->subject->summaries()->latest()->paginate(12);
     }
 
     #[On('summaryCreated')]
@@ -61,7 +58,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
     <!-- Header & nav bar -->
     <livewire:subjects.components.nav-bar :subject="$subject" />
 
-    <flux:table :paginate="$summaries">
+    <flux:table :paginate="$this->summaries">
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
             <flux:table.column>Topics</flux:table.column>
@@ -69,7 +66,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
         </flux:table.columns>
 
         <flux:table.rows>
-            @forelse($summaries as $summary)
+            @forelse($this->summaries as $summary)
                 <flux:table.row wire:key="summary-{{ $summary->id }}">
                     <flux:table.cell variant="strong">
                         <flux:link class="text-sm font-medium text-zinc-800 dark:text-white" wire:navigate
@@ -89,18 +86,21 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summary • Practizly')] c
                             <flux:badge inset="top bottom" size="sm" color="zinc">No topics yet</flux:badge>
                         @else
                             @foreach ($topicsToShow as $topic)
-                                <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}</flux:badge>
+                                <flux:badge inset="top bottom" size="sm" color="zinc">{{ $topic->name }}
+                                </flux:badge>
                             @endforeach
 
                             @if ($hasMoreTopics)
-                                <flux:badge inset="top bottom" size="sm" color="zinc">+ {{ $summary->topics->count() - 2 }} more
+                                <flux:badge inset="top bottom" size="sm" color="zinc">+
+                                    {{ $summary->topics->count() - 2 }} more
                                 </flux:badge>
                             @endif
                         @endif
                     </flux:table.cell>
 
                     <!-- Size -->
-                    <flux:table.cell class="whitespace-nowrap hidden sm:table-cell">{{ Str::of($summary->size)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
+                    <flux:table.cell class="whitespace-nowrap hidden sm:table-cell">
+                        {{ Str::of($summary->size)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
 
                     <!-- Actions -->
                     <flux:table.cell>

@@ -14,12 +14,18 @@ new class extends Component {
     public function deleteExam()
     {
         $this->exam->delete();
-        
-        $this->dispatch('examDeleted');
 
         Flux::toast(heading: 'Exam deleted', text: 'Your exam was deleted successfully', variant: 'danger');
 
-        Flux::modals()->close();
+        $url = request()->header('Referer');
+
+        if ($url === url()->route('exams.index', [Auth::user()->username]) || $url === url()->route('subjects.components.exams', [Auth::user()->username, $this->exam->subject->slug])) {
+            $this->dispatch('examDeleted');
+            Flux::modals()->close();
+        } else {
+            Flux::modals()->close();
+            $this->redirectRoute('subjects.components.exams', [Auth::user()->username, $this->exam->subject->slug], navigate: true);
+        }
     }
 }; ?>
 

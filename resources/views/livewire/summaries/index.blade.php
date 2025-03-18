@@ -2,7 +2,7 @@
 
 use Livewire\Volt\Component;
 
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
@@ -11,11 +11,10 @@ use Carbon\Carbon;
 new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class extends Component {
     use WithPagination;
 
-    public function with()
+    #[Computed]
+    public function summaries()
     {
-        return [
-            'summaries' => Auth::user()->summaries()->latest()->paginate(12),
-        ];
+        return Auth::user()->summaries()->latest()->paginate(12);
     }
 
     #[On('summaryCreated')]
@@ -77,7 +76,7 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
     </div>
 
     <div class="space-y-6">
-        <flux:table :paginate="$summaries">
+        <flux:table :paginate="$this->summaries">
             <flux:table.columns>
                 <flux:table.column>Title</flux:table.column>
                 <flux:table.column>Subject</flux:table.column>
@@ -86,7 +85,7 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
             </flux:table.columns>
 
             <flux:table.rows>
-                @forelse($summaries as $summary)
+                @forelse($this->summaries as $summary)
                     <flux:table.row wire:key="summary-{{ $summary->id }}">
                         <flux:table.cell variant="strong">
                             <flux:link class="text-sm font-medium text-zinc-800 dark:text-white" wire:navigate
@@ -152,7 +151,7 @@ new #[Layout('layouts.dashboard')] #[Title('Summaries • Practizly')] class ext
                             </flux:dropdown>
 
                             <livewire:summaries.delete :$summary wire:key="delete-summary-{{ $summary->id }}" />
-                        </flux:table.cell>  
+                        </flux:table.cell>
                     </flux:table.row>
                 @empty
                     <flux:table.cell colspan="4" class="text-center">

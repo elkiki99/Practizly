@@ -1,27 +1,21 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
 use App\Models\Subject;
 
 new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] class extends Component {
-    public string $slug;
-
     public ?Subject $subject;
 
-    public function mount($slug)
+    public function mount(Subject $subject, $slug)
     {
-        $this->slug = Str::slug($slug);
+        $this->subject = Subject::where('slug', $slug)->first();
     }
 
-    public function with()
+    #[Computed]
+    public function topics()
     {
-        $this->subject = Subject::where('slug', $this->slug)->first();
-
-        return [
-            'subject' => $this->subject,
-            'topics' => $this->subject->topics()->orderBy('created_at', 'desc')->paginate(12),
-        ];
+        return $this->subject->topics()->paginate(12);
     }
 
     #[On('topicCreated')]
@@ -60,13 +54,13 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
     <!-- Tabs -->
     <livewire:subjects.components.nav-bar :subject="$subject" />
 
-    <flux:table :paginate="$topics">
+    <flux:table :paginate="$this->topics">
         <flux:table.columns>
             <flux:table.column>Name</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
-            @forelse ($topics as $topic)
+            @forelse ($this->topics as $topic)
                 <flux:table.row>
                     <flux:table.cell>{{ $topic->name }}</flux:table.cell>
 

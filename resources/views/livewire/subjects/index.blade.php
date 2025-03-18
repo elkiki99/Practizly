@@ -1,7 +1,7 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\{Layout, Title, On};
+use Livewire\Attributes\{Layout, Title, On, Computed};
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithPagination;
 use App\Models\Subject;
@@ -10,11 +10,10 @@ use Carbon\Carbon;
 new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class extends Component {
     use WithPagination;
 
-    public function with()
+    #[Computed]
+    public function subjects()
     {
-        return [
-            'subjects' => Auth::user()->subjects()->latest()->paginate(12),
-        ];
+        return Auth::user()->subjects()->latest()->paginate(12);
     }
 
     #[On('subjectCreated')]
@@ -78,7 +77,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
     </div>
 
     <div class="space-y-6">
-        <flux:table :paginate="$subjects">
+        <flux:table :paginate="$this->subjects">
             <flux:table.columns>
                 <flux:table.column>Subject</flux:table.column>
                 <flux:table.column sortable>Upcoming event</flux:table.column>
@@ -87,7 +86,7 @@ new #[Layout('layouts.dashboard')] #[Title('Subjects • Practizly')] class exte
             </flux:table.columns>
 
             <flux:table.rows>
-                @forelse($subjects as $subject)
+                @forelse($this->subjects as $subject)
                     <flux:table.row wire:key="subject-{{ $subject->id }}">
                         <!-- Name -->
                         <flux:table.cell variant="strong" class="flex items-center space-x-2 whitespace-nowrap">

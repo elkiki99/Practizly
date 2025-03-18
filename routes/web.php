@@ -19,7 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('{user:username}/subjects', 'subjects.index')->name('subjects.index');
     Volt::route('{user:username}/subjects/{slug}', 'subjects.show')->name('subjects.show');
 
-    Volt::route('{user:username}/exams', 'exams.index')->name('exams');
+    Volt::route('{user:username}/exams', 'exams.index')->name('exams.index');
     Volt::route('{user:username}/exams/{slug}', 'exams.show')->name('exams.show');
 
     Volt::route('{user:username}/calendar', 'events.index')->name('calendar');
