@@ -21,39 +21,39 @@ new #[Layout('layouts.dashboard-component')] #[Title('Summaries • Practizly')]
 }; ?>
 
 <div class="space-y-6">
-    <div class="flex items-start justify-between gap-2">
-        <div class="space-y-3">
+    <div class="space-y-3">
+        <div class="flex items-start justify-between gap-2">
             <flux:heading level="1" size="xl">
                 {{ Str::of($summary->title)->ucfirst() }}
             </flux:heading>
+            <div class="flex items-center justify-start gap-2">
+                <flux:modal.trigger>
+                    <flux:badge href="{{-- asset('storage/' . $summary->file_path) --}}" download as="link" variant="pill" color="zinc"
+                        icon="arrow-down-tray" size="lg">
+                        Download&nbsp;<span class="hidden sm:inline">summary</span>
+                    </flux:badge>
+                </flux:modal.trigger>
 
-            <flux:breadcrumbs>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
-                </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item wire:navigate
-                    href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}">
-                    {{ Str::of($summary->subject->name)->ucfirst() }}
-                </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item wire:navigate
-                    href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}/summaries">Summaries
-                </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item>{{ Str::of($summary->title)->ucfirst() }}</flux:breadcrumbs.item>
-            </flux:breadcrumbs>
+                <flux:modal.trigger name="delete-summary-{{ $summary->id }}">
+                    <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">
+                        Delete&nbsp;<span class="hidden sm:inline">summary</span>
+                    </flux:badge>
+                </flux:modal.trigger>
+            </div>
         </div>
-
-        {{-- <div class="flex items-center justify-start gap-2">
-            <flux:modal.trigger name="edit-summary-{{ $summary->id }}">
-                <flux:badge as="button" variant="pill" color="zinc" icon="pencil-square" size="lg">
-                    Edit&nbsp;<span class="hidden sm:inline">event</span>
-                </flux:badge>
-            </flux:modal.trigger> --}}
-
-            <flux:modal.trigger name="delete-summary-{{ $summary->id }}">
-                <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">
-                    Delete&nbsp;<span class="hidden sm:inline">summary</span>
-                </flux:badge>
-            </flux:modal.trigger>
-        {{-- </div> --}}
+        
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item wire:navigate
+                href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}">
+                {{ Str::of($summary->subject->name)->ucfirst() }}
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item wire:navigate
+                href="/{{ Auth::user()->username }}/subjects/{{ $summary->subject->slug }}/summaries">Summaries
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>{{ Str::of($summary->title)->ucfirst() }}</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
     </div>
 
     <livewire:subjects.components.nav-bar :subject="$summary->subject" />

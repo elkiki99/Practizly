@@ -157,7 +157,6 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
 
                             <livewire:exams.delete :$exam wire:key="delete-exam-{{ $exam->id }}" />
                         </flux:table.cell>
-
                     </flux:table.row>
                 @empty
                     <flux:table.row class="text-center">

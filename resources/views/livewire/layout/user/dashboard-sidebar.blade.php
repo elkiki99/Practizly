@@ -43,11 +43,11 @@ new class extends Component {
         <flux:navlist variant="outline">
             <flux:navlist.item wire:navigate icon="squares-2x2" href="/{{ Auth::user()->username}}/dashboard">Dashboard</flux:navlist.item>
 
-            <flux:navlist.group expandable :expanded="false" heading="Subjects">
+            <flux:navlist.group expandable heading="Subjects">
                 @forelse($subjects as $subject)
                     <flux:navlist.item wire:navigate href="/{{ Auth::user()->username}}/subjects/{{ $subject->slug }}">{{ $subject->name }}</flux:navlist.item>
                 @empty
-                    <flux:subheading>No subjects yet</flux:subheading>
+                    <flux:navlist.item>No subjects yet</flux:navlist.item>
                 @endforelse
             </flux:navlist.group>
 

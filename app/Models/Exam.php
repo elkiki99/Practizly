@@ -14,6 +14,7 @@ class Exam extends Model
     protected $fillable = [
         'subject_id',
         'title', 
+        'slug',
         'type',
         'size',
         'difficulty',

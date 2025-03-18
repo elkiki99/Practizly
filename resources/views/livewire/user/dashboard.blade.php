@@ -30,7 +30,6 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
 
 <div class="space-y-6">
     <flux:heading class="mb-6" size="xl">Welcome back {{ Auth::user()->name }}</flux:heading>
-
     <flux:separator variant="subtle" />
 
     <div class="space-y-12">
@@ -129,9 +128,11 @@ new #[Layout('layouts.dashboard')] #[Title('Dashboard • Practizly')] class ext
                             </flux:table.cell>
 
                             <!-- Date -->
-                            <flux:table.cell class="whitespace-nowrap hidden sm:table-cell">{{ Carbon::parse($event->date)->format('F j, Y') }}</flux:table.cell>
+                            <flux:table.cell class="whitespace-nowrap hidden sm:table-cell">
+                                {{ Carbon::parse($event->date)->format('F j, Y') }}</flux:table.cell>
 
-                            <flux:table.cell class="whitespace-nowrap table-cell sm:hidden">{{ Carbon::parse($event->date)->format('d/m') }}</flux:table.cell>
+                            <flux:table.cell class="whitespace-nowrap table-cell sm:hidden">
+                                {{ Carbon::parse($event->date)->format('d/m') }}</flux:table.cell>
 
                             <!-- Topics -->
                             <flux:table.cell class="hidden md:table-cell">

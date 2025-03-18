@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('subject_id')->constrained()->onDelete('cascade');
             $table->string('title');
+            $table->string('slug');
             $table->string('type')->default('open_ended');
             $table->string('difficulty')->default('easy');
             $table->string('size')->default('short');

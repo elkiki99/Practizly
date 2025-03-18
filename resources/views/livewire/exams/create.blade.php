@@ -127,12 +127,22 @@ new class extends Component {
 
         $subject = Subject::find($this->subject);
 
+        $baseSlug = Str::slug($subject->name . '-test-' . $this->type);
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (Exam::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
         $exam = Exam::create([
             'subject_id' => $this->subject,
             'title' => $subject->name . ' Test',
             'type' => $this->type,
             'difficulty' => $this->difficulty,
             'size' => $this->size,
+            'slug' => $slug,
         ]);
 
         $exam->update([

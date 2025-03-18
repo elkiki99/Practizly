@@ -47,7 +47,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Assignments • Practizly'
                 </flux:breadcrumbs.item>
                 <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects/{{ $subject->slug }}">
                     {{ Str::of($subject->name)->ucfirst() }}</flux:breadcrumbs.item>
-                <flux:breadcrumbs.item>Exams</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item>Assignments</flux:breadcrumbs.item>
             </flux:breadcrumbs>
         </div>
 

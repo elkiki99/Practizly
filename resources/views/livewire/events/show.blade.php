@@ -23,39 +23,39 @@ new #[Layout('layouts.dashboard-component')] #[Title('Events • Practizly')] cl
 }; ?>
 
 <div class="space-y-6">
-    <div class="flex items-start justify-between gap-2">
-        <div class="space-y-3">
+    <div class="space-y-3">
+        <div class="flex items-start justify-between gap-2">
             <flux:heading level="1" size="xl">
                 {{ Str::of($event->name)->ucfirst() }}
             </flux:heading>
 
-            <flux:breadcrumbs>
-                <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
-                </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item wire:navigate
-                    href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
-                    {{ Str::of($event->subject->name)->ucfirst() }}
-                </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item wire:navigate
-                    href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}/events">Events
-                </flux:breadcrumbs.item>
-                <flux:breadcrumbs.item>{{ Str::of($event->name)->ucfirst() }}</flux:breadcrumbs.item>
-            </flux:breadcrumbs>
+            <div class="flex items-center justify-start gap-2">
+                <flux:modal.trigger name="edit-event-{{ $event->id }}">
+                    <flux:badge as="button" variant="pill" color="zinc" icon="pencil-square" size="lg">
+                        Edit&nbsp;<span class="hidden sm:inline">event</span>
+                    </flux:badge>
+                </flux:modal.trigger>
+
+                <flux:modal.trigger name="delete-event-{{ $event->id }}">
+                    <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">
+                        Delete&nbsp;<span class="hidden sm:inline">event</span>
+                    </flux:badge>
+                </flux:modal.trigger>
+            </div>
         </div>
 
-        <div class="flex items-center justify-start gap-2">
-            <flux:modal.trigger name="edit-event-{{ $event->id }}">
-                <flux:badge as="button" variant="pill" color="zinc" icon="pencil-square" size="lg">
-                    Edit&nbsp;<span class="hidden sm:inline">event</span>
-                </flux:badge>
-            </flux:modal.trigger>
-
-            <flux:modal.trigger name="delete-event-{{ $event->id }}">
-                <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">
-                    Delete&nbsp;<span class="hidden sm:inline">event</span>
-                </flux:badge>
-            </flux:modal.trigger>
-        </div>
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item wire:navigate
+                href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}">
+                {{ Str::of($event->subject->name)->ucfirst() }}
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item wire:navigate
+                href="/{{ Auth::user()->username }}/subjects/{{ $event->subject->slug }}/events">Events
+            </flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>{{ Str::of($event->name)->ucfirst() }}</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
     </div>
 
     <livewire:subjects.components.nav-bar :subject="$event->subject" />
