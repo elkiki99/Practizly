@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\MultipleChoiceExam;
 use App\Models\TrueOrFalseExam;
 use App\Models\Attachment;
 use App\Models\Subject;
@@ -41,5 +42,10 @@ class Exam extends Model
     public function trueOrFalseExams()
     {
         return $this->hasMany(TrueOrFalseExam::class);
+    }
+
+    public function multipleChoiceExams()
+    {
+        return $this->hasMany(MultipleChoiceExam::class);
     }
 }

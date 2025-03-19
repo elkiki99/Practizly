@@ -1,12 +1,10 @@
 <?php
 
 use Livewire\Volt\Component;
+use App\Models\{Subject, Topic, Exam, Attachment};
+use App\Livewire\Actions\GenerateExam;
 use Livewire\Attributes\{Validate, On};
-use App\Models\Attachment;
 use Livewire\WithFileUploads;
-use App\Models\Subject;
-use App\Models\Topic;
-use App\Models\Exam;
 
 new class extends Component {
     use WithFileUploads;
@@ -120,7 +118,7 @@ new class extends Component {
         }
     }
 
-    public function createExam()
+    public function createExam(GenerateExam $generateExam)
     {
         $this->validate();
 
@@ -158,7 +156,8 @@ new class extends Component {
 
         $exam->topics()->sync($this->topic);
 
-        $this->dispatch('genereateExam', examId: $exam->id);
+        // We call the action to generate the exam
+        $generateExam($exam);
 
         $this->dispatch('examCreated');
 
@@ -268,6 +267,4 @@ new class extends Component {
             <flux:button type="submit" variant="primary">Generate exam</flux:button>
         </div>
     </flux:modal>
-
-    <livewire:open-ai-test />
 </form>
