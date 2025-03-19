@@ -63,4 +63,23 @@ new #[Layout('layouts.dashboard-component')] #[Title('Exams • Practizly')] cla
 
     <!-- Action modals -->
     <livewire:exams.delete :exam="$exam" />
+
+    @if ($exam->type === 'true_or_false')
+        @forelse ($exam->trueOrFalseExams as $trueOrFalseExam)
+            <div class="flex items-center gap-4">
+                <flux:subheading>{{ $trueOrFalseExam->question }}</flux:subheading>
+
+                <flux:radio.group class="flex items-center gap-4">
+                    <flux:radio value="true" name="question_{{ $trueOrFalseExam->id }}" />
+                    <label for="true">True</label>
+                    <flux:radio value="false" name="question_{{ $trueOrFalseExam->id }}" />
+                    <label for="false">False</label>
+                </flux:radio.group>
+            </div>
+        @empty
+            <p>No hay preguntas disponibles.</p>
+        @endforelse
+    @endif
+
+    <flux:button variant="primary">Submit</flux:button>
 </div>

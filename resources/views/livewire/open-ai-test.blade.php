@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use OpenAI\Laravel\Facades\OpenAI;
+use App\Models\TrueOrFalseExam;
 use Livewire\Attributes\On;
 use App\Models\Exam;
 
@@ -14,7 +15,7 @@ new class extends Component {
         $this->exam = $exam;
     }
 
-    #[On('create-new-ai-exam')]
+    #[On('genereateExam')]
     public function loadExam($examId)
     {
         $this->exam = Exam::find($examId);
@@ -27,6 +28,7 @@ new class extends Component {
             return;
         }
 
+        // Definición de la cantidad de preguntas según el tamaño del examen
         switch ($this->exam->size) {
             case 'short':
                 $minQuestions = 5;
@@ -46,31 +48,57 @@ new class extends Component {
                 break;
         }
 
-        // Generar el número de preguntas aleatorio dentro del rango
         $numQuestions = rand($minQuestions, $maxQuestions);
 
-        // Construir el prompt con el número de preguntas adecuado
-        $prompt = "Genera un examen de prueba basado en el siguiente contenido:\n\n";
+        // Solicitarle a OpenAI que genere un examen con preguntas y respuestas en formato "Pregunta - Respuesta"
+        $prompt = "Genera un examen de prueba con preguntas tipo 'True or False'. El formato debe ser el siguiente:\n";
+        $prompt .= "1. Pregunta - Respuesta\n";
+        $prompt .= "Las respuestas deben ser 'Verdadero' o 'Falso', tratando de que siempre hayan respuestas falsas y verdaderas.\n";
+        $prompt .= "Número de preguntas: {$numQuestions}\n\n";
         $prompt .= "Título: {$this->exam->title}\n";
         $prompt .= "Tipo: {$this->exam->type}\n";
-        $prompt .= "Dificultad: {$this->exam->difficulty}\n";
-        $prompt .= "Número de preguntas: {$numQuestions}\n\n"; // Aquí usamos el rango calculado
+        $prompt .= "Dificultad: {$this->exam->difficulty}\n\n";
 
+        // Llamar a OpenAI
         $response = OpenAI::chat()->create([
             'model' => 'gpt-3.5-turbo',
             'messages' => [['role' => 'system', 'content' => 'Eres un generador de exámenes altamente eficiente.'], ['role' => 'user', 'content' => $prompt]],
         ]);
 
-        // dd($response);
-
-        // Procesar la respuesta
         $content = $response['choices'][0]['message']['content'];
-        
-        dd($content);
 
-        // $this->mockExam = $this->parseMockExamContent($content); // Parse the exam content
+        // Analizar las preguntas y respuestas generadas
+        $questions = $this->parseTrueOrFalseQuestions($content);
 
-        // dd($this->mockExam); // Display parsed exam for debugging
+        // Insertar las preguntas y respuestas en la base de datos
+        foreach ($questions as $questionData) {
+            TrueOrFalseExam::create([
+                'exam_id' => $this->exam->id,
+                'question' => $questionData['question'],
+                'answer' => $questionData['answer'], // true o false
+            ]);
+        }
+
+        // dd($content, $questions);
+    }
+
+    public function parseTrueOrFalseQuestions(string $content)
+    {
+        // Aquí analizamos el contenido generado por OpenAI
+        $lines = explode("\n", $content);
+        $questions = [];
+
+        foreach ($lines as $line) {
+            // Detectar si la línea tiene el formato de "Pregunta - Respuesta"
+            if (preg_match('/^(\d+\..+)\s*-\s*(Verdadero|Falso)$/', $line, $matches)) {
+                $questions[] = [
+                    'question' => trim($matches[1]), // La pregunta
+                    'answer' => $matches[2] === 'Verdadero' ? true : false, // True o False
+                ];
+            }
+        }
+
+        return $questions;
     }
 }; ?>
 

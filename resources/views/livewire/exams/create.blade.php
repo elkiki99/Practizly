@@ -158,13 +158,13 @@ new class extends Component {
 
         $exam->topics()->sync($this->topic);
 
+        $this->dispatch('genereateExam', examId: $exam->id);
+
         $this->dispatch('examCreated');
 
         Flux::toast(heading: 'Exam created', text: 'Your exam was created successfully', variant: 'success');
 
         $this->modal('create-exam')->close();
-
-        $this->dispatch("create-new-ai-exam", examId: $exam->id);
     }
 }; ?>
 

@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Topic;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\TrueOrFalseExam;
+use App\Models\Attachment;
+use App\Models\Subject;
+use App\Models\Topic;
 
 class Exam extends Model
 {
@@ -13,7 +16,7 @@ class Exam extends Model
 
     protected $fillable = [
         'subject_id',
-        'title', 
+        'title',
         'slug',
         'type',
         'size',
@@ -33,5 +36,10 @@ class Exam extends Model
     public function attachments()
     {
         return $this->belongsToMany(Attachment::class, 'exam_attachment')->withTimestamps();
+    }
+
+    public function trueOrFalseExams()
+    {
+        return $this->hasMany(TrueOrFalseExam::class);
     }
 }

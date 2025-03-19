@@ -13,7 +13,7 @@ new #[Layout('layouts.dashboard')] #[Title('Exams • Practizly')] class extends
     #[Computed]
     public function exams()
     {
-        return Auth::user()->exams()->with('topic')->latest()->paginate(12);
+        return Auth::user()->exams()->with('topics')->latest()->paginate(12);
     }
 
     #[On('examCreated')]
