@@ -23,9 +23,13 @@ class MultipleChoiceExamGenerator
             ],
         ]);
 
-        $content = $response['choices'][0]['message']['content'];
-        $questions = $this->parseQuestions($content);
+        // Limpieza del contenido recibido para quitar comillas triples y bloques de código
+        $cleanedContent = $this->cleanContent($response['choices'][0]['message']['content']);
 
+        // Decodificar el contenido limpio a JSON
+        $questions = json_decode($cleanedContent, true);
+
+        // Guardar las preguntas en la base de datos
         foreach ($questions as $questionData) {
             MultipleChoiceExam::create([
                 'exam_id' => $exam->id,
@@ -34,6 +38,20 @@ class MultipleChoiceExamGenerator
                 'correct_answer' => $questionData['correct_answer'],
             ]);
         }
+    }
+
+    private function cleanContent($content)
+    {
+        // Eliminar las comillas triples al principio y al final
+        $content = preg_replace('/^"""\s*/', '', $content);
+        $content = preg_replace('/\s*"""$/', '', $content);
+    
+        // Eliminar el bloque de código JSON (```json) y (```)
+        $content = preg_replace('/^```json\s*/', '', $content);
+        $content = preg_replace('/\s*```$/', '', $content);
+    
+        // Retornar el contenido limpio
+        return $content;
     }
 
     private function checkExamSize(Exam $exam): array
@@ -48,55 +66,22 @@ class MultipleChoiceExamGenerator
 
     private function generatePrompt(Exam $exam, int $numQuestions): string
     {
-        return "Generate a multiple-choice mock exam with the following specifications:\n" .
+        return "Generate a multiple-choice exam with the following specifications:\n" .
             "1. The exam should contain {$numQuestions} questions.\n" .
             "2. The questions should be related to the topic of {$exam->subject->name}.\n" .
-            "3. The exam should vary in difficulty as follows: {$exam->difficulty}.\n" .
-            "4. For each question, provide four answer options labeled A, B, C, D.\n" .
-            "5. Each question should have only one correct answer.\n" .
-            "6. The correct answer should be indicated clearly.\n" .
-            "7. The questions should be diverse and test the range of knowledge in {$exam->subject->name}.\n" .
-            "8. Format:\n" .
-            "    1. Question text\n" .
-            "    A) Option 1\n" .
-            "    B) Option 2\n" .
-            "    C) Option 3\n" .
-            "    D) Option 4\n" .
-            "    Correct answer: X (where X is the correct option)\n" .
-            "9. Number of questions: {$numQuestions}\n" .
-            "10. Title: {$exam->title}\n" .
-            "11. Type: {$exam->type}\n" .
-            "12. Difficulty: {$exam->difficulty}\n" .
-            "Ensure that each question is challenging, clear, and relevant to the topic.";
-    }
-
-    private function parseQuestions(string $content): array
-    {
-        $lines = explode("\n", $content);
-        $questions = [];
-        $question = '';
-        $options = [];
-        $correct_answer = '';
-
-        foreach ($lines as $line) {
-            if (preg_match('/^(\d+\..+)\s*$/', $line, $matches)) {
-                if ($question) {
-                    $questions[] = [
-                        'question' => $question,
-                        'options' => $options,
-                        'correct_answer' => $correct_answer,
-                    ];
-                }
-                $question = trim($matches[1]);
-                $options = [];
-                $correct_answer = '';
-            } elseif (preg_match('/^[A-D]\)\s*(.+)$/', $line, $matches)) {
-                $options[] = $matches[1];
-            } elseif (preg_match('/^Correct answer: ([A-D])$/', $line, $matches)) {
-                $correct_answer = $matches[1];
-            }
-        }
-
-        return $questions;
+            "3. The difficulty of the exam should be {$exam->difficulty}.\n" .
+            "4. For each question, provide four answer options: A, B, C, D.\n" .
+            "5. Each question must have exactly one correct answer.\n" .
+            "6. The format should be in JSON with the following structure:\n" .
+            "    [\n" .
+            "        {\n" .
+            "            \"question\": \"Question text\",\n" .
+            "            \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n" .
+            "            \"correct_answer\": \"A\"\n" .
+            "        },\n" .
+            "        ...\n" .
+            "    ]\n" .
+            "7. The JSON should be clean, with no additional text or explanation.\n" .
+            "8. The correct answer must be one of the options: A, B, C, or D.";
     }
 }
