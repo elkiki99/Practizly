@@ -23,13 +23,10 @@ class MultipleChoiceExamGenerator
             ],
         ]);
 
-        // Limpieza del contenido recibido para quitar comillas triples y bloques de código
         $cleanedContent = $this->cleanContent($response['choices'][0]['message']['content']);
 
-        // Decodificar el contenido limpio a JSON
         $questions = json_decode($cleanedContent, true);
 
-        // Guardar las preguntas en la base de datos
         foreach ($questions as $questionData) {
             MultipleChoiceExam::create([
                 'exam_id' => $exam->id,
@@ -42,15 +39,12 @@ class MultipleChoiceExamGenerator
 
     private function cleanContent($content)
     {
-        // Eliminar las comillas triples al principio y al final
         $content = preg_replace('/^"""\s*/', '', $content);
         $content = preg_replace('/\s*"""$/', '', $content);
     
-        // Eliminar el bloque de código JSON (```json) y (```)
         $content = preg_replace('/^```json\s*/', '', $content);
         $content = preg_replace('/\s*```$/', '', $content);
     
-        // Retornar el contenido limpio
         return $content;
     }
 

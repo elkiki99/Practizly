@@ -143,7 +143,7 @@ new class extends Component {
         ]);
 
         $exam->update([
-            'title' => $subject->name . ' Test #' . $exam->id . ' (' . ucwords(str_replace('_', ' ', $exam->type)) . ')',
+            'title' => $subject->name . ' Test #' . $exam->id,
         ]);
 
         if (!is_array($this->attachment)) {

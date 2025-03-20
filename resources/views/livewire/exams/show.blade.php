@@ -66,5 +66,9 @@ new #[Layout('layouts.dashboard-component')] #[Title('Exams • Practizly')] cla
 
     @if ($exam->type === 'true_or_false')
         <livewire:exams.types.true-or-false :exam="$exam" />
+    @elseif($exam->type === 'multiple_choice')
+        <livewire:exams.types.multiple-choice :exam="$exam" />
+    {{-- @elseif($exam->type === 'short_answer')
+        <livewire:exams.types.short-answer :exam="$exam" />  --}}
     @endif
 </div>

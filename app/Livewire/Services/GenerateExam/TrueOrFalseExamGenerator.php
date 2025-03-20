@@ -13,16 +13,8 @@ class TrueOrFalseExamGenerator
         $size = $this->checkExamSize($exam);
         $numQuestions = rand($size['min'], $size['max']);
 
-        $prompt = "You are an exam generator. Generate a mock exam with true or false questions based on the following details:\n";
-        $prompt .= "Number of questions: {$numQuestions} (random between min and max based on exam size)\n";
-        $prompt .= "Title: {$exam->title}\n";
-        $prompt .= "Type: {$exam->type}\n";
-        $prompt .= "Difficulty: {$exam->difficulty} (please match the complexity to the difficulty)\n";
-        $prompt .= "Format:\n";
-        $prompt .= "1. Question - Answer (True or False)\n";
-        $prompt .= "Make sure the questions are relevant to the exam type and difficulty level.\n";
-        $prompt .= "Each question should have a clear and straightforward answer.\n";
-        
+        $prompt = $this->generateTrueFalsePrompt($exam, $numQuestions);
+
         $response = OpenAI::chat()->create([
             'model' => 'gpt-3.5-turbo',
             'messages' => [
@@ -68,5 +60,18 @@ class TrueOrFalseExamGenerator
         }
 
         return $questions;
+    }
+
+    private function generateTrueFalsePrompt(Exam $exam, int $numQuestions): string
+    {
+        return "You are an exam generator. Generate a mock exam with true or false questions based on the following details:\n" .
+            "Number of questions: {$numQuestions} (random between min and max based on exam size)\n" .
+            "Title: {$exam->title}\n" .
+            "Type: {$exam->type}\n" .
+            "Difficulty: {$exam->difficulty} (please match the complexity to the difficulty)\n" .
+            "Format:\n" .
+            "1. Question - Answer (True or False)\n" .
+            "Make sure the questions are relevant to the exam type and difficulty level.\n" .
+            "Each question should have a clear and straightforward answer.\n";
     }
 }

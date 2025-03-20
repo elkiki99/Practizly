@@ -59,9 +59,10 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
     <flux:table :paginate="$this->exams">
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
-            <flux:table.column class="hidden sm:table-cell">Topics</flux:table.column>
+            <flux:table.column sortable>Type</flux:table.column>
+            <flux:table.column class="hidden md:table-cell">Topics</flux:table.column>
             <flux:table.column sortable>Difficulty</flux:table.column>
-            <flux:table.column class="hidden md:table-cell">Size</flux:table.column>
+            <flux:table.column sortable class="hidden lg:table-cell">Size</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
@@ -75,8 +76,11 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                             {{ Str::of($exam->title)->ucfirst() }}</flux:link>
                     </flux:table.cell>
 
+                    <!-- Type -->
+                    <flux:table.cell>{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
+
                     <!-- Topics -->
-                    <flux:table.cell class="hidden sm:table-cell">
+                    <flux:table.cell class="hidden md:table-cell">
                         @php
                             $topicsToShow = $exam->topics->take(2);
                             $hasMoreTopics = $exam->topics->count() > 2;
@@ -103,7 +107,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                     </flux:table.cell>
 
                     <!-- Size -->
-                    <flux:table.cell class="whitespace-nowrap hidden md:table-cell">
+                    <flux:table.cell class="whitespace-nowrap hidden lg:table-cell">
                         {{ Str::of($exam->size)->ucfirst() }}</flux:table.cell>
 
                     <!-- Actions -->
