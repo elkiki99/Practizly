@@ -13,18 +13,18 @@ class TrueOrFalseExamGenerator
         $size = $this->checkExamSize($exam);
         $numQuestions = rand($size['min'], $size['max']);
 
-        $prompt = $this->generateTrueFalsePrompt($exam, $numQuestions);
+        $prompt = $this->generatePrompt($exam, $numQuestions);
 
         $response = OpenAI::chat()->create([
             'model' => 'gpt-3.5-turbo',
             'messages' => [
-                ['role' => 'system', 'content' => 'You are a highly experienced exam generator specializing in true or false questions. You are tasked with creating a high-quality, comprehensive true or false exam based on the provided exam details..'],
+                ['role' => 'system', 'content' => 'You are a highly experienced exam generator specializing in true or false questions. You are tasked with creating a high-quality, comprehensive true or false exam based on the provided exam details.'],
                 ['role' => 'user', 'content' => $prompt],
             ],
         ]);
 
-        $content = $response['choices'][0]['message']['content'];
-        $questions = $this->parseQuestions($content);
+        $cleanedContent = $this->cleanContent($response['choices'][0]['message']['content']);
+        $questions = json_decode($cleanedContent, true);
 
         foreach ($questions as $questionData) {
             TrueOrFalseExam::create([
@@ -45,33 +45,32 @@ class TrueOrFalseExamGenerator
         };
     }
 
-    private function parseQuestions(string $content): array
+    private function cleanContent($content)
     {
-        $lines = explode("\n", $content);
-        $questions = [];
+        $content = preg_replace('/^"""\s*/', '', $content);
+        $content = preg_replace('/\s*"""$/', '', $content);
 
-        foreach ($lines as $line) {
-            if (preg_match('/^(\d+\..+)\s*-\s*(True|False)$/', $line, $matches)) {
-                $questions[] = [
-                    'question' => trim($matches[1]),
-                    'answer' => $matches[2] === 'True',
-                ];
-            }
-        }
+        $content = preg_replace('/^```json\s*/', '', $content);
+        $content = preg_replace('/\s*```$/', '', $content);
 
-        return $questions;
+        return $content;
     }
 
-    private function generateTrueFalsePrompt(Exam $exam, int $numQuestions): string
+    private function generatePrompt(Exam $exam, int $numQuestions): string
     {
-        return "You are an exam generator. Generate a mock exam with true or false questions based on the following details:\n" .
-            "Number of questions: {$numQuestions} (random between min and max based on exam size)\n" .
-            "Title: {$exam->title}\n" .
-            "Type: {$exam->type}\n" .
-            "Difficulty: {$exam->difficulty} (please match the complexity to the difficulty)\n" .
-            "Format:\n" .
-            "1. Question - Answer (True or False)\n" .
-            "Make sure the questions are relevant to the exam type and difficulty level.\n" .
-            "Each question should have a clear and straightforward answer.\n";
+        return "Generate a true or false exam with the following specifications:\n" .
+            "1. The exam should contain {$numQuestions} questions.\n" .
+            "2. The questions should be related to the following topics: " . implode(', ', $exam->topics->pluck('name')->toArray()) . ".\n" .
+            "3. The difficulty of the exam should be {$exam->difficulty}.\n" .
+            "4. Each question should have only two possible answers: 'True' or 'False'.\n" .
+            "5. The format should be in JSON with the following structure:\n" .
+            "    [\n" .
+            "        {\n" .
+            "            \"question\": \"Question text\",\n" .
+            "            \"answer\": true\n" .
+            "        },\n" .
+            "        ...\n" .
+            "    ]\n" .
+            "6. The JSON should be clean, with no additional text or explanation.";
     }
 }

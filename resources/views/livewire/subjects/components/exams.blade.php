@@ -44,13 +44,24 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                 <flux:breadcrumbs.item>Exams</flux:breadcrumbs.item>
             </flux:breadcrumbs>
         </div>
-
+{{-- 
         <div class="flex items-center justify-start gap-2">
             <flux:modal.trigger name="create-exam">
                 <flux:badge as="button" variant="pill" color="zinc" icon="plus" size="lg">New exam
                 </flux:badge>
             </flux:modal.trigger>
-        </div>
+        </div> --}}
+
+        
+        <flux:modal.trigger name="create-exam">
+            <div class="hidden md:block">
+                <flux:badge as="button" variant="pill" color="zinc" icon="plus"
+                    size="lg">
+                    New exam
+                </flux:badge>
+            </div>
+            <flux:button variant="ghost" icon="plus" class="block md:hidden" />
+        </flux:modal.trigger>
     </div>
 
     <!-- Header & nav bar -->
@@ -60,9 +71,9 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
         <flux:table.columns>
             <flux:table.column>Title</flux:table.column>
             <flux:table.column sortable>Type</flux:table.column>
-            <flux:table.column class="hidden md:table-cell">Topics</flux:table.column>
+            <flux:table.column class="hidden lg:table-cell">Topics</flux:table.column>
             <flux:table.column sortable>Difficulty</flux:table.column>
-            <flux:table.column sortable class="hidden lg:table-cell">Size</flux:table.column>
+            <flux:table.column sortable class="hidden xl:table-cell">Size</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
@@ -80,7 +91,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                     <flux:table.cell>{{ Str::of($exam->type)->replace('_', ' ')->ucfirst() }}</flux:table.cell>
 
                     <!-- Topics -->
-                    <flux:table.cell class="hidden md:table-cell">
+                    <flux:table.cell class="hidden lg:table-cell">
                         @php
                             $topicsToShow = $exam->topics->take(2);
                             $hasMoreTopics = $exam->topics->count() > 2;
@@ -107,7 +118,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Subjects • Practizly')] 
                     </flux:table.cell>
 
                     <!-- Size -->
-                    <flux:table.cell class="whitespace-nowrap hidden lg:table-cell">
+                    <flux:table.cell class="whitespace-nowrap hidden xl:table-cell">
                         {{ Str::of($exam->size)->ucfirst() }}</flux:table.cell>
 
                     <!-- Actions -->

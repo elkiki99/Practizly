@@ -12,7 +12,7 @@ new class extends Component {
     }
 }; ?>
 
-<div class="lg:sticky lg:top-[0rem] z-50 bg-white dark:bg-zinc-950">
+<div class="lg:sticky lg:top-[0rem] z-50 bg-white dark:bg-zinc-950 no-print">
     <!-- Desktop -->
     <flux:navbar class="my-0 max-md:hidden">
         <flux:navbar.item 

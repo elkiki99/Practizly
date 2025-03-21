@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\MultipleChoiceExam;
 use App\Models\TrueOrFalseExam;
+use App\Models\OpenEndedExam;
 use App\Models\Attachment;
 use App\Models\Subject;
 use App\Models\Topic;
@@ -47,5 +48,10 @@ class Exam extends Model
     public function multipleChoiceExams()
     {
         return $this->hasMany(MultipleChoiceExam::class);
+    }
+
+    public function openEndedExams()
+    {
+        return $this->hasMany(OpenEndedExam::class);
     }
 }

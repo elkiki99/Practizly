@@ -11,25 +11,28 @@ new class extends Component {
         $this->exam = $exam;
     }
 
-    public function reviewTrueOrFalse() {}
+    public function reviewTrueOrFalseExam() {}
 }; ?>
 
-<flux:card>
-    <form wire:submit.prevent="reviewTrueOrFalse" class="space-y-6">
+<flux:card class="print-remove-b">
+    <form wire:submit.prevent="reviewTrueOrFalseExam" class="space-y-6 print">
         @forelse ($exam->trueOrFalseExams as $exam)
             <div>
                 <flux:heading>{{ $exam->question }}</flux:heading>
-                <flux:subheading>Choose the correct answer.</flux:subheading>
+                <flux:subheading class="no-print">Choose the correct answer.</flux:subheading>
             </div>
 
-            <flux:radio.group class="flex items-start gap-4">
-                <flux:radio label="True" value="true" name="question_{{ $exam->id }}" />
-                <flux:radio label="False" value="false" name="question_{{ $exam->id }}" />
+            <flux:radio.group name="question_{{ $exam->id }}" class="flex items-start gap-4">
+                <flux:radio label="True" value="true" />
+                <flux:radio label="False" value="false" />
             </flux:radio.group>
         @empty
-            <flux:subheading>No true or false questions yet.</flux:subheading>
+            <flux:subheading class="no-print">No true or false questions yet.</flux:subheading>
         @endforelse
 
-        <flux:button type="submit" variant="primary">Submit</flux:button>
+        <div class="flex items-center no-print">
+            <flux:spacer class="lg:hidden" />
+            <flux:button type="submit" variant="primary">Submit</flux:button>
+        </div>
     </form>
 </flux:card>

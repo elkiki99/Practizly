@@ -11,15 +11,15 @@ new class extends Component {
         $this->exam = $exam;
     }
 
-    public function reviewMultipleChoice() {}
+    public function reviewMultipleChoiceExam() {}
 }; ?>
 
-<flux:card>
-    <form wire:submit.prevent="reviewMultipleChoice" class="space-y-6">
+<flux:card class="print-remove-b">
+    <form wire:submit.prevent="reviewMultipleChoiceExam" class="space-y-6 print">
         @forelse ($exam->multipleChoiceExams as $exam)
             <div>
                 <flux:heading level="2" size="lg">{{ $exam->question }}</flux:heading>
-                <flux:subheading>Choose the correct answer.</flux:subheading>
+                <flux:subheading class="no-print">Choose the correct answer.</flux:subheading>
             </div>
 
             <flux:radio.group name="answers[{{ $exam->id }}]">
@@ -31,6 +31,9 @@ new class extends Component {
             <p>No multiple choice questions yet.</p>
         @endforelse
 
-        <flux:button type="submit" variant="primary">Submit</flux:button>
+        <div class="flex items-center no-print">
+            <flux:spacer class="lg:hidden" />
+            <flux:button type="submit" variant="primary">Submit</flux:button>
+        </div>
     </form>
 </flux:card>

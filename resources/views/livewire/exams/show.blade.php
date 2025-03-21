@@ -29,23 +29,28 @@ new #[Layout('layouts.dashboard-component')] #[Title('Exams • Practizly')] cla
                 {{ Str::of($exam->title)->ucfirst() }}
             </flux:heading>
 
-            <div class="flex items-center justify-start gap-2">
-                <flux:modal.trigger>
-                    <flux:badge href="{{-- asset('storage/' . $exam->file_path) --}}" download as="link" variant="pill" color="zinc"
-                        icon="arrow-down-tray" size="lg">
-                        Download&nbsp;<span class="hidden sm:inline">exam</span>
-                    </flux:badge>
-                </flux:modal.trigger>
+            <div class="flex items-center justify-start gap-2 no-print">
+                <div onclick="printExam()">
+                    <div class="hidden md:block">
+                        <flux:badge as="button" variant="pill" color="zinc" icon="arrow-down-tray" size="lg">
+                            Download
+                        </flux:badge>
+                    </div>
+                    <flux:button variant="ghost" icon="arrow-down-tray" class="block md:hidden" />
+                </div>
 
                 <flux:modal.trigger name="delete-exam-{{ $exam->id }}">
-                    <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">
-                        Delete&nbsp;<span class="hidden sm:inline">exam</span>
-                    </flux:badge>
+                    <div class="hidden md:block">
+                        <flux:badge as="button" variant="pill" color="zinc" icon="trash" size="lg">
+                            Delete
+                        </flux:badge>
+                    </div>
+                    <flux:button variant="ghost" icon="trash" class="block md:hidden" />
                 </flux:modal.trigger>
             </div>
         </div>
 
-        <flux:breadcrumbs>
+        <flux:breadcrumbs class="no-print">
             <flux:breadcrumbs.item wire:navigate href="/{{ Auth::user()->username }}/subjects">Subjects
             </flux:breadcrumbs.item>
             <flux:breadcrumbs.item wire:navigate
@@ -68,7 +73,7 @@ new #[Layout('layouts.dashboard-component')] #[Title('Exams • Practizly')] cla
         <livewire:exams.types.true-or-false :exam="$exam" />
     @elseif($exam->type === 'multiple_choice')
         <livewire:exams.types.multiple-choice :exam="$exam" />
-    {{-- @elseif($exam->type === 'short_answer')
-        <livewire:exams.types.short-answer :exam="$exam" />  --}}
+    @elseif($exam->type === 'open_ended')
+        <livewire:exams.types.open-ended :exam="$exam" />
     @endif
 </div>

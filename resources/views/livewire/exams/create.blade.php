@@ -18,7 +18,7 @@ new class extends Component {
     #[Validate('required|exists:attachments,id')]
     public $attachment = null;
 
-    #[Validate('required|string|in:open_ended,multiple_choice,true_or_false,quiz')]
+    #[Validate('required|string|in:open_ended,multiple_choice,true_or_false')]
     public string $type = 'open_ended';
 
     #[Validate('required|string|in:easy,medium,hard')]
@@ -259,7 +259,6 @@ new class extends Component {
             <flux:radio label="Open ended" value="open_ended" />
             <flux:radio label="Multiple choice" value="multiple_choice" />
             <flux:radio label="True or false" value="true_or_false" />
-            <flux:radio label="Quiz" value="quiz" />
         </flux:radio.group>
 
         <div class="flex">

@@ -28,18 +28,18 @@
 <body class="flex flex-col min-h-screen font-sans antialiased bg-white dark:bg-zinc-950">
     <div class="flex">
         <!-- Sidebar -->
-        <div class="z-40 h-screen lg:fixed lg:w-64">
+        <div class="z-40 h-screen lg:fixed lg:w-64 no-print">
             <livewire:layout.user.dashboard-sidebar />
         </div>
 
         <div class="flex-1 lg:ml-64">
             <!-- Navigation -->
-            <div class="sticky top-0 z-20">
+            <div class="sticky top-0 z-20 no-print">
                 <livewire:layout.user.dashboard-secondary-navigation />
             </div>
 
             <!-- Main Content -->
-            <main class="self-stretch flex-1 p-6 space-y-6">
+            <main class="self-stretch flex-1 p-6 space-y-6 print">
                 {{ $slot }}
             </main>
         </div>
@@ -50,6 +50,12 @@
     @endpersist
 
     @fluxScripts
+
+    <script>
+        function printExam() {
+            window.print();
+        }
+    </script>
 </body>
 
 </html>

@@ -17,6 +17,7 @@
         [x-cloak] {
             display: none;
         }
+        }
     </style>
 
     <!-- Scripts -->

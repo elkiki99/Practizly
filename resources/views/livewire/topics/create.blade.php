@@ -33,7 +33,7 @@ new class extends Component {
 
         Flux::toast(heading: 'Topic created', text: 'Your topic was created successfully', variant: 'success');
 
-        $this->modal('create-topic')->close();
+        $this->modal('original-create-topic')->close();
 
         $this->reset('name');
 

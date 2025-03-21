@@ -62,20 +62,21 @@ class MultipleChoiceExamGenerator
     {
         return "Generate a multiple-choice exam with the following specifications:\n" .
             "1. The exam should contain {$numQuestions} questions.\n" .
-            "2. The questions should be related to the topic of {$exam->subject->name}.\n" .
+            "2. The questions should be related to the following topics: " . implode(', ', $exam->topics->pluck('name')->toArray()) . ".\n" .
             "3. The difficulty of the exam should be {$exam->difficulty}.\n" .
-            "4. For each question, provide four answer options: A, B, C, D.\n" .
-            "5. Each question must have exactly one correct answer.\n" .
-            "6. The format should be in JSON with the following structure:\n" .
+            "4. For each question, provide four answer options in an array format.\n" .
+            "5. Do **not** include any prefixes like 'A)', 'B)', etc., just provide the answer text.\n" .
+            "6. Each question must have exactly one correct answer.\n" .
+            "7. The format should be in JSON with the following structure:\n" .
             "    [\n" .
             "        {\n" .
             "            \"question\": \"Question text\",\n" .
-            "            \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n" .
-            "            \"correct_answer\": \"A\"\n" .
+            "            \"options\": [\"Option 1\", \"Option 2\", \"Option 3\", \"Option 4\"],\n" .
+            "            \"correct_answer\": \"Option 1\"\n" .
             "        },\n" .
             "        ...\n" .
             "    ]\n" .
-            "7. The JSON should be clean, with no additional text or explanation.\n" .
-            "8. The correct answer must be one of the options: A, B, C, or D.";
+            "8. The JSON should be clean, with no additional text or explanation.\n" .
+            "9. The correct answer must match exactly one of the provided options.";
     }
 }
