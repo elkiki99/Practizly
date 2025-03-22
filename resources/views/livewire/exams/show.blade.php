@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\{Layout, Title, On};
+use Spatie\PdfToText\Pdf;
 use App\Models\Exam;
 use Carbon\Carbon;
 
@@ -65,6 +66,10 @@ new #[Layout('layouts.dashboard-component')] #[Title('Exams • Practizly')] cla
     </div>
 
     <livewire:subjects.components.nav-bar :subject="$exam->subject" />
+
+    @foreach ($exam->attachments as $attachment)
+        {{ Pdf::getText(public_path('storage/' . $attachment->file_path), base_path('poppler-24.08.0/Library\bin/pdftotext.exe')) }}
+    @endforeach
 
     <!-- Action modals -->
     <livewire:exams.delete :exam="$exam" />

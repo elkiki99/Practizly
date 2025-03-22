@@ -61,9 +61,10 @@ class TrueOrFalseExamGenerator
         return "Generate a true or false exam with the following specifications:\n" .
             "1. The exam should contain {$numQuestions} questions.\n" .
             "2. The questions should be related to the following topics: " . implode(', ', $exam->topics->pluck('name')->toArray()) . ".\n" .
-            "3. The difficulty of the exam should be {$exam->difficulty}.\n" .
-            "4. Each question should have only two possible answers: 'True' or 'False'.\n" .
-            "5. The format should be in JSON with the following structure:\n" .
+            "3. The exam should be based on the following study materials: " . implode(', ', $exam->pdfScannedAttachments->pluck('name')->toArray()) . ".\n" .
+            "4. The difficulty of the exam should be {$exam->difficulty}.\n" .
+            "5. Each question should have only two possible answers: 'True' or 'False'.\n" .
+            "6. The format should be in JSON with the following structure:\n" .
             "    [\n" .
             "        {\n" .
             "            \"question\": \"Question text\",\n" .
@@ -71,6 +72,6 @@ class TrueOrFalseExamGenerator
             "        },\n" .
             "        ...\n" .
             "    ]\n" .
-            "6. The JSON should be clean, with no additional text or explanation.";
+            "7. The JSON should be clean, with no additional text or explanation.";
     }
 }

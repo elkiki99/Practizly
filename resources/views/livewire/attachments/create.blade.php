@@ -20,7 +20,7 @@ new class extends Component {
     #[Validate('required|exists:topics,id')]
     public $topic;
 
-    #[Validate(['attachments.*' => 'required|file|mimes:c,cpp,cs,css,doc,docx,go,html,java,js,json,md,pdf,php,pptx,py,rb,sh,tex,ts,txt|max:10240'])]
+    #[Validate(['attachments.*' => 'required|file|mimes:pdf|max:10240'])]
     public $attachments = [];
 
     public $topics = [];
@@ -168,7 +168,7 @@ new class extends Component {
 
         <flux:field>
             <flux:label>Attachment file</flux:label>
-            <flux:input accept=".pdf,.xls,.xlsx" type="file" wire:model="attachments" multiple required />
+            <flux:input accept=".pdf" type="file" wire:model="attachments" multiple required />
             <flux:error name="attachments" />
         </flux:field>
         
